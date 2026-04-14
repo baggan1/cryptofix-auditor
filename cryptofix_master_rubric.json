@@ -5,7 +5,7 @@
     "author": "Opound LLC — Navilla Bagga",
     "author_credentials": "15+ years FIX protocol implementation: Wellington Management (9 years, 20+ broker certifications, ATDL, dark pool ATS), Solidus Labs (25+ crypto exchange onboardings, digital asset FIX standard)",
     "last_updated": "2026-04-09",
-    "rubric_basis": "Wellington Management institutional FIX standards, CME iLink3 FIX 5.0, FIX Trading Community standards, FATF Travel Rule, MiFID II RTS 6/25/27",
+    "rubric_basis": "Institutional FIX standards, CME iLink3 FIX 5.0, FIX Trading Community standards, FATF Travel Rule, MiFID II RTS 6/25/27",
     "disclaimer": "Rubric reflects TradFi institutional connectivity standards applied to crypto venue FIX implementations. Scores are indicative. Independent verification against exchange RoE documentation recommended.",
     "scoring_guide": {
       "90-100": "Institutional grade — suitable for direct OMS connectivity without workarounds",
