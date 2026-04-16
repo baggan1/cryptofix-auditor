@@ -1,0 +1,65 @@
+export interface CheckResult {
+  check_id: string;
+  fix_tag: string;
+  field_name: string;
+  status: 'full_credit' | 'partial_credit' | 'no_credit';
+  points_available: number;
+  evidence: string | null;
+  asset_class_limitation: string | null;
+  custom_tag_notes: string | null;
+}
+
+export interface Tier5CheckResult {
+  check_id: string;
+  status: 'full_credit' | 'partial_credit' | 'no_credit';
+  evidence: string | null;
+  notes: string;
+}
+
+export interface ExtractionResult {
+  exchange_name: string;
+  spec_source: string;
+  asset_classes_audited: string[];
+  extraction_date: string;
+  extractor_notes: string;
+  checks: CheckResult[];
+}
+
+export interface TierScore {
+  label: string;
+  earned: number;
+  available: number;
+  pct: number;
+}
+
+export interface GapSummaryItem {
+  check_id: string;
+  fix_tag: string;
+  field_name: string;
+  tier: number;
+  status: 'partial_credit' | 'no_credit';
+  points_lost: number;
+  evidence: string | null;
+}
+
+export interface Tier5Results {
+  label: string;
+  informational_only: true;
+  ep273_ratified_checks: string[];
+  tbd_checks: string[];
+  checks: Tier5CheckResult[];
+  summary: string;
+}
+
+export interface ScoredReport {
+  exchange_name: string;
+  audit_date: string;
+  total_score: number;
+  max_score: number;
+  grade: 'Institutional grade' | 'Near-institutional' | 'Partial' | 'Basic' | 'Pre-institutional';
+  tier_scores: Record<string, TierScore>;
+  gap_count: number;
+  gap_summary: GapSummaryItem[];
+  full_detail: CheckResult[];
+  tier5_results?: Tier5Results;
+}
