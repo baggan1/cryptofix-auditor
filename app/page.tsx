@@ -51,9 +51,9 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-24">
       {/* Hero Section */}
-      <section className="bg-navy-dark text-white pt-24 pb-32 px-4 relative overflow-hidden">
+      <section className="bg-navy-dark text-white flex flex-col items-center justify-center pt-24 pb-16 px-4 text-center relative">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_0,transparent_50%)]" />
         </div>
@@ -75,9 +75,9 @@ export default function Home() {
       </section>
 
       {/* Selector Section */}
-      <section className="-mt-16 px-4 pb-20">
+      <section className="px-4 pb-20">
         <div className="max-w-5xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-slate-100">
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-slate-100 relative">
             <div className="text-center mb-10">
               <h3 className="text-2xl font-bold text-slate-900 mb-2">Select Target Exchange</h3>
               <p className="text-slate-500 font-medium">Choose a certified audit or input a documentation URL to begin analysis.</p>

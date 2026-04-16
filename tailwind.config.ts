@@ -12,8 +12,14 @@ const config: Config = {
         navy: {
           dark: "#0A1628",
         },
+        brand: {
+          bg: '#0A1628',
+          accent: '#10B981',
+          'accent-hover': '#059669',
+          muted: '#94A3B8',
+        },
         status: {
-          present: "#1D9E75", // Green
+          present: "#10B981", // Updated from #1D9E75
           partial: "#F59E0B", // Amber
           missing: "#EF4444", // Red
         },

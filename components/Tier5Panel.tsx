@@ -28,7 +28,7 @@ const Tier5Panel: React.FC<Tier5PanelProps> = ({ results }) => {
           {results.checks.map((check) => (
             <div key={check.check_id} className="flex items-start gap-3 p-3 bg-white border border-tier5-border rounded-md">
               <div className={`mt-1 h-2 w-2 rounded-full shrink-0 ${
-                check.status === 'full_credit' ? 'bg-green-500' : 
+                check.status === 'full_credit' ? 'bg-[#10B981]' : 
                 check.status === 'partial_credit' ? 'bg-amber-500' : 'bg-red-300'
               }`} />
               <div>

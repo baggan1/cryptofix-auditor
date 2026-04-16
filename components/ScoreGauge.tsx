@@ -23,7 +23,7 @@ const ScoreGauge: React.FC<ScoreGaugeProps> = ({ score, grade }) => {
   const offset = circumference - (animatedScore / 100) * circumference;
 
   const getColor = (s: number) => {
-    if (s >= 70) return '#1D9E75'; // Green
+    if (s >= 70) return '#10B981'; // Brand Accent Green
     if (s >= 50) return '#F59E0B'; // Amber
     return '#EF4444'; // Red
   };

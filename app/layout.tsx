@@ -26,9 +26,9 @@ export default function RootLayout({
               </div>
             </div>
             <nav className="hidden md:flex items-center gap-8">
-              <a href="/" className="text-sm font-semibold hover:text-slate-300 transition-colors">Home</a>
-              <a href="/methodology" className="text-sm font-semibold hover:text-slate-300 transition-colors">Methodology</a>
-              <a href="mailto:navilla@opound.com" className="text-sm font-semibold px-4 py-2 bg-white/10 rounded-full hover:bg-white/20 transition-all">Contact</a>
+              <a href="/" className="text-sm font-semibold hover:text-[#10B981] transition-colors">Home</a>
+              <a href="/methodology" className="text-sm font-semibold hover:text-[#10B981] transition-colors">Methodology</a>
+              <a href="/contact" className="text-sm font-semibold px-4 py-2 border border-[#10B981] text-[#10B981] rounded-full hover:bg-[#10B981] hover:text-white transition-all">Contact</a>
             </nav>
           </div>
         </header>

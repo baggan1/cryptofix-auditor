@@ -21,7 +21,7 @@ const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) =>
   const getStatusPill = (status: string) => {
     switch (status) {
       case 'full_credit':
-        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">Present</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#10B981]/10 text-[#10B981]">Present</span>;
       case 'partial_credit':
         return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Partial</span>;
       default:

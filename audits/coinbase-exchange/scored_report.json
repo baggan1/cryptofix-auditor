@@ -1,0 +1,517 @@
+{
+  "exchange_name": "Coinbase Exchange",
+  "audit_date": "2026-04-13T20:55:00Z",
+  "total_score": 55,
+  "max_score": 100,
+  "grade": "Partial",
+  "tier_scores": {
+    "tier1": {
+      "label": "Order lifecycle — core order management",
+      "earned": 32,
+      "available": 35,
+      "pct": 91
+    },
+    "tier2": {
+      "label": "Execution quality & TCA fields",
+      "earned": 14,
+      "available": 25,
+      "pct": 56
+    },
+    "tier3": {
+      "label": "Post-trade, allocation & session reliability",
+      "earned": 5.5,
+      "available": 25,
+      "pct": 22
+    },
+    "tier4": {
+      "label": "AML, Travel Rule & compliance data hooks",
+      "earned": 3,
+      "available": 15,
+      "pct": 20
+    }
+  },
+  "gap_count": 14,
+  "gap_summary": [
+    {
+      "check_id": "T2_001",
+      "fix_tag": "29",
+      "field_name": "LastCapacity",
+      "tier": 2,
+      "status": "no_credit",
+      "points_lost": 5,
+      "evidence": "LastCapacity (tag 29) is not documented for the Exchange Spot FIX implementation."
+    },
+    {
+      "check_id": "T2_002",
+      "fix_tag": "30",
+      "field_name": "LastMkt / Execution Venue",
+      "tier": 2,
+      "status": "no_credit",
+      "points_lost": 5,
+      "evidence": "LastMkt (tag 30) is not documented for the Exchange Spot FIX implementation."
+    },
+    {
+      "check_id": "T3_001",
+      "fix_tag": "78/79",
+      "field_name": "NoAllocs / AllocAccount — sub-account order routing",
+      "tier": 3,
+      "status": "no_credit",
+      "points_lost": 5,
+      "evidence": "NoAllocs (78) and AllocAccount (79) repeating groups are not documented for Order Entry messages on Spot."
+    },
+    {
+      "check_id": "T3_002",
+      "fix_tag": "35=J",
+      "field_name": "AllocationInstruction",
+      "tier": 3,
+      "status": "no_credit",
+      "points_lost": 5,
+      "evidence": "AllocationInstruction (35=J) message is not supported by the Coinbase Exchange FIX API."
+    },
+    {
+      "check_id": "T3_005",
+      "fix_tag": "Session",
+      "field_name": "Session management — logon / heartbeat / gap-fill",
+      "tier": 3,
+      "status": "partial_credit",
+      "points_lost": 2.5,
+      "evidence": "ResendRequest (35=2) is NOT supported; every reconnection is handled as a fresh session."
+    },
+    {
+      "check_id": "T4_001",
+      "fix_tag": "453/448/452",
+      "field_name": "Parties group — VASP / counterparty identification",
+      "tier": 4,
+      "status": "no_credit",
+      "points_lost": 5,
+      "evidence": "Parties repeating group (453) is not documented for the Exchange Spot FIX API."
+    },
+    {
+      "check_id": "T2_006",
+      "fix_tag": "851",
+      "field_name": "LastLiquidityInd (maker/taker)",
+      "tier": 2,
+      "status": "partial_credit",
+      "points_lost": 2,
+      "evidence": "AggressorIndicator (tag 1057) is used to indicate maker/taker status (Y=Taker, N=Maker) instead of standard LastLiquidityInd (851)."
+    },
+    {
+      "check_id": "T3_004",
+      "fix_tag": "63",
+      "field_name": "SettlType",
+      "tier": 3,
+      "status": "no_credit",
+      "points_lost": 4,
+      "evidence": "SettlType (63) is not documented for Execution Reports on Spot."
+    },
+    {
+      "check_id": "T4_002",
+      "fix_tag": "custom / 448",
+      "field_name": "Wallet address attribution",
+      "tier": 4,
+      "status": "no_credit",
+      "points_lost": 4,
+      "evidence": "There is no documented mechanism to attribute on-chain wallet addresses via the FIX protocol."
+    },
+    {
+      "check_id": "T1_004",
+      "fix_tag": "1138",
+      "field_name": "DisplayQty (Iceberg)",
+      "tier": 1,
+      "status": "no_credit",
+      "points_lost": 3,
+      "evidence": "Iceberg/DisplayQty support was officially removed from Coinbase Exchange on May 27, 2025."
+    },
+    {
+      "check_id": "T2_007",
+      "fix_tag": "375",
+      "field_name": "ContraTrader / counterparty identifier",
+      "tier": 2,
+      "status": "no_credit",
+      "points_lost": 3,
+      "evidence": "ContraTrader (375) is not documented for the Exchange Spot FIX implementation."
+    },
+    {
+      "check_id": "T3_003",
+      "fix_tag": "35=AK",
+      "field_name": "AllocationInstructionAck",
+      "tier": 3,
+      "status": "no_credit",
+      "points_lost": 3,
+      "evidence": "AllocationInstructionAck (35=AK) is not supported."
+    },
+    {
+      "check_id": "T4_003",
+      "fix_tag": "17",
+      "field_name": "ExecID — audit trail uniqueness & recoverability",
+      "tier": 4,
+      "status": "partial_credit",
+      "points_lost": 1.5,
+      "evidence": "ExecID (17) is provided and unique per session, but global uniqueness across all historical sessions or queryability after closure is not explicitly guaranteed in docs."
+    },
+    {
+      "check_id": "T4_004",
+      "fix_tag": "18",
+      "field_name": "ExecInst — regulatory execution instructions",
+      "tier": 4,
+      "status": "partial_credit",
+      "points_lost": 1.5,
+      "evidence": "ExecInst (18) supports Post-Only (value P or A in subagent check) but Reduce-Only (E) is not documented for Spot orders."
+    }
+  ],
+  "full_detail": [
+    {
+      "check_id": "T1_001",
+      "fix_tag": "35=D",
+      "field_name": "NewOrderSingle",
+      "tier": 1,
+      "weight": 5,
+      "status": "full_credit",
+      "points_earned": 5,
+      "points_available": 5,
+      "evidence": "NewOrderSingle (35=D) is the primary order entry message, supporting standard field tags 11, 38, 40, 44, 54, 55, 59, 60."
+    },
+    {
+      "check_id": "T1_002",
+      "fix_tag": "35=8",
+      "field_name": "ExecutionReport",
+      "tier": 1,
+      "weight": 5,
+      "status": "full_credit",
+      "points_earned": 5,
+      "points_available": 5,
+      "evidence": "ExecutionReport (35=8) covers all standard execution types including New (0), Partial Fill (1), Fill (2), Canceled (4), Rejected (8), and Expired (C)."
+    },
+    {
+      "check_id": "T1_003",
+      "fix_tag": "59",
+      "field_name": "TimeInForce",
+      "tier": 1,
+      "weight": 5,
+      "status": "full_credit",
+      "points_earned": 5,
+      "points_available": 5,
+      "evidence": "TimeInForce (59) supports GTC (1), IOC (3), FOK (4), and GTD (6)."
+    },
+    {
+      "check_id": "T1_004",
+      "fix_tag": "1138",
+      "field_name": "DisplayQty (Iceberg)",
+      "tier": 1,
+      "weight": 3,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 3,
+      "evidence": "Iceberg/DisplayQty support was officially removed from Coinbase Exchange on May 27, 2025."
+    },
+    {
+      "check_id": "T1_005",
+      "fix_tag": "7928",
+      "field_name": "SelfTradePrevention (STP)",
+      "tier": 1,
+      "weight": 4,
+      "status": "full_credit",
+      "points_earned": 4,
+      "points_available": 4,
+      "evidence": "Self-Trade Prevention is supported via tag 7928 (SelfTradeType) on NewOrderSingle. Supported modes: D (Decrement and Cancel), O (Cancel Oldest), N (Cancel Newest), B (Cancel Both)."
+    },
+    {
+      "check_id": "T1_006",
+      "fix_tag": "35=F",
+      "field_name": "OrderCancelRequest",
+      "tier": 1,
+      "weight": 3,
+      "status": "full_credit",
+      "points_earned": 3,
+      "points_available": 3,
+      "evidence": "OrderCancelRequest (35=F) is supported for single and batch cancellations using ClOrdID (11) or OrderID (37)."
+    },
+    {
+      "check_id": "T1_007",
+      "fix_tag": "35=q",
+      "field_name": "OrderMassCancelRequest + Cancel-on-Disconnect",
+      "tier": 1,
+      "weight": 4,
+      "status": "full_credit",
+      "points_earned": 4,
+      "points_available": 4,
+      "evidence": "OrderMassCancelRequest (35=q) is documented. Cancel-on-Disconnect (COD) is supported via tag 8013 (CancelOrdersOnDisconnect) in Logon message."
+    },
+    {
+      "check_id": "T1_008",
+      "fix_tag": "35=G",
+      "field_name": "OrderCancelReplaceRequest (Amend)",
+      "tier": 1,
+      "weight": 4,
+      "status": "full_credit",
+      "points_earned": 4,
+      "points_available": 4,
+      "evidence": "OrderCancelReplaceRequest (35=G) is supported for amending price and quantity."
+    },
+    {
+      "check_id": "T1_009",
+      "fix_tag": "35=H",
+      "field_name": "OrderStatusRequest",
+      "tier": 1,
+      "weight": 2,
+      "status": "full_credit",
+      "points_earned": 2,
+      "points_available": 2,
+      "evidence": "OrderStatusRequest (35=H) is documented and supported for querying current order state."
+    },
+    {
+      "check_id": "T2_001",
+      "fix_tag": "29",
+      "field_name": "LastCapacity",
+      "tier": 2,
+      "weight": 5,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 5,
+      "evidence": "LastCapacity (tag 29) is not documented for the Exchange Spot FIX implementation."
+    },
+    {
+      "check_id": "T2_002",
+      "fix_tag": "30",
+      "field_name": "LastMkt / Execution Venue",
+      "tier": 2,
+      "weight": 5,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 5,
+      "evidence": "LastMkt (tag 30) is not documented for the Exchange Spot FIX implementation."
+    },
+    {
+      "check_id": "T2_003",
+      "fix_tag": "31",
+      "field_name": "LastPx (fill price)",
+      "tier": 2,
+      "weight": 3,
+      "status": "full_credit",
+      "points_earned": 3,
+      "points_available": 3,
+      "evidence": "LastPx (31) is provided in all fill Execution Reports."
+    },
+    {
+      "check_id": "T2_004",
+      "fix_tag": "32",
+      "field_name": "LastQty (fill quantity)",
+      "tier": 2,
+      "weight": 3,
+      "status": "full_credit",
+      "points_earned": 3,
+      "points_available": 3,
+      "evidence": "LastQty (32) is provided in all fill Execution Reports."
+    },
+    {
+      "check_id": "T2_005",
+      "fix_tag": "60",
+      "field_name": "TransactTime — microsecond precision",
+      "tier": 2,
+      "weight": 4,
+      "status": "full_credit",
+      "points_earned": 4,
+      "points_available": 4,
+      "evidence": "TransactTime (60) follows ISO 8601 format with microsecond precision (YYYY-MM-DDThh:mm:ss.uuuuuuZ)."
+    },
+    {
+      "check_id": "T2_006",
+      "fix_tag": "851",
+      "field_name": "LastLiquidityInd (maker/taker)",
+      "tier": 2,
+      "weight": 4,
+      "status": "partial_credit",
+      "points_earned": 2,
+      "points_available": 4,
+      "evidence": "AggressorIndicator (tag 1057) is used to indicate maker/taker status (Y=Taker, N=Maker) instead of standard LastLiquidityInd (851)."
+    },
+    {
+      "check_id": "T2_007",
+      "fix_tag": "375",
+      "field_name": "ContraTrader / counterparty identifier",
+      "tier": 2,
+      "weight": 3,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 3,
+      "evidence": "ContraTrader (375) is not documented for the Exchange Spot FIX implementation."
+    },
+    {
+      "check_id": "T2_008",
+      "fix_tag": "14",
+      "field_name": "CumQty — cumulative fill tracking",
+      "tier": 2,
+      "weight": 2,
+      "status": "full_credit",
+      "points_earned": 2,
+      "points_available": 2,
+      "evidence": "CumQty (14) is provided in all Execution Reports."
+    },
+    {
+      "check_id": "T3_001",
+      "fix_tag": "78/79",
+      "field_name": "NoAllocs / AllocAccount — sub-account order routing",
+      "tier": 3,
+      "weight": 5,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 5,
+      "evidence": "NoAllocs (78) and AllocAccount (79) repeating groups are not documented for Order Entry messages on Spot."
+    },
+    {
+      "check_id": "T3_002",
+      "fix_tag": "35=J",
+      "field_name": "AllocationInstruction",
+      "tier": 3,
+      "weight": 5,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 5,
+      "evidence": "AllocationInstruction (35=J) message is not supported by the Coinbase Exchange FIX API."
+    },
+    {
+      "check_id": "T3_003",
+      "fix_tag": "35=AK",
+      "field_name": "AllocationInstructionAck",
+      "tier": 3,
+      "weight": 3,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 3,
+      "evidence": "AllocationInstructionAck (35=AK) is not supported."
+    },
+    {
+      "check_id": "T3_004",
+      "fix_tag": "63",
+      "field_name": "SettlType",
+      "tier": 3,
+      "weight": 4,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 4,
+      "evidence": "SettlType (63) is not documented for Execution Reports on Spot."
+    },
+    {
+      "check_id": "T3_005",
+      "fix_tag": "Session",
+      "field_name": "Session management — logon / heartbeat / gap-fill",
+      "tier": 3,
+      "weight": 5,
+      "status": "partial_credit",
+      "points_earned": 2.5,
+      "points_available": 5,
+      "evidence": "ResendRequest (35=2) is NOT supported; every reconnection is handled as a fresh session."
+    },
+    {
+      "check_id": "T3_006",
+      "fix_tag": "58",
+      "field_name": "Text field — reject reason quality",
+      "tier": 3,
+      "weight": 3,
+      "status": "full_credit",
+      "points_earned": 3,
+      "points_available": 3,
+      "evidence": "Text (58) field is provided on rejections and cancellations to provide human-readable reason strings."
+    },
+    {
+      "check_id": "T4_001",
+      "fix_tag": "453/448/452",
+      "field_name": "Parties group — VASP / counterparty identification",
+      "tier": 4,
+      "weight": 5,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 5,
+      "evidence": "Parties repeating group (453) is not documented for the Exchange Spot FIX API."
+    },
+    {
+      "check_id": "T4_002",
+      "fix_tag": "custom / 448",
+      "field_name": "Wallet address attribution",
+      "tier": 4,
+      "weight": 4,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 4,
+      "evidence": "There is no documented mechanism to attribute on-chain wallet addresses via the FIX protocol."
+    },
+    {
+      "check_id": "T4_003",
+      "fix_tag": "17",
+      "field_name": "ExecID — audit trail uniqueness & recoverability",
+      "tier": 4,
+      "weight": 3,
+      "status": "partial_credit",
+      "points_earned": 1.5,
+      "points_available": 3,
+      "evidence": "ExecID (17) is provided and unique per session, but global uniqueness across all historical sessions or queryability after closure is not explicitly guaranteed in docs."
+    },
+    {
+      "check_id": "T4_004",
+      "fix_tag": "18",
+      "field_name": "ExecInst — regulatory execution instructions",
+      "tier": 4,
+      "weight": 3,
+      "status": "partial_credit",
+      "points_earned": 1.5,
+      "points_available": 3,
+      "evidence": "ExecInst (18) supports Post-Only (value P or A in subagent check) but Reduce-Only (E) is not documented for Spot orders."
+    }
+  ],
+  "tier5_results": {
+    "label": "Digital asset FIX extensions — DAWG proposed standards",
+    "informational_only": true,
+    "ep273_ratified_checks": [
+      "T5_001",
+      "T5_002",
+      "T5_003"
+    ],
+    "tbd_checks": [
+      "T5_004",
+      "T5_005"
+    ],
+    "checks": [
+      {
+        "check_id": "T5_001",
+        "title": "SecurityIDSource=Y (DTI)",
+        "status": "no_credit",
+        "evidence": "Tag 22 not found in NewOrderSingle or Dictionary",
+        "points_earned": 0,
+        "notes": "Informational only — does not affect score"
+      },
+      {
+        "check_id": "T5_002",
+        "title": "CurrencySource=Y (DTI)",
+        "status": "no_credit",
+        "evidence": "Tags 2897/2899 (EP273) are missing from spec",
+        "points_earned": 0,
+        "notes": "Informational only — does not affect score"
+      },
+      {
+        "check_id": "T5_003",
+        "title": "SecurityType=DIGITAL",
+        "status": "no_credit",
+        "evidence": "Tag 167 does not list 'DIGITAL' as supported",
+        "points_earned": 0,
+        "notes": "Informational only — does not affect score"
+      },
+      {
+        "check_id": "T5_004",
+        "title": "WalletID (803=32)",
+        "status": "no_credit",
+        "evidence": "Tag 803 (PartySubIDType) is not documented",
+        "points_earned": 0,
+        "notes": "Informational only — does not affect score"
+      },
+      {
+        "check_id": "T5_005",
+        "title": "DTI Pairs Support",
+        "status": "no_credit",
+        "evidence": "SecAltIDGrp (454-456) not implemented for DTI",
+        "points_earned": 0,
+        "notes": "Informational only — does not affect score"
+      }
+    ],
+    "summary": "0 of 5 DAWG extension checks present or partially implemented"
+  }
+}
