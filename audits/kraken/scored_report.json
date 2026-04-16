@@ -511,7 +511,7 @@
         "check_id": "T5_001",
         "title": "SecurityIDSource=Y (DTI)",
         "status": "no_credit",
-        "evidence": "No DTI support (ISO 24165) documented",
+        "evidence": "SecurityIDSource 22=Y/456=Y for DTI support (ISO 24165) not documented",
         "points_earned": 0,
         "notes": "Informational only — does not affect score"
       },
@@ -519,7 +519,7 @@
         "check_id": "T5_002",
         "title": "CurrencySource=Y (DTI)",
         "status": "no_credit",
-        "evidence": "EP273 currency source tags missing",
+        "evidence": "CurrencySource Tags 2897/2899 missing",
         "points_earned": 0,
         "notes": "Informational only — does not affect score"
       },
@@ -527,7 +527,7 @@
         "check_id": "T5_003",
         "title": "SecurityType=DIGITAL",
         "status": "no_credit",
-        "evidence": "SecurityType=DIGITAL not documented",
+        "evidence": "SecurityType 167=DIGITAL not documented",
         "points_earned": 0,
         "notes": "Informational only — does not affect score"
       },
@@ -535,7 +535,7 @@
         "check_id": "T5_004",
         "title": "WalletID (803=32)",
         "status": "no_credit",
-        "evidence": "No natively documented wallet identifier mapping",
+        "evidence": "Wallet identifier mapping, WalletID 803=32 not documented",
         "points_earned": 0,
         "notes": "Informational only — does not affect score"
       },
@@ -543,7 +543,7 @@
         "check_id": "T5_005",
         "title": "DTI Pairs Support",
         "status": "no_credit",
-        "evidence": "SecAltIDGrp disambiguation not implemented",
+        "evidence": "SecAltIDGrp (454-456) disambiguation not implemented for DTI",
         "points_earned": 0,
         "notes": "Informational only — does not affect score"
       }
