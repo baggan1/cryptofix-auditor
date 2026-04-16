@@ -24,4 +24,4 @@ For multi-exchange audits, please use the following convention to keep the works
 
 ## Contact
 **Opound LLC**
-Navilla Bagga — [navilla.bagga@gmail.com](mailto:navilla.bagga@gmail.com)
+Navilla Bagga — [navilla.bagga@gmail.com](mailto:navilla@opound.com)
