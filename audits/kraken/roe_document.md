@@ -1,259 +1,192 @@
 # Rules of Engagement — Kraken FIX API
-## Institutional Readiness Audit
+## Institutional readiness audit
 
-**Audit date:** 2026-04-13
-**Auditor:** Opound LLC — Navilla Bagga
-**Spec source:** https://docs.kraken.com/api/docs/guides/fix-intro/
-**Asset classes audited:** [spot, futures]
+Audit date: 2026-04-13
+Auditor: Opound LLC — Navilla Bagga
+Spec source: https://docs.kraken.com/api/docs/guides/fix-intro/
+Asset classes: spot, futures
 
-### Overall score: 55 / 100 — Partial
+Overall score: 58 / 100 — Partial
 
-| Tier | Label | Score | Available | % |
-|------|-------|-------|-----------|---|
-| 1 | Order lifecycle | 26.0 | 35 | 74% |
-| 2 | Execution quality & TCA | 12.0 | 25 | 48% |
-| 3 | Post-trade & allocation | 10.5 | 25 | 42% |
-| 4 | AML & Travel Rule | 6.0 | 15 | 40% |
+Tier | Score | Available | %
+-----|-------|-----------|---
+1 Order lifecycle | 28.5 | 35 | 81%
+2 Execution quality & TCA | 12 | 25 | 48%
+3 Post-trade & allocation | 10.5 | 25 | 42%
+4 AML & Travel Rule | 6 | 15 | 40%
 
-**Recommendation:** Kraken provides a robust and reliable FIX API for Spot trading suitable for prop-trading and algorithmic execution. However, it is currently **not institutional-grade** for Tier-1 prime brokerage or asset management integration. The significant parity gap between Spot and Derivatives, coupled with the absence of standard TradFi identifiers (LastCapacity, LastMkt) and post-trade allocation messages (35=J), requires significant custom engineering and REST-based workarounds.
+Recommendation:
+Kraken FIX API is suitable for spot electronic execution with moderate institutional requirements. The core order lifecycle is largely complete (81%), but significant fragmentation remains in institutional post-trade reporting and multi-venue compliance data. The primary blockers are the absence of institutional fill tagging (LastCapacity, LastMkt) and standard post-trade allocation message support. Priority fix remains implementing tag 29/30 on fills.
 
-**Critical gaps (highest weight items missing):**
-- **T2_001 | LastCapacity | 5.0 pts lost |** Absence of agency vs. principal tagging prevents MiFID II best-execution audit.
-- **T2_002 | LastMkt / Venue | 5.0 pts lost |** Lack of venue tagging prevents multi-venue TCA analysis and routing transparency.
-- **T3_002 | AllocationInstruction | 5.0 pts lost |** Missing 35=J message prevents standard block trade allocation workflows.
-
----
-
-## FIX Session Configuration
-
-### Protocol version
-- FIX version: 4.4
-- Transport: TCP/TLS 1.2+
-- Encryption: TLS 1.2 minimum; TLS 1.3 preferred.
-
-### Connection parameters
-| Parameter | Value | Notes |
-|-----------|-------|-------|
-| TargetCompID | Exchange-assigned | Provided by Kraken Support |
-| SenderCompID | Client-assigned | Unique per API Key |
-| Host / IP | fix.kraken.com | Global entry point |
-| Port | 443 | Standard TLS port |
-| Environment | Prod / UAT | Separate hostnames provided in spec |
-
-### Authentication
-- Method: HMAC-SHA256 (API Key + Signature)
-- Logon fields: Tag 553 (Username) and Tag 554 (Password/Signature)
-- Session reset behavior: ResetOnLogon (Tag 141) supported; resets both Sender and Target sequences to 1.
-
-### Session management
-| Parameter | Value | Notes |
-|-----------|-------|-------|
-| Heartbeat interval (tag 108) | 10–60 seconds | Configurable at Logon |
-| Missed heartbeat threshold | 3 missed = disconnect | Standard behavior |
-| Cancel-on-Disconnect | Supported | Scope: Session-level via Tag 8674 |
-| Message recovery window | 24 hours | Via ResendRequest (35=2) |
+Critical gaps (top 3 by points_lost):
+- T2_001 | LastCapacity | 5 pts | Institutions cannot determine if execution was agent/principal for best-ex reporting.
+- T2_002 | LastMkt / Execution Venue | 5 pts | Multi-venue TCA is blocked as venue identification is missing from ERs.
+- T3_002 | AllocationInstruction | 5 pts | Block trade allocation must be handled via manual/out-of-band instructions, increasing operational risk.
 
 ---
 
-## Institutional Readiness Scorecard
+## SECTION 2 — Session configuration
 
-### Tier 1 — Order lifecycle (26.0 / 35 pts)
+FIX version: FIX 4.4
+Transport: TCP/TLS 1.2+
 
-| Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence |
-|----------|---------|-------|--------|-----------|--------------|---------|
-| T1_001 | 35=D | NewOrderSingle | ✅ Present | 5 | 5 | Supports Market, Limit, Stop types; all core tags provided. |
-| T1_002 | 35=8 | ExecutionReport | ✅ Present | 5 | 5 | Covers New, Partial Fill, Fill, Cancel, and Reject transitions. |
-| T1_003 | 59 | TimeInForce | ⚠ Partial | 2.5 | 5 | GTC, IOC, FOK, GTD supported on Spot; Futures parity missing. |
-| T1_004 | 1138 | DisplayQty (Iceberg) | ⚠ Partial | 1.5 | 3 | Tag 1138 supported on Spot only; 1/15 min ratio constraint. |
-| T1_005 | 7928 | SelfTradePrevention | ⚠ Partial | 2 | 4 | All 3 modes supported but explicitly Spot Only. |
-| T1_006 | 35=F | OrderCancelRequest | ✅ Present | 3 | 3 | Supports cancel by ClOrdID and OrigClOrdID. |
-| T1_007 | 35=q | Mass Cancel + COD | ✅ Present | 4 | 4 | 35=q supported; COD via Tag 8674. |
-| T1_008 | 35=G | OrderCancelReplace | ⚠ Partial | 2 | 4 | Amend supported but Spot Only. |
-| T1_009 | 35=H | OrderStatusRequest | ⚠ Partial | 1 | 2 | Supported but Spot Only. |
+Connection parameters:
+TargetCompID: Kraken
+SenderCompID: [client-assigned]
+Host: fix.kraken.com
+Port: 443
+Sandbox: Y — demo-fix.kraken.com
 
-### Tier 2 — Execution quality & TCA (12.0 / 25 pts)
+Authentication: API Key + Signature (HMAC-SHA256)
+Logon tags: 553 (Username), 554 (Password), 9002 (Nonce)
+ResetOnLogon (141): Y (standard behavior)
 
-| Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence |
-|----------|---------|-------|--------|-----------|--------------|---------|
-| T2_001 | 29 | LastCapacity | ❌ Missing | 0 | 5 | Not documented. |
-| T2_002 | 30 | LastMkt / Venue | ❌ Missing | 0 | 5 | Not documented. |
-| T2_003 | 31 | LastPx (fill price) | ✅ Present | 3 | 3 | Present in ER fill messages. |
-| T2_004 | 32 | LastQty (fill quantity) | ✅ Present | 3 | 3 | Present in all fill ERs. |
-| T2_005 | 60 | TransactTime | ⚠ Partial | 2 | 4 | Millisecond precision (3 places) only. |
-| T2_006 | 851 | LastLiquidityInd | ⚠ Partial | 2 | 4 | Uses custom Tag 5050 instead of 851. |
-| T2_007 | 375 | ContraTrader | ❌ Missing | 0 | 3 | Not documented. |
-| T2_008 | 14 | CumQty | ✅ Present | 2 | 2 | Present and consistent with LeavesQty. |
-
-### Tier 3 — Post-trade & allocation (10.5 / 25 pts)
-
-| Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence |
-|----------|---------|-------|--------|-----------|--------------|---------|
-| T3_001 | 78/79 | NoAllocs / AllocAcc | ⚠ Partial | 2.5 | 5 | Present in data dictionary but restricted tier. |
-| T3_002 | 35=J | AllocationInstruction | ❌ Missing | 0 | 5 | Message type not supported. |
-| T3_003 | 35=AK | AllocationAck | ❌ Missing | 0 | 3 | Message type not supported. |
-| T3_004 | 63 | SettlType | ❌ Missing | 0 | 4 | Tag 63 not supported. |
-| T3_005 | Session | Session Management | ✅ Present | 5 | 5 | Complete session protocol documentation. |
-| T3_006 | 58 | Text (Reject reason) | ✅ Present | 3 | 3 | Quality human-readable reject reasons. |
-
-### Tier 4 — AML & Travel Rule (6.0 / 15 pts)
-
-| Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence |
-|----------|---------|-------|--------|-----------|--------------|---------|
-| T4_001 | 453 | Parties group | ❌ Missing | 0 | 5 | Not implemented in public spec. |
-| T4_002 | custom | Wallet Attribution | ❌ Missing | 0 | 4 | No documented mechanism. |
-| T4_003 | 17 | ExecID | ✅ Present | 3 | 3 | Unique and queryable across sessions. |
-| T4_004 | 18 | ExecInst | ✅ Present | 3 | 3 | Supports Post-Only and Reduce-Only. |
-
-**Status legend:** ✅ Full credit | ⚠ Partial credit | ❌ Missing / no credit
+Session management:
+Heartbeat interval (108): 30 sec — Configurable [Y]
+Missed heartbeat threshold: 3 missed = disconnect
+Cancel-on-Disconnect: Y — scope: [session/account] via custom Tag 8674
+Message recovery: Supported — via ResendRequest (35=2).
+Forced session reset: Daily reset at 00:00 UTC.
 
 ---
 
-## Gap Analysis & Remediation Roadmap
+## SECTION 3 — Tier scorecard
 
----
-#### T2_001 — LastCapacity (FIX tag 29) — 5.0 pts lost
+Status icons: [P] Full credit / [~] Partial / [X] Missing
 
-**Status:** Missing
-**Evidence from spec:** Not documented
+### Tier 1 (9 checks, 35 pts)
+Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
+---|---|---|---|---|---|---
+T1_001 | 35=D | NewOrderSingle | [P] | 5 | 5 | Standard NOS supported for limit/market/stop.
+T1_002 | 35=8 | ExecutionReport | [P] | 5 | 5 | All required state transitions (New, Fill, Cancel) covered.
+T1_003 | 59 | TimeInForce | [P] | 5 | 5 | GTC/IOC/FOK/GTD supported on Spot and Futures (confirmed via changelog).
+T1_004 | 1138 | DisplayQty (Iceberg) | [~] | 1.5 | 3 | Supported on Spot Only; 1/15 min ratio.
+T1_005 | 7928 | STP | [~] | 2 | 4 | Supported on Spot Only; all 3 modes documented.
+T1_006 | 35=F | OrderCancelRequest | [P] | 3 | 3 | Supported via ClOrdID and OrigClOrdID.
+T1_007 | 35=q | MassCancel + COD | [P] | 4 | 4 | 35=q and Tag 8674 (COD) both implemented.
+T1_008 | 35=G | Amend | [~] | 2 | 4 | Supported on Spot Only.
+T1_009 | 35=H | OrderStatusRequest | [~] | 1 | 2 | Supported on Spot Only.
 
-**Institutional impact:**
-Without LastCapacity, institutions cannot determine if they were filled against exchange inventory (principal) vs. other market participants (agency). Regulatory reporting under MiFID II RTS 27/28 requires this field. Prime brokers will flag its absence.
+### Tier 2 (8 checks, 25 pts)
+Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
+---|---|---|---|---|---|---
+T2_001 | 29 | LastCapacity | [X] | 0 | 5 | Not documented.
+T2_002 | 30 | LastMkt | [X] | 0 | 5 | Tag 30 absent from documentation.
+T2_003 | 31 | LastPx | [P] | 3 | 3 | Present in ER fills.
+T2_004 | 32 | LastQty | [P] | 3 | 3 | Present in all fill reports.
+T2_005 | 60 | TransactTime | [~] | 2 | 4 | Millisecond precision only (3 places).
+T2_006 | 851 | LastLiquidityInd | [~] | 2 | 4 | Uses custom Tag 5050 (m/t).
+T2_007 | 375 | ContraTrader | [X] | 0 | 3 | Not documented.
+T2_008 | 14 | CumQty | [P] | 2 | 2 | Consistent with LeavesQty (151).
 
-**TradFi reference:**
-FIX 4.4 tag 29; MiFID II RTS 27 Article 3(1)(f); CME iLink3 tag 29
+### Tier 3 (6 checks, 25 pts)
+Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
+---|---|---|---|---|---|---
+T3_001 | 78/79 | NoAllocs / AllocAccount | [~] | 2.5 | 5 | Supported for Broker/Prime accounts only.
+T3_002 | 35=J | AllocationInstruction | [X] | 0 | 5 | Not supported.
+T3_003 | 35=AK | AllocationInstructionAck | [X] | 0 | 3 | Not supported.
+T3_004 | 63 | SettlType | [X] | 0 | 4 | Not supported for per-order settlement.
+T3_005 | Ses | Session Management | [P] | 5 | 5 | ResendRequest (35=2) supported with gap-fill.
+T3_006 | 58 | Text | [P] | 3 | 3 | Populated on all rejects.
 
-**Recommended remediation:**
-Implement Tag 29 in all ExecutionReport fill messages. Map matched client sub-orders to Agent (1) and any internalization or OTC desk fills to Principal (5).
-
-**Workaround (if any):**
-No FIX-native workaround — REST reconciliation required for venue-specific book analysis.
-
-**Implementation effort:** M = 1–4 weeks
-
----
-#### T2_002 — LastMkt / Execution Venue (FIX tag 30) — 5.0 pts lost
-
-**Status:** Missing
-**Evidence from spec:** Not documented
-
-**Institutional impact:**
-Without venue tagging, institutions cannot determine where their fill occurred — especially when exchanges route to external liquidity or internalize. Best-execution analysis becomes meaningless.
-
-**TradFi reference:**
-FIX 4.4 tag 30; MiFID II RTS 27 Article 3; ISO 10383 MIC codes for traditional venues
-
-**Recommended remediation:**
-Implement Tag 30 in ER messages using MIC-compliant codes (e.g., 'XKRAK' for lit book, 'XKOT' for OTC desk).
-
-**Workaround (if any):**
-No FIX-native workaround.
-
-**Implementation effort:** S = < 1 week
-
----
-#### T3_002 — AllocationInstruction (FIX tag 35=J) — 5.0 pts lost
-
-**Status:** Missing
-**Evidence from spec:** Not documented
-
-**Institutional impact:**
-Without 35=J, block trade allocation must occur via proprietary API or manual process. This breaks the end-to-end FIX workflow that institutional prime brokers require.
-
-**TradFi reference:**
-FIX 4.4 35=J; required by prime brokers (Goldman Sachs PB, Morgan Stanley PB) for block allocation
-
-**Recommended remediation:**
-Enable the AllocationInstruction (35=J) message to allow post-trade splitting of parent fills across sub-accounts.
-
-**Workaround (if any):**
-Manual allocation via Kraken Pro sub-account management UI or REST API block-allocation endpoints.
-
-**Implementation effort:** L = > 1 month
+### Tier 4 (4 checks, 15 pts)
+Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
+---|---|---|---|---|---|---
+T4_001 | 453 | Parties group | [X] | 0 | 5 | Not implemented in public spec.
+T4_002 | cst | Wallet attribution | [X] | 0 | 4 | No documented mechanism.
+T4_003 | 17 | ExecID | [P] | 3 | 3 | Unique per execution and queryable via REST for post-trade recon.
+T4_004 | 18 | ExecInst | [P] | 3 | 3 | Supports Post-Only (P) and Reduce-Only (E).
 
 ---
 
-## Custom & Non-Standard FIX Tags
+## SECTION 4 — Gap analysis & remediation
 
-| Tag # | Field Name | Data Type | Valid Values | Applicable Messages | Notes |
-|-------|-----------|-----------|-------------|-------------------|-------|
-| 1138 | DisplayQty | Float | > 0 | NOS | Iceberg orders (Spot Only) |
-| 5050 | LastLiquidityInd | Char | m, t | ER | Custom alternative to Tag 851 |
-| 7928 | STP | Int | 0, 1, 2 | NOS | Self-Trade Prevention (Spot Only) |
-| 8674 | ExpireTime | Int | Seconds | Logon / NOS | Used for Cancel-on-Disconnect duration |
+### T2_001 — LastCapacity (tag 29) — 5 pts lost
+Status: Missing
+Evidence: Not documented.
+Institutional impact: Institutions cannot determine if Kraken acted as agent or principal. Required for MiFID II best-ex disclosure.
+TradFi reference: FIX 4.4 tag 29; CME iLink3 tag 29.
+Recommended remediation: Implement tag 29 on fills; explicitly document if all fills are pure Agency (1).
+Workaround: No FIX-native workaround.
+Effort: S < 1 week
 
----
+### T2_002 — LastMkt / Execution Venue (tag 30) — 5 pts lost
+Status: Missing
+Evidence: Tag 30 absent from ER documentation.
+Institutional impact: Essential for multi-venue TCA. Prime brokers expect venue identifiers on all fills.
+TradFi reference: ISO 10383 MIC codes.
+Recommended remediation: Implement tag 30 with value 'XKRA' (Kraken MIC code).
+Workaround: No FIX-native workaround.
+Effort: S < 1 week
 
-## Order Types Support Matrix
-
-| Order Type | FIX OrdType | Spot | Futures | Perps | Options | Notes |
-|-----------|------------|------|---------|-------|---------|-------|
-| Market | 1 | ✅ | ✅ | ✅ | ✅ | |
-| Limit | 2 | ✅ | ✅ | ✅ | ✅ | |
-| Stop-Loss | 3 | ✅ | ✅ | ✅ | ✅ | |
-| Stop-Limit | 4 | ✅ | ✅ | ✅ | ✅ | |
-| Take-Profit | R | ❌ | ❌ | ❌ | ❌ | |
-| Take-Profit-Limit | T | ❌ | ❌ | ❌ | ❌ | |
-| Trailing Stop | U | ❌ | ❌ | ❌ | ❌ | |
-| Trailing Stop-Limit | V | ❌ | ❌ | ❌ | ❌ | |
-| Iceberg / Reserve | — (tag 1138) | ✅ | ❌ | ❌ | ❌ | Spot Only |
-
-**TIF support:**
-| TIF | Value | Spot | Futures | Notes |
-|-----|-------|------|---------|-------|
-| GTC | 1 | ✅ | ✅ | |
-| IOC | 3 | ✅ | ✅ | |
-| FOK | 4 | ✅ | ❌ | Spot Only |
-| GTD | 6 | ✅ | ❌ | Spot Only |
-| Day | 0 | ❌ | ❌ | |
+### T3_002 — AllocationInstruction (35=J) — 5 pts lost
+Status: Missing
+Evidence: Message type not supported.
+Institutional impact: Fund managers cannot perform post-trade block allocations within the FIX stream.
+TradFi reference: FIX 4.4 35=J; required for prime brokerage workflows.
+Recommended remediation: Implement 35=J for block trade decomposition.
+Workaround: Manual allocation via web portal or REST API.
+Effort: L > 1 month
 
 ---
 
-## UAT Connectivity Checklist
+## SECTION 5 — Custom tag dictionary
 
-Use this checklist to validate institutional FIX connectivity before production go-live.
-UAT environment: fix-demo.kraken.com:443
-
-### Phase 1 — Session establishment
-- [ ] Logon (35=A) with correct credentials — receive Logon ack
-- [ ] Heartbeat exchange confirmed at configured interval
-- [ ] TestRequest (35=1) / Heartbeat (35=0) echo verified
-- [ ] Logout (35=5) cleanly terminates session
-- [ ] Reconnect after clean disconnect — sequence numbers resume correctly
-- [ ] Cancel-on-Disconnect: disconnect TCP without logout — verify all open orders canceled within 500ms
-
-### Phase 2 — Order entry and lifecycle
-- [ ] NewOrderSingle (35=D) — Market order — ExecutionReport (150=0 New, 150=2 Fill) received
-- [ ] NewOrderSingle — Limit order — ER (150=0 New) received; order visible on book
-- [ ] NewOrderSingle — IOC order — ER (150=0 New + 150=4 Cancel) or immediate fill
-- [ ] NewOrderSingle — FOK order — ER full fill or immediate cancel (no partial)
-- [ ] NewOrderSingle — GTD order — ER (150=0 New); verify expiry at configured time
-- [ ] NewOrderSingle — Iceberg (tag 1138) — verify displayed qty on book
-- [ ] SelfTradePrevention — send opposing orders from same account — verify STP mode behavior
-
-### Phase 3 — Order modification and cancel
-- [ ] OrderCancelReplaceRequest (35=G) — amend price — ER (150=5 Replaced) received
-- [ ] OrderCancelReplaceRequest — amend qty — ER (150=5 Replaced) received
-- [ ] OrderCancelRequest (35=F) by ClOrdID — ER (150=4 Canceled) received
-- [ ] OrderCancelRequest by OrigClOrdID — verify alternate cancel identifier works
-- [ ] OrderCancelReject (35=9) — attempt cancel of already-filled order — verify reject with reason in tag 58
-- [ ] OrderMassCancelRequest (35=q) — cancel all open orders — verify all ERs (150=4) received
-
-### Phase 4 — Execution quality fields
-- [ ] Partial fill scenario — verify LastPx (31), LastQty (32), CumQty (14), LeavesQty (151) all present and consistent
-- [ ] Verify TransactTime (60) precision — ⚠ Milliseconds (3 decimal places) detected
-- [ ] Verify LastLiquidityInd — ⚠ Custom Tag 5050 (m/t) detected
-- [ ] Verify LastCapacity (29) — ❌ Missing (Agent/Principal identification)
-- [ ] Verify ExecID (17) uniqueness across multiple sessions
-
-### Phase 5 — Session recovery
-- [ ] Send ResendRequest (35=2) for last 10 messages — verify gap-fill or SeqReset response
-- [ ] Disconnect mid-fill partial fill scenario — reconnect and verify position state reconcilable
-- [ ] OrderStatusRequest (35=H) — query open order — verify full ER response
+Tag # | Field Name | Data Type | Valid Values | Messages | Notes
+---|---|---|---|---|---
+5050 | LiquidityIndicator | Char | m (maker), t (taker) | ER | Non-standard tag for LastLiquidityInd.
+8674 | ExpireTime | Int | Seconds | Logon | Kraken-specific COD timeout control.
+9002 | Nonce | Int | Increasing int | Logon | Used for secure signature generation.
 
 ---
 
-**Sign-off criteria:** All Phase 1–3 and Phase 5 items must pass before production go-live.
-Phase 4 items flagged ⚠ (absent fields) are documented as known gaps.
+## SECTION 6 — Order types matrix
 
-**Prepared by:** Opound LLC — navilla.bagga@gmail.com
-**Document version:** 1.0 | **Date:** 2026-04-13
+Order Type | FIX OrdType | Spot | Futures | Notes
+---|---|---|---|---
+Market | 1 | [P] | [P] | Supported.
+Limit | 2 | [P] | [P] | Supported.
+Stop | 3 | [P] | [P] | Supported (StopLoss).
+StopLimit | 4 | [P] | [P] | Supported (StopLossLimit).
+Iceberg | 1138 | [P] | [X] | Spot Only.
+
+TIF table | Spot | Futures | Notes
+---|---|---|---
+GTC(1) | [P] | [P] | Supported.
+IOC(3) | [P] | [P] | Supported.
+FOK(4) | [P] | [P] | Supported (confirmed parity).
+GTD(6) | [P] | [X] | Spot Only.
+
+---
+
+## SECTION 7 — UAT checklist
+
+UAT environment: demo-fix.kraken.com:443
+
+Phase 1 — Session: Logon with Nonce (9002), heartbeat echo, sequence recovery via ResendRequest (35=2), COD trigger via Tag 8674.
+Phase 2 — Order lifecycle: NOS execution (Market/Limit), Iceberg ratio validation (Spot), STP mode validation (Spot), TIF (GTC/IOC/FOK).
+Phase 3 — Modify/cancel: Amend (35=G) for Spot, Cancel by OrigClOrdID (41), Mass Cancel (35=q).
+Phase 4 — Execution quality: Fill field validation (31/32/14/151), millisecond precision check on Tag 60, Custom Liquidity (Tag 5050) check.
+Phase 5 — Recovery: Gap-fill behavior (35=4), OrderStatusRequest (35=H) Spot validation.
+
+Sign-off: Phases 1-3 required for Spot go-live.
+Derivatives go-live requires exclusion of GTD/Iceberg/Amend tests due to documented gaps.
+
+Prepared by: Opound LLC — Navilla Bagga
+Version: 1.1 | Date: 2026-04-15
+
+---
+
+## SECTION 8 — DAWG Digital Asset FIX Extensions — Forward-Looking Assessment
+
+This section evaluates the exchange against the **Digital Asset Working Group (DAWG)** extensions, including ratified **FIX EP273** standards and upcoming proposals. These checks are informational and do not affect the current readiness score, but serve as a roadmap for institutional-grade digital asset connectivity.
+
+Check ID | Title | Status | Evidence | Institutional Impact
+---|---|---|---|---
+T5_001 | SecurityIDSource=Y (DTI) | [X] No Credit | No mention of DTI/EP273 in spec | **ISO 24165 (DTI)** is the standard for unique digital asset identification. Absence blocks automated instrument mapping and cross-venue reconciliation.
+T5_002 | CurrencySource=Y (DTI) | [X] No Credit | EP273 currency source tags missing | **Tags 2897/2899** allow disambiguation between legacy ISO 4217 and digital assets. Absence requires custom mapping logic in OMS/EMS.
+T5_003 | SecurityType=DIGITAL | [X] No Credit | SecurityType=DIGITAL not documented | **SecurityType(167)=DIGITAL** provides a standard taxonomy for digital assets, essential for regulatory reporting and risk management.
+T5_004 | WalletID (803=32) | [X] No Credit | No natively documented wallet identifier mapping | Identification of wallet addresses via **PartySubIDType(803)=32** is critical for FATF Travel Rule compliance and on-chain settlement.
+T5_005 | DTI Pairs Support | [X] No Credit | SecAltIDGrp disambiguation not implemented | Explicit DTI pairing in the **SecurityAltIDGrp** ensures deterministic asset mapping in multi-leg or derivative structures.
+
+These checks are based on FIX EP273 (T5_001–T5_003, ratified) and draft DAWG proposals (T5_004–T5_005, pending ratification). They do not affect the institutional readiness score.

@@ -75,7 +75,7 @@ T2_002 | 30 | LastMkt | [X] | 0 | 5 | Not documented in Spot implementation.
 T2_003 | 31 | LastPx | [P] | 3 | 3 | Provided in all fill reports.
 T2_004 | 32 | LastQty | [P] | 3 | 3 | Provided in all fill reports.
 T2_005 | 60 | TransactTime | [P] | 4 | 4 | Microsecond precision confirmed.
-T2_006 | 851 | LastLiquidityInd | [~] | 2 | 4 | Uses custom tag 1057 (AggressorIndicator).
+T2_006 | 851 | LastLiquidityInd | [~] | 2 | 4 | Uses custom Tag 1057 (AggressorIndicator). Scored partial_credit as functionally equivalent per rubric.
 T2_007 | 375 | ContraTrader | [X] | 0 | 3 | Not documented in Spot implementation.
 T2_008 | 14 | CumQty | [P] | 2 | 2 | Standard field in execution reports.
 
@@ -92,7 +92,7 @@ T3_006 | 58 | Text | [P] | 3 | 3 | Provided on all rejections.
 ### Tier 4 (4 checks, 15 pts)
 Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
 ---|---|---|---|---|---|---
-T4_001 | 453 | Parties group | [X] | 0 | 5 | Not documented for spot (derivatives only).
+T4_001 | 453 | Parties group | [X] | 0 | 5 | Not documented for spot.
 T4_002 | cst | Wallet attribution | [X] | 0 | 4 | No mechanism documented.
 T4_003 | 17 | ExecID | [~] | 1.5 | 3 | Unique per session, but no global guarantee.
 T4_004 | 18 | ExecInst | [~] | 1.5 | 3 | Supports Post-Only but not Reduce-Only.
@@ -103,7 +103,7 @@ T4_004 | 18 | ExecInst | [~] | 1.5 | 3 | Supports Post-Only but not Reduce-Only.
 
 ### T2_001 — LastCapacity (tag 29) — 5 pts lost
 Status: Missing
-Evidence: LastCapacity (tag 29) is not documented for the Exchange Spot FIX implementation.
+Evidence: Not documented in Spot implementation.
 Institutional impact: TradFi prime brokers and institutional asset managers require LastCapacity to report if they traded against the venue (principal) or other participants (agency). Missing this blocks MiFID II RTS 27/28 reporting.
 TradFi reference: FIX 4.4 tag 29; MiFID II RTS 27 Article 3(1)(f).
 Recommended remediation: Implement tag 29 in ExecutionReport (35=8) with values 1 (Agent), 4 (Cross principal), or 5 (Principal).
@@ -112,7 +112,7 @@ Effort: S < 1 week
 
 ### T2_002 — LastMkt / Execution Venue (tag 30) — 5 pts lost
 Status: Missing
-Evidence: LastMkt (tag 30) is not documented for the Exchange Spot FIX implementation.
+Evidence: Not documented in Spot implementation.
 Institutional impact: Multi-venue TCA and best-execution analysis depend on knowing exactly which engine or venue provided the fill.
 TradFi reference: ISO 10383 MIC codes; FIX 4.4 tag 30.
 Recommended remediation: Implement tag 30 in ExecutionReport with value 'XCOB' (Coinbase MIC code).
@@ -121,7 +121,7 @@ Effort: S < 1 week
 
 ### T3_001 — NoAllocs / AllocAccount — 5 pts lost
 Status: Missing
-Evidence: NoAllocs (78) and AllocAccount (79) repeating groups are not documented for Order Entry messages on Spot.
+Evidence: Not documented in NOS for Spot.
 Institutional impact: Institutions managing multi-fund portfolios cannot route orders to specific fund sleeves under a master account. This breaks fund-level P&L tracking.
 TradFi reference: FIX 4.4 tags 78/79.
 Recommended remediation: Supported NoAllocs repeating group in NewOrderSingle to allow account routing at entry.
@@ -144,18 +144,18 @@ Tag # | Field Name | Data Type | Valid Values | Messages | Notes
 
 Order Type | FIX OrdType | Spot | Futures | Notes
 ---|---|---|---|---
-Market | 1 | [P] | [P] | Supported.
-Limit | 2 | [P] | [P] | Supported.
-Stop | 3 | [P] | [P] | Supported.
-StopLimit | 4 | [P] | [P] | Supported.
+Market | 1 | [P] | [X] | Spot Only.
+Limit | 2 | [P] | [X] | Spot Only.
+Stop | 3 | [P] | [X] | Spot Only.
+StopLimit | 4 | [P] | [X] | Spot Only.
 Iceberg | 1138 | [X] | [X] | Feature removed May 2025.
 
 TIF table | Spot | Futures | Notes
 ---|---|---|---
-GTC(1) | [P] | [P] | Supported.
-IOC(3) | [P] | [P] | Supported.
-FOK(4) | [P] | [P] | Supported.
-GTD(6) | [P] | [P] | Supported.
+GTC(1) | [P] | [X] | Spot Only.
+IOC(3) | [P] | [X] | Spot Only.
+FOK(4) | [P] | [X] | Spot Only.
+GTD(6) | [P] | [X] | Spot Only.
 
 ---
 
@@ -169,8 +169,26 @@ Phase 3 — Modify/cancel: Amend price/qty (35=G), cancel by ClOrdID, cancel bat
 Phase 4 — Execution quality: Partial fill tags (31/32/14/151), TransactTime (60) precision, AggressorIndicator (1057) validation.
 Phase 5 — Recovery: Reconnect sequence reset (141=Y behavior), Fresh session state verification.
 
-Sign-off: Phases 1-3 and 5 required before go-live.
+Sign-off: Phases 1-3 required for Spot go-live.
 Phase 4 gaps (LastCapacity, LastMkt) are flagged as known — manual TCA reconciliation required.
 
 Prepared by: Opound LLC — Navilla Bagga
 Version: 1.0 | Date: 2026-04-13T20:55:00Z
+
+---
+
+## SECTION 8 — DAWG Digital Asset FIX Extensions — Forward-Looking Assessment
+
+This section evaluates the exchange against the **Digital Asset Working Group (DAWG)** extensions, including ratified **FIX EP273** standards and upcoming proposals. These checks are informational and do not affect the current readiness score. 
+
+**Note for Coinbase Exchange:** As Coinbase uses **FIX 5.0 SP2**, it is theoretically prepared to adopt EP273-ratified tags. However, current documentation shows that these fields have not yet been implemented in the public spec.
+
+Check ID | Title | Status | Evidence | Institutional Impact
+---|---|---|---|---
+T5_001 | SecurityIDSource=Y (DTI) | [X] No Credit | Tag 22 not found in NewOrderSingle or Dictionary | **ISO 24165 (DTI)** is the standard for unique digital asset identification. Absence blocks automated instrument mapping and cross-venue reconciliation.
+T5_002 | CurrencySource=Y (DTI) | [X] No Credit | Tags 2897/2899 (EP273) are missing from spec | **Tags 2897/2899** allow disambiguation between legacy ISO 4217 and digital assets. Absence requires custom mapping logic in OMS/EMS.
+T5_003 | SecurityType=DIGITAL | [X] No Credit | Tag 167 does not list 'DIGITAL' as supported | **SecurityType(167)=DIGITAL** provides a standard taxonomy for digital assets, essential for regulatory reporting and risk management.
+T5_004 | WalletID (803=32) | [X] No Credit | Tag 803 (PartySubIDType) is not documented | Identification of wallet addresses via **PartySubIDType(803)=32** is critical for FATF Travel Rule compliance and on-chain settlement.
+T5_005 | DTI Pairs Support | [X] No Credit | SecAltIDGrp (454-456) not implemented for DTI | Explicit DTI pairing in the **SecurityAltIDGrp** ensures deterministic asset mapping in multi-leg or derivative structures.
+
+These checks are based on FIX EP273 (T5_001–T5_003, ratified) and draft DAWG proposals (T5_004–T5_005, pending ratification). They do not affect the institutional readiness score.
