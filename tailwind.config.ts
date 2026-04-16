@@ -10,10 +10,10 @@ const config: Config = {
     extend: {
       colors: {
         navy: {
-          dark: "#0A1628",
+          dark: "#0F172A",
         },
         brand: {
-          bg: '#0A1628',
+          bg: '#0F172A',
           accent: '#10B981',
           'accent-hover': '#059669',
           muted: '#94A3B8',
