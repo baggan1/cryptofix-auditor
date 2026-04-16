@@ -28,7 +28,7 @@ export default function RootLayout({
             <nav className="hidden md:flex items-center gap-8">
               <a href="/" className="text-sm font-semibold hover:text-slate-300 transition-colors">Home</a>
               <a href="/methodology" className="text-sm font-semibold hover:text-slate-300 transition-colors">Methodology</a>
-              <a href="mailto:navilla.bagga@gmail.com" className="text-sm font-semibold px-4 py-2 bg-white/10 rounded-full hover:bg-white/20 transition-all">Contact</a>
+              <a href="mailto:navilla@opound.com" className="text-sm font-semibold px-4 py-2 bg-white/10 rounded-full hover:bg-white/20 transition-all">Contact</a>
             </nav>
           </div>
         </header>
@@ -42,7 +42,7 @@ export default function RootLayout({
             <div className="flex flex-col md:flex-row justify-between items-center gap-6">
               <div className="text-center md:text-left">
                 <p className="text-sm text-slate-500 font-semibold uppercase tracking-wider mb-1">CryptoFIX Auditor</p>
-                <p className="text-xs text-slate-400">Opound LLC — navilla.bagga@gmail.com</p>
+                <p className="text-xs text-slate-400">Opound LLC — navilla@opound.com</p>
               </div>
               <div className="text-center md:text-right">
                 <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-loose">
