@@ -1,0 +1,599 @@
+{
+  "exchange_name": "Coinbase Derivatives Exchange",
+  "audit_date": "2026-04-13",
+  "total_score": 64,
+  "max_score": 100,
+  "grade": "Partial",
+  "tier_scores": {
+    "tier1": {
+      "label": "Order lifecycle — core order management",
+      "earned": 30.5,
+      "available": 35,
+      "pct": 87
+    },
+    "tier2": {
+      "label": "Execution quality & TCA fields",
+      "earned": 14.5,
+      "available": 25,
+      "pct": 58
+    },
+    "tier3": {
+      "label": "Post-trade, allocation & session reliability",
+      "earned": 10.5,
+      "available": 25,
+      "pct": 42
+    },
+    "tier4": {
+      "label": "AML, Travel Rule & compliance data hooks",
+      "earned": 8.5,
+      "available": 15,
+      "pct": 57
+    },
+    "tier5": {
+      "label": "Digital asset FIX extensions — DAWG proposed standards",
+      "earned": 0,
+      "available": 0,
+      "pct": null
+    }
+  },
+  "gap_count": 19,
+  "gap_summary": [
+    {
+      "check_id": "T2_001",
+      "fix_tag": "29",
+      "field_name": "LastCapacity",
+      "tier": 2,
+      "status": "partial_credit",
+      "points_lost": 2.5,
+      "evidence": "OrderCapacity (tag 528) with value 'A' (Agent) present."
+    },
+    {
+      "check_id": "T2_002",
+      "fix_tag": "30",
+      "field_name": "LastMkt / Execution Venue",
+      "tier": 2,
+      "status": "no_credit",
+      "points_lost": 5,
+      "evidence": null
+    },
+    {
+      "check_id": "T3_001",
+      "fix_tag": "78/79",
+      "field_name": "NoAllocs / AllocAccount — sub-account order routing",
+      "tier": 3,
+      "status": "partial_credit",
+      "points_lost": 2.5,
+      "evidence": "NoAllocs (78) and AllocAccount (79) are documented in the FIX data dictionary as part of account structures, but not explicitly supported in public NOS for standard clients."
+    },
+    {
+      "check_id": "T3_002",
+      "fix_tag": "35=J",
+      "field_name": "AllocationInstruction",
+      "tier": 3,
+      "status": "no_credit",
+      "points_lost": 5,
+      "evidence": null
+    },
+    {
+      "check_id": "T4_001",
+      "fix_tag": "453/448/452",
+      "field_name": "Parties group — VASP / counterparty identification",
+      "tier": 4,
+      "status": "partial_credit",
+      "points_lost": 2.5,
+      "evidence": "Parties group (453/448/452) present for ITM/sub-firm."
+    },
+    {
+      "check_id": "T1_008",
+      "fix_tag": "35=G",
+      "field_name": "OrderCancelReplaceRequest (Amend)",
+      "tier": 1,
+      "status": "partial_credit",
+      "points_lost": 2,
+      "evidence": "Order amendment via 35=G supported for Spot. Specifically marked as '( Spot Only )' in unified docs."
+    },
+    {
+      "check_id": "T2_005",
+      "fix_tag": "60",
+      "field_name": "TransactTime — microsecond precision",
+      "tier": 2,
+      "status": "partial_credit",
+      "points_lost": 2,
+      "evidence": "TransactTime (60) provided with millisecond precision (3 decimal places). Rubric requires microsecond (6 places) for full credit."
+    },
+    {
+      "check_id": "T2_006",
+      "fix_tag": "851",
+      "field_name": "LastLiquidityInd (maker/taker)",
+      "tier": 2,
+      "status": "partial_credit",
+      "points_lost": 2,
+      "evidence": "Liquidity indicator present but uses custom Tag 5050 (m=maker, t=taker) instead of standard Tag 851."
+    },
+    {
+      "check_id": "T3_004",
+      "fix_tag": "63",
+      "field_name": "SettlType",
+      "tier": 3,
+      "status": "no_credit",
+      "points_lost": 4,
+      "evidence": null
+    },
+    {
+      "check_id": "T4_002",
+      "fix_tag": "custom / 448",
+      "field_name": "Wallet address attribution",
+      "tier": 4,
+      "status": "no_credit",
+      "points_lost": 4,
+      "evidence": null
+    },
+    {
+      "check_id": "T1_004",
+      "fix_tag": "1138",
+      "field_name": "DisplayQty (Iceberg)",
+      "tier": 1,
+      "status": "partial_credit",
+      "points_lost": 1.5,
+      "evidence": "Tag 1138 supported on Spot NOS. Explicit constraint: visible quantity must be at least 1/15 of total OrderQty."
+    },
+    {
+      "check_id": "T2_007",
+      "fix_tag": "375",
+      "field_name": "ContraTrader / counterparty identifier",
+      "tier": 2,
+      "status": "no_credit",
+      "points_lost": 3,
+      "evidence": null
+    },
+    {
+      "check_id": "T3_003",
+      "fix_tag": "35=AK",
+      "field_name": "AllocationInstructionAck",
+      "tier": 3,
+      "status": "no_credit",
+      "points_lost": 3,
+      "evidence": null
+    },
+    {
+      "check_id": "T1_009",
+      "fix_tag": "35=H",
+      "field_name": "OrderStatusRequest",
+      "tier": 1,
+      "status": "partial_credit",
+      "points_lost": 1,
+      "evidence": "OrderStatusRequest (35=H) supported for Spot accounts. Explicitly marked as '( Spot Only )'."
+    },
+    {
+      "check_id": "T5_001",
+      "fix_tag": "22=Y / 456=Y",
+      "field_name": "SecurityIDSource=Y (DTI)",
+      "tier": 5,
+      "status": "no_credit",
+      "points_lost": 0,
+      "evidence": null
+    },
+    {
+      "check_id": "T5_002",
+      "fix_tag": "15 + 2897 / 120 + 2899",
+      "field_name": "Currency(15) + CurrencyCodeSource(2897) / SettlCurrency(120) + SettlCurrencyCodeSource(2899) — ISO 4217 / ISO 24165 disambiguation",
+      "tier": 5,
+      "status": "no_credit",
+      "points_lost": 0,
+      "evidence": null
+    },
+    {
+      "check_id": "T5_003",
+      "fix_tag": "167=DIGITAL",
+      "field_name": "SecurityType(167) — DIGITAL enumeration value (ISO 24165)",
+      "tier": 5,
+      "status": "no_credit",
+      "points_lost": 0,
+      "evidence": null
+    },
+    {
+      "check_id": "T5_004",
+      "fix_tag": "803 (PartySubIDType) — new wallet value",
+      "field_name": "Wallet identifier — PartySubIDType extension",
+      "tier": 5,
+      "status": "no_credit",
+      "points_lost": 0,
+      "evidence": null
+    },
+    {
+      "check_id": "T5_005",
+      "fix_tag": "55 + 454/455/456",
+      "field_name": "Symbol + SecAltIDGrp — FX-style DTI pair identification",
+      "tier": 5,
+      "status": "no_credit",
+      "points_lost": 0,
+      "evidence": null
+    }
+  ],
+  "full_detail": [
+    {
+      "check_id": "T1_001",
+      "fix_tag": "35=D",
+      "field_name": "NewOrderSingle",
+      "tier": 1,
+      "weight": 5,
+      "status": "full_credit",
+      "points_earned": 5,
+      "points_available": 5,
+      "evidence": "Supports Market (OrdType=1), Limit (OrdType=2), StopLoss (OrdType=3), and StopLossLimit (OrdType=4). Required tags 11, 38, 40, 44, 54, 55, 59, 60 provided.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T1_002",
+      "fix_tag": "35=8",
+      "field_name": "ExecutionReport",
+      "tier": 1,
+      "weight": 5,
+      "status": "full_credit",
+      "points_earned": 5,
+      "points_available": 5,
+      "evidence": "Covers New (150=0), Partial Fill (150=1), Fill (150=2), Cancel (150=4), and Reject (150=8). Documents all required status transitions.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T1_003",
+      "fix_tag": "59",
+      "field_name": "TimeInForce",
+      "tier": 1,
+      "weight": 5,
+      "status": "full_credit",
+      "points_earned": 5,
+      "points_available": 5,
+      "evidence": "Suppports GTC (1), IOC (3), FOK (4), and GTD (6) for Spot. FOK support on Futures confirmed via recent changelog parity update.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T1_004",
+      "fix_tag": "1138",
+      "field_name": "DisplayQty (Iceberg)",
+      "tier": 1,
+      "weight": 3,
+      "status": "partial_credit",
+      "points_earned": 1.5,
+      "points_available": 3,
+      "evidence": "Tag 1138 supported on Spot NOS. Explicit constraint: visible quantity must be at least 1/15 of total OrderQty.",
+      "asset_class_limitation": "Spot Only"
+    },
+    {
+      "check_id": "T1_005",
+      "fix_tag": "7928",
+      "field_name": "SelfTradePrevention (STP)",
+      "tier": 1,
+      "weight": 4,
+      "status": "full_credit",
+      "points_earned": 4,
+      "points_available": 4,
+      "evidence": "SelfMatchPreventionID (7928) AND SelfMatchPreventionStrategy (8000) both present.",
+      "asset_class_limitation": "Spot Only"
+    },
+    {
+      "check_id": "T1_006",
+      "fix_tag": "35=F",
+      "field_name": "OrderCancelRequest",
+      "tier": 1,
+      "weight": 3,
+      "status": "full_credit",
+      "points_earned": 3,
+      "points_available": 3,
+      "evidence": "Supports cancel via ClOrdID (11) and OrigClOrdID (41). Standard OrderCancelReject (35=9) provided.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T1_007",
+      "fix_tag": "35=q",
+      "field_name": "OrderMassCancelRequest + Cancel-on-Disconnect",
+      "tier": 1,
+      "weight": 4,
+      "status": "full_credit",
+      "points_earned": 4,
+      "points_available": 4,
+      "evidence": "OrderMassCancelRequest (35=q) supported. Cancel-on-Disconnect (COD) implemented via custom Tag 8674 (ExpireTime) or session-level config.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T1_008",
+      "fix_tag": "35=G",
+      "field_name": "OrderCancelReplaceRequest (Amend)",
+      "tier": 1,
+      "weight": 4,
+      "status": "partial_credit",
+      "points_earned": 2,
+      "points_available": 4,
+      "evidence": "Order amendment via 35=G supported for Spot. Specifically marked as '( Spot Only )' in unified docs.",
+      "asset_class_limitation": "Spot Only"
+    },
+    {
+      "check_id": "T1_009",
+      "fix_tag": "35=H",
+      "field_name": "OrderStatusRequest",
+      "tier": 1,
+      "weight": 2,
+      "status": "partial_credit",
+      "points_earned": 1,
+      "points_available": 2,
+      "evidence": "OrderStatusRequest (35=H) supported for Spot accounts. Explicitly marked as '( Spot Only )'.",
+      "asset_class_limitation": "Spot Only"
+    },
+    {
+      "check_id": "T2_001",
+      "fix_tag": "29",
+      "field_name": "LastCapacity",
+      "tier": 2,
+      "weight": 5,
+      "status": "partial_credit",
+      "points_earned": 2.5,
+      "points_available": 5,
+      "evidence": "OrderCapacity (tag 528) with value 'A' (Agent) present.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T2_002",
+      "fix_tag": "30",
+      "field_name": "LastMkt / Execution Venue",
+      "tier": 2,
+      "weight": 5,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 5,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T2_003",
+      "fix_tag": "31",
+      "field_name": "LastPx (fill price)",
+      "tier": 2,
+      "weight": 3,
+      "status": "full_credit",
+      "points_earned": 3,
+      "points_available": 3,
+      "evidence": "Tag 31 present in ER fill messages with precision matching instrument tick size.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T2_004",
+      "fix_tag": "32",
+      "field_name": "LastQty (fill quantity)",
+      "tier": 2,
+      "weight": 3,
+      "status": "full_credit",
+      "points_earned": 3,
+      "points_available": 3,
+      "evidence": "Tag 32 present in all partial and full fill ExecutionReports.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T2_005",
+      "fix_tag": "60",
+      "field_name": "TransactTime — microsecond precision",
+      "tier": 2,
+      "weight": 4,
+      "status": "partial_credit",
+      "points_earned": 2,
+      "points_available": 4,
+      "evidence": "TransactTime (60) provided with millisecond precision (3 decimal places). Rubric requires microsecond (6 places) for full credit.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T2_006",
+      "fix_tag": "851",
+      "field_name": "LastLiquidityInd (maker/taker)",
+      "tier": 2,
+      "weight": 4,
+      "status": "partial_credit",
+      "points_earned": 2,
+      "points_available": 4,
+      "evidence": "Liquidity indicator present but uses custom Tag 5050 (m=maker, t=taker) instead of standard Tag 851.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T2_007",
+      "fix_tag": "375",
+      "field_name": "ContraTrader / counterparty identifier",
+      "tier": 2,
+      "weight": 3,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 3,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T2_008",
+      "fix_tag": "14",
+      "field_name": "CumQty — cumulative fill tracking",
+      "tier": 2,
+      "weight": 2,
+      "status": "full_credit",
+      "points_earned": 2,
+      "points_available": 2,
+      "evidence": "Tag 14 (CumQty) and Tag 151 (LeavesQty) provided and consistent in ExecReports.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T3_001",
+      "fix_tag": "78/79",
+      "field_name": "NoAllocs / AllocAccount — sub-account order routing",
+      "tier": 3,
+      "weight": 5,
+      "status": "partial_credit",
+      "points_earned": 2.5,
+      "points_available": 5,
+      "evidence": "NoAllocs (78) and AllocAccount (79) are documented in the FIX data dictionary as part of account structures, but not explicitly supported in public NOS for standard clients.",
+      "asset_class_limitation": "Institutional/Broker tiers only"
+    },
+    {
+      "check_id": "T3_002",
+      "fix_tag": "35=J",
+      "field_name": "AllocationInstruction",
+      "tier": 3,
+      "weight": 5,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 5,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T3_003",
+      "fix_tag": "35=AK",
+      "field_name": "AllocationInstructionAck",
+      "tier": 3,
+      "weight": 3,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 3,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T3_004",
+      "fix_tag": "63",
+      "field_name": "SettlType",
+      "tier": 3,
+      "weight": 4,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 4,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T3_005",
+      "fix_tag": "Session",
+      "field_name": "Session management — logon / heartbeat / gap-fill",
+      "tier": 3,
+      "weight": 5,
+      "status": "full_credit",
+      "points_earned": 5,
+      "points_available": 5,
+      "evidence": "Logon (35=A), Logout (35=5), Heartbeat (35=0), and ResendRequest (35=2) all supported. Gap-fill (35=4) behavior documented.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T3_006",
+      "fix_tag": "58",
+      "field_name": "Text field — reject reason quality",
+      "tier": 3,
+      "weight": 3,
+      "status": "full_credit",
+      "points_earned": 3,
+      "points_available": 3,
+      "evidence": "Tag 58 populated on all rejects (35=3, 35=j, 35=9). Provides human-readable descriptions of failure.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T4_001",
+      "fix_tag": "453/448/452",
+      "field_name": "Parties group — VASP / counterparty identification",
+      "tier": 4,
+      "weight": 5,
+      "status": "partial_credit",
+      "points_earned": 2.5,
+      "points_available": 5,
+      "evidence": "Parties group (453/448/452) present for ITM/sub-firm.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T4_002",
+      "fix_tag": "custom / 448",
+      "field_name": "Wallet address attribution",
+      "tier": 4,
+      "weight": 4,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 4,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T4_003",
+      "fix_tag": "17",
+      "field_name": "ExecID — audit trail uniqueness & recoverability",
+      "tier": 4,
+      "weight": 3,
+      "status": "full_credit",
+      "points_earned": 3,
+      "points_available": 3,
+      "evidence": "ExecID (17) is unique per execution and queryable via REST for post-trade recon.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T4_004",
+      "fix_tag": "18",
+      "field_name": "ExecInst — regulatory execution instructions",
+      "tier": 4,
+      "weight": 3,
+      "status": "full_credit",
+      "points_earned": 3,
+      "points_available": 3,
+      "evidence": "Supports Post-Only (P) and Reduce-Only (E) via Tag 18. Both Spot and Futures parity confirmed.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T5_001",
+      "fix_tag": "22=Y / 456=Y",
+      "field_name": "SecurityIDSource=Y (DTI)",
+      "tier": 5,
+      "weight": 0,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 0,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T5_002",
+      "fix_tag": "15 + 2897 / 120 + 2899",
+      "field_name": "Currency(15) + CurrencyCodeSource(2897) / SettlCurrency(120) + SettlCurrencyCodeSource(2899) — ISO 4217 / ISO 24165 disambiguation",
+      "tier": 5,
+      "weight": 0,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 0,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T5_003",
+      "fix_tag": "167=DIGITAL",
+      "field_name": "SecurityType(167) — DIGITAL enumeration value (ISO 24165)",
+      "tier": 5,
+      "weight": 0,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 0,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T5_004",
+      "fix_tag": "803 (PartySubIDType) — new wallet value",
+      "field_name": "Wallet identifier — PartySubIDType extension",
+      "tier": 5,
+      "weight": 0,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 0,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T5_005",
+      "fix_tag": "55 + 454/455/456",
+      "field_name": "Symbol + SecAltIDGrp — FX-style DTI pair identification",
+      "tier": 5,
+      "weight": 0,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 0,
+      "evidence": null,
+      "asset_class_limitation": null
+    }
+  ]
+}

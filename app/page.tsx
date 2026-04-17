@@ -3,20 +3,30 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ExchangeSelector from '@/components/ExchangeSelector';
-import { ShieldCheck, BarChart3, FileText, Zap } from 'lucide-react';
+import { ShieldCheck, BarChart3, FileText, Zap, CheckCircle2 } from 'lucide-react';
+
+const PROGRESS_STEPS = [
+  "Fetching FIX specification",
+  "Extracting 27 fields",
+  "Scoring against rubric",
+  "Building report"
+];
 
 export default function Home() {
   const router = useRouter();
   const [selectedExchange, setSelectedExchange] = useState('');
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState('');
+  const [currentStep, setCurrentStep] = useState<number | null>(null);
+  const [errorText, setErrorText] = useState('');
 
   const handleRunAudit = async () => {
+    setErrorText('');
+    setCurrentStep(null);
+
     if (selectedExchange) {
-      // Pre-loaded audit
       setLoading(true);
-      setStatus('Loading static report...');
+      setCurrentStep(3); // Just show "Building report" roughly
       setTimeout(() => {
         router.push(`/audit/${selectedExchange}`);
       }, 500);
@@ -24,27 +34,53 @@ export default function Home() {
     }
 
     if (url) {
-      // Manual audit flow
       setLoading(true);
       try {
-        setStatus('Fetching spec...');
-        // In a real app, we'd call /api/ingest and /api/score here
-        // For the scaffold MVP, we'll simulate the steps as requested
+        // Step 0 & 1: Fetching & Extracting via /api/ingest
+        setCurrentStep(0);
         
-        await new Promise(r => setTimeout(r, 800));
-        setStatus('Extracting fields...');
-        await new Promise(r => setTimeout(r, 1200));
-        setStatus('Scoring...');
-        await new Promise(r => setTimeout(r, 800));
-        setStatus('Generating report...');
-        await new Promise(r => setTimeout(r, 500));
+        const ingestRes = await fetch('/api/ingest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            exchange_name: new URL(url).hostname.replace('www.', ''),
+            spec_source: url,
+            asset_classes: 'spot, futures'
+          })
+        });
+
+        setCurrentStep(1);
+
+        if (!ingestRes.ok) {
+          const errData = await ingestRes.json();
+          throw new Error(errData.error || 'Ingest failed');
+        }
+
+        const extractionResult = await ingestRes.json();
         
-        // Redirect to a placeholder or dynamic slug
-        // For now, let's just go to a dynamic audit page (Phase 2 logic)
-        router.push(`/audit/manual?url=${encodeURIComponent(url)}`);
-      } catch (error) {
+        // Step 2: Scoring
+        setCurrentStep(2);
+        const scoreRes = await fetch('/api/score', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(extractionResult)
+        });
+
+        if (!scoreRes.ok) {
+          const errData = await scoreRes.json();
+          throw new Error(errData.error || 'Scoring failed');
+        }
+
+        const scoreData = await scoreRes.json();
+
+        // Step 3: Building report
+        setCurrentStep(3);
+        await new Promise(r => setTimeout(r, 500)); // Brief pause for UX
+
+        router.push(`/audit/${scoreData.slug}`);
+      } catch (error: any) {
         console.error(error);
-        setStatus('Error occurred during audit.');
+        setErrorText(error.message || 'Error occurred during audit.');
         setLoading(false);
       }
     }
@@ -98,12 +134,39 @@ export default function Home() {
               loading={loading}
             />
 
-            {loading && (
-              <div className="mt-8 flex flex-col items-center">
-                <div className="w-full max-w-md h-1.5 bg-slate-100 rounded-full overflow-hidden mb-3">
-                  <div className="h-full bg-navy-dark animate-progress-indeterminate" />
+            {errorText && (
+              <div className="mt-8 text-center text-red-600 bg-red-50 border border-red-200 p-4 rounded-xl font-medium max-w-lg mx-auto">
+                {errorText}
+              </div>
+            )}
+
+            {loading && currentStep !== null && !errorText && (
+              <div className="mt-8 flex flex-col items-center max-w-sm mx-auto bg-slate-50 border border-slate-200 p-6 rounded-2xl shadow-sm">
+                <div className="w-full space-y-4">
+                  {PROGRESS_STEPS.map((step, idx) => {
+                    const isDone = currentStep > idx;
+                    const isActive = currentStep === idx;
+                    const isPending = currentStep < idx;
+                    
+                    return (
+                      <div key={idx} className={`flex items-center gap-3 ${isPending ? 'opacity-40' : 'opacity-100'}`}>
+                        {isDone ? (
+                           <CheckCircle2 className="w-5 h-5 text-green-500" />
+                        ) : isActive ? (
+                           <div className="w-5 h-5 border-2 border-navy-dark/30 border-t-navy-dark rounded-full animate-spin flex-shrink-0" />
+                        ) : (
+                           <div className="w-5 h-5 border-2 border-slate-200 rounded-full flex-shrink-0" />
+                        )}
+                        <span className={`text-sm font-medium ${isActive ? 'text-navy-dark font-bold' : 'text-slate-500'}`}>
+                          {step}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-                <p className="text-sm font-bold text-navy-dark animate-pulse uppercase tracking-widest">{status}</p>
+                <p className="mt-6 text-xs text-slate-400 font-medium uppercase tracking-widest text-center">
+                  This takes 15-30 seconds
+                </p>
               </div>
             )}
           </div>
@@ -144,17 +207,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
-      <style jsx>{`
-        @keyframes progress-indeterminate {
-          0% { transform: translateX(-100%); width: 30%; }
-          50% { transform: translateX(100%); width: 70%; }
-          100% { transform: translateX(300%); width: 30%; }
-        }
-        .animate-progress-indeterminate {
-          animation: progress-indeterminate 2s infinite ease-in-out;
-        }
-      `}</style>
     </div>
   );
 }
