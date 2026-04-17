@@ -64,9 +64,11 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
     return marked.parse(md);
   }, [content]);
 
-  // Extract sections for screen view
+  // Split markdown for screen sections
   const mdSections = useMemo(() => {
-    return content.split('---').map(s => s.trim());
+    // Split by SECTION headings, using a positive lookahead to keep the heading with the content
+    const sections = content.split(/(?=##?\s*SECTION\s+\d)/gi);
+    return sections.map(s => s.trim());
   }, [content]);
 
   const getImpact = (gap: GapSummaryItem) => {
@@ -86,6 +88,17 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
     });
     return tiers;
   }, [report.full_detail]);
+
+  // Helper to find a section by its number
+  const getSectionByNum = (num: number) => {
+    const prefix = `SECTION ${num}`;
+    return mdSections.find(s => s.toUpperCase().includes(prefix)) || '';
+  };
+
+  // Helper to strip the heading from a section string
+  const stripHeading = (sectionContent: string) => {
+    return sectionContent.replace(/##?\s*SECTION\s+\d.*?(\n|$)/i, '').trim();
+  };
 
   return (
     <div className="bg-white min-h-screen">
@@ -157,7 +170,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
 
           {/* PROBLEM 4 & 6 & 5 & 1: Structured Sections */}
           <div className="space-y-12">
-            {/* SECTION 1: EXEC SUMMARY (mostly from md) */}
+            {/* SECTION 1: EXEC SUMMARY (Header + Intro from mdSections[0]) */}
             <section>
               <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 1 — Executive Summary</h2>
               <div className="prose prose-slate max-w-none text-slate-700">
@@ -195,8 +208,8 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
             {/* SECTION 2: SESSION CONFIG */}
             <section>
               <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 2 — Session configuration</h2>
-              <div className="prose prose-slate max-w-none text-slate-700">
-                <div dangerouslySetInnerHTML={{ __html: marked.parse(mdSections[1].replace('## SECTION 2 — Session configuration', '')) }} />
+              <div className="report-content">
+                <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(2))) }} />
               </div>
             </section>
 
@@ -287,14 +300,14 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
               </div>
             </section>
 
-            {/* SECTIONS 5-7 (Markdown fallback) */}
+            {/* PROBLEM A, B, C: SECTIONS 5-7 */}
             {[5, 6, 7].map(num => (
                <section key={num}>
                   <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
                     {num === 5 ? 'SECTION 5 — Custom tag dictionary' : num === 6 ? 'SECTION 6 — Order types matrix' : 'SECTION 7 — UAT checklist'}
                   </h2>
-                  <div className="prose prose-slate max-w-none text-slate-700">
-                    <div dangerouslySetInnerHTML={{ __html: marked.parse(mdSections[num+1] || '') }} />
+                  <div className="report-content">
+                    <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(num))) }} />
                   </div>
                </section>
             ))}
@@ -302,35 +315,9 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
             {/* SECTION 8 (DAWG) */}
             {report.tier5_results && (
               <section>
-                <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 8 — DAWG Digital Asset FIX Extensions</h2>
-                <div className="prose prose-slate max-w-none text-slate-700 mb-6">
-                  <p>{report.tier5_results.summary}</p>
-                </div>
-                <div className="overflow-x-auto">
-                   <table className="w-full text-sm border-collapse border border-slate-200">
-                      <thead className="bg-slate-800 text-white">
-                         <tr>
-                            <th className="text-left p-3">Check ID</th>
-                            <th className="text-left p-3">Title</th>
-                            <th className="text-center p-3">Status</th>
-                            <th className="text-left p-3">Evidence</th>
-                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200">
-                         {report.tier5_results.checks.map((check, i) => (
-                            <tr key={check.check_id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                               <td className="p-3 font-mono text-xs">{check.check_id}</td>
-                               <td className="p-3 font-semibold">{check.title}</td>
-                               <td className="p-3 text-center">
-                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${check.status === 'full_credit' ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-500'}`}>
-                                     {check.status === 'full_credit' ? 'Implemented' : 'No Credit'}
-                                  </span>
-                               </td>
-                               <td className="p-3 text-xs text-slate-500">{check.evidence}</td>
-                            </tr>
-                         ))}
-                      </tbody>
-                   </table>
+                <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 8 — DAWG Digital Asset FIX Extensions — Forward-Looking Assessment</h2>
+                <div className="report-content mb-6">
+                  <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(8))) }} />
                 </div>
               </section>
             )}
@@ -360,6 +347,62 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
 
       <style jsx global>{`
         /* Screen versions */
+        .report-content table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 0.875rem;
+          margin-bottom: 1.5rem;
+          border: 1px solid #E2E8F0;
+        }
+        .report-content th {
+          background-color: #0A1628;
+          color: white;
+          padding: 10px 12px;
+          text-align: left;
+          font-weight: 500;
+        }
+        .report-content td {
+          padding: 10px 12px;
+          border-bottom: 1px solid #E2E8F0;
+          vertical-align: top;
+          color: #374151;
+        }
+        .report-content tr:nth-child(even) td {
+          background-color: #F8FAFC;
+        }
+        .report-content h3 {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #0A1628;
+          margin-top: 1.5rem;
+          margin-bottom: 0.75rem;
+        }
+        .report-content ul {
+          list-style: disc;
+          padding-left: 1.25rem;
+          margin-bottom: 1rem;
+        }
+        .report-content li {
+          font-size: 0.875rem;
+          color: #374151;
+          margin-bottom: 0.25rem;
+          line-height: 1.6;
+        }
+        .report-content code {
+          font-family: monospace;
+          font-size: 0.8125rem;
+          background: #F1F5F9;
+          padding: 1px 5px;
+          border-radius: 3px;
+          color: #1E293B;
+        }
+        .report-content p {
+          font-size: 0.9375rem;
+          color: #374151;
+          line-height: 1.7;
+          margin-bottom: 0.75rem;
+        }
+        
         .metadata-block { margin: 16px 0; font-size: 14px; line-height: 1.6; }
         .meta-row { display: block; }
         .meta-label { font-weight: 600; color: #64748B; margin-right: 8px; }
@@ -371,6 +414,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
         @media print {
           .no-print { display: none !important; }
           nav, footer { display: none !important; }
+          .report-content th { background-color: #0A1628 !important; -webkit-print-color-adjust: exact; }
 
           @page { margin: 0.75in; size: A4; }
 
