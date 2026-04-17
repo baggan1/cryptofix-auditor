@@ -85,18 +85,39 @@ export async function POST(req: NextRequest) {
     // Step 3 — parse and validate JSON
     let extraction: ExtractionResult;
     try {
-      // Robustly extract just the JSON object and ignore preambles/fences
-      const match = responseText.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error('No JSON object found in response');
-      extraction = JSON.parse(match[0]);
+      // Clean up markdown markers
+      let cleanText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+      
+      // Robustly extract just the JSON
+      const match = cleanText.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+      if (!match) throw new Error('No JSON structure found in response');
+      
+      let parsed = JSON.parse(match[0]);
+      
+      // Standardize schema
+      if (Array.isArray(parsed)) {
+        // If Gemini hallucinates an outer array
+        extraction = { checks: parsed } as ExtractionResult;
+      } else {
+        extraction = parsed as ExtractionResult;
+        // Fix "results" vs "checks" hallucination
+        if (!extraction.checks && (parsed as any).results) {
+            extraction.checks = (parsed as any).results;
+        }
+      }
+      
+      if (!extraction.checks) {
+        extraction.checks = [];
+      }
+      
     } catch (parseError) {
-      console.error('JSON Parse Error. Raw response:', responseText);
+      console.error('JSON Parse Error in /ingest. Raw response:', responseText);
       return NextResponse.json({ error: 'Failed to parse JSON', rawResponse: responseText }, { status: 500 });
     }
 
     // Ensure we have the basic required fields
-    if (!extraction.exchange_name) extraction.exchange_name = exchange_name;
-    if (!extraction.spec_source) extraction.spec_source = spec_source;
+    if (!extraction.exchange_name) extraction.exchange_name = exchange_name || 'Unknown Exchange';
+    if (!extraction.spec_source) extraction.spec_source = spec_source || '';
     if (!extraction.extraction_date) extraction.extraction_date = new Date().toISOString();
     
     // Attach slug for downstream passing
