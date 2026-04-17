@@ -85,6 +85,7 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
       const result = extraction.checks.find(c => c.check_id === check.id);
       return {
         check_id: check.id,
+        title: check.field_name,
         status: result?.status || 'no_credit',
         evidence: result?.evidence || null,
         notes: "Informational only — does not affect score"
