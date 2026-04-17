@@ -31,7 +31,8 @@ export async function POST(req: NextRequest) {
       let earned = 0;
       tier.checks.forEach((check: any) => {
         const r = extraction.checks.find((c: any) => c.check_id === check.id);
-        const f = r ? (factors[r.status as keyof typeof factors] ?? 0) : 0;
+        const st = r ? (r.status || r.determination || 'no_credit') : 'no_credit';
+        const f = factors[st as keyof typeof factors] ?? 0;
         const pts = (check.weight ?? 0) * f;
         earned += pts;
         total += pts;
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
           field_name: check.field_name,
           tier: tier.tier,
           weight: check.weight,
-          status: r ? r.status : 'no_credit',
+          status: st,
           points_earned: pts,
           points_available: check.weight,
           evidence: r ? r.evidence : null,

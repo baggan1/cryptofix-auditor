@@ -85,8 +85,10 @@ export async function POST(req: NextRequest) {
     // Step 3 — parse and validate JSON
     let extraction: ExtractionResult;
     try {
-      const clean = responseText.replace(/```json|```/g, '').trim();
-      extraction = JSON.parse(clean);
+      // Robustly extract just the JSON object and ignore preambles/fences
+      const match = responseText.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('No JSON object found in response');
+      extraction = JSON.parse(match[0]);
     } catch (parseError) {
       console.error('JSON Parse Error. Raw response:', responseText);
       return NextResponse.json({ error: 'Failed to parse JSON', rawResponse: responseText }, { status: 500 });
