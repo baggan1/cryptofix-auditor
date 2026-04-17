@@ -11,6 +11,7 @@ export interface CheckResult {
 
 export interface Tier5CheckResult {
   check_id: string;
+  title: string;
   status: 'full_credit' | 'partial_credit' | 'no_credit';
   evidence: string | null;
   notes: string;
@@ -54,6 +55,8 @@ export interface Tier5Results {
 export interface ScoredReport {
   exchange_name: string;
   audit_date: string;
+  spec_source?: string;
+  asset_classes_audited?: string[];
   total_score: number;
   max_score: number;
   grade: 'Institutional grade' | 'Near-institutional' | 'Partial' | 'Basic' | 'Pre-institutional';

@@ -39,7 +39,7 @@
       "tier": 2,
       "status": "no_credit",
       "points_lost": 5,
-      "evidence": null
+      "evidence": "Not documented."
     },
     {
       "check_id": "T2_002",
@@ -48,7 +48,7 @@
       "tier": 2,
       "status": "no_credit",
       "points_lost": 5,
-      "evidence": null
+      "evidence": "Not documented."
     },
     {
       "check_id": "T3_001",
@@ -66,7 +66,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 5,
-      "evidence": null
+      "evidence": "Not documented."
     },
     {
       "check_id": "T4_001",
@@ -75,7 +75,7 @@
       "tier": 4,
       "status": "no_credit",
       "points_lost": 5,
-      "evidence": null
+      "evidence": "Not documented."
     },
     {
       "check_id": "T1_005",
@@ -120,7 +120,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 4,
-      "evidence": null
+      "evidence": "Not documented."
     },
     {
       "check_id": "T4_002",
@@ -129,7 +129,7 @@
       "tier": 4,
       "status": "no_credit",
       "points_lost": 4,
-      "evidence": null
+      "evidence": "Not documented."
     },
     {
       "check_id": "T1_004",
@@ -147,7 +147,7 @@
       "tier": 2,
       "status": "no_credit",
       "points_lost": 3,
-      "evidence": null
+      "evidence": "Not documented."
     },
     {
       "check_id": "T3_003",
@@ -156,7 +156,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 3,
-      "evidence": null
+      "evidence": "Not documented."
     },
     {
       "check_id": "T1_009",
