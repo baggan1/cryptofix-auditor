@@ -30,8 +30,9 @@ export async function POST(req: NextRequest) {
         let links: string[] = [];
         
         // Simple regex to find hrefs
-        const linkMatches = html.matchAll(/<a[^>]+href="([^"]+)"/g);
-        for (const match of linkMatches) {
+        const regex = /<a[^>]+href="([^"]+)"/g;
+        let match;
+        while ((match = regex.exec(html)) !== null) {
           let link = match[1];
           if (!link.startsWith('http')) {
             try {
