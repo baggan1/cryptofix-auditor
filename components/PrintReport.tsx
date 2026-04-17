@@ -13,16 +13,16 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, exchangeName }) => {
     let md = content;
 
     // 1. Critical Gaps List to Table
-    md = md.replace(/Critical gaps \(top 3 by points_lost\):\n((?:- .*?\n?)+)/g, (match, list) => {
-      const rows = list.trim().split('\n').map(line => {
-        const parts = line.replace(/^\s*-\s*/, '').split('|').map(p => p.trim());
+    md = md.replace(/Critical gaps \(top 3 by points_lost\):\n((?:- .*?\n?)+)/g, (match: string, list: string) => {
+      const rows = list.trim().split('\n').map((line: string) => {
+        const parts = line.replace(/^\s*-\s*/, '').split('|').map((p: string) => p.trim());
         return `<tr><td>${parts[0]}</td><td>${parts[1]}</td><td>${parts[3] || parts[2]}</td></tr>`;
       }).join('');
       return `### Critical Gaps\n\n<table class="critical-gaps-table"><thead><tr><th>Check ID</th><th>Field</th><th>Impact</th></tr></thead><tbody>${rows}</tbody></table>\n\n`;
     });
 
     // 2. Metadata Block
-    md = md.replace(/Audit date: (.*)\nAuditor: (.*)\nSpec source: (.*)\nAsset classes: (.*)/, (match, date, auditor, source, assets) => {
+    md = md.replace(/Audit date: (.*)\nAuditor: (.*)\nSpec source: (.*)\nAsset classes: (.*)/, (match: string, date: string, auditor: string, source: string, assets: string) => {
       return `<div class="metadata-block">
         <div class="meta-row"><span class="meta-label">Audit date</span><span class="meta-value">${date}</span></div>
         <div class="meta-row"><span class="meta-label">Auditor</span><span class="meta-value">${auditor}</span></div>
@@ -32,7 +32,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, exchangeName }) => {
     });
 
     // 3. Overall Score
-    md = md.replace(/Overall score: (\d+) \/ 100 — (.*)/, (match, score, grade) => {
+    md = md.replace(/Overall score: (\d+) \/ 100 — (.*)/, (match: string, score: string, grade: string) => {
       return `<div class="overall-score-block">
         <div class="score-main">${score}</div>
         <div class="score-sub">
@@ -43,18 +43,18 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, exchangeName }) => {
     });
 
     // 4. Section Headings & Breaks
-    md = md.replace(/^## (SECTION (\d+) — (.*))/gm, (match, full, num) => {
+    md = md.replace(/^## (SECTION (\d+) — (.*))/gm, (match: string, full: string, num: string) => {
       const className = `section-heading section-${num}`;
       return `<h2 class="${className}">${full}</h2>`;
     });
 
     // 5. Gap Analysis Cards (### T... — ... lost)
-    md = md.replace(/(### [A-Z0-9]+_.*?\n)([\s\S]*?)(?=\n###|\n##|\n---|$(?![\s\S]))/g, (match, header, body) => {
+    md = md.replace(/(### [A-Z0-9]+_.*?\n)([\s\S]*?)(?=\n###|\n##|\n---|$(?![\s\S]))/g, (match: string, header: string, body: string) => {
       return `<div class="gap-card">\n\n${header}\n${body}\n\n</div>`;
     });
 
     // 6. Tier Table Wrapper
-    md = md.replace(/(\nTier \| Score \| Available \| %.*?\n[\-\s|]+\n(?:.*?\n)+)/, (match) => {
+    md = md.replace(/(\nTier \| Score \| Available \| %.*?\n[\-\s|]+\n(?:.*?\n)+)/, (match: string) => {
       return `\n<div class="tier-scores-table-wrapper">\n\n${match}\n\n</div>\n`;
     });
 
