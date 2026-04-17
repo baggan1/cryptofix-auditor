@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { marked } from 'marked';
 
 interface PrintReportProps {
@@ -9,13 +9,62 @@ interface PrintReportProps {
 }
 
 const PrintReport: React.FC<PrintReportProps> = ({ content, exchangeName }) => {
-  // Configure marked if necessary (standard is fine for now)
-  const htmlContent = marked.parse(content);
+  const htmlContent = useMemo(() => {
+    let md = content;
+
+    // 1. Critical Gaps List to Table
+    md = md.replace(/Critical gaps \(top 3 by points_lost\):\n((?:- .*?\n?)+)/g, (match, list) => {
+      const rows = list.trim().split('\n').map(line => {
+        const parts = line.replace(/^\s*-\s*/, '').split('|').map(p => p.trim());
+        return `<tr><td>${parts[0]}</td><td>${parts[1]}</td><td>${parts[3] || parts[2]}</td></tr>`;
+      }).join('');
+      return `### Critical Gaps\n\n<table class="critical-gaps-table"><thead><tr><th>Check ID</th><th>Field</th><th>Impact</th></tr></thead><tbody>${rows}</tbody></table>\n\n`;
+    });
+
+    // 2. Metadata Block
+    md = md.replace(/Audit date: (.*)\nAuditor: (.*)\nSpec source: (.*)\nAsset classes: (.*)/, (match, date, auditor, source, assets) => {
+      return `<div class="metadata-block">
+        <div class="meta-row"><span class="meta-label">Audit date</span><span class="meta-value">${date}</span></div>
+        <div class="meta-row"><span class="meta-label">Auditor</span><span class="meta-value">${auditor}</span></div>
+        <div class="meta-row"><span class="meta-label">Spec source</span><span class="meta-value">${source}</span></div>
+        <div class="meta-row"><span class="meta-label">Asset classes</span><span class="meta-value">${assets}</span></div>
+      </div>`;
+    });
+
+    // 3. Overall Score
+    md = md.replace(/Overall score: (\d+) \/ 100 — (.*)/, (match, score, grade) => {
+      return `<div class="overall-score-block">
+        <div class="score-main">${score}</div>
+        <div class="score-sub">
+          <div class="score-denominator">out of 100</div>
+          <div class="score-text">${grade}</div>
+        </div>
+      </div>`;
+    });
+
+    // 4. Section Headings & Breaks
+    md = md.replace(/^## (SECTION (\d+) — (.*))/gm, (match, full, num) => {
+      const className = `section-heading section-${num}`;
+      return `<h2 class="${className}">${full}</h2>`;
+    });
+
+    // 5. Gap Analysis Cards (### T... — ... lost)
+    md = md.replace(/(### [A-Z0-9]+_.*?\n)([\s\S]*?)(?=\n###|\n##|\n---|$(?![\s\S]))/g, (match, header, body) => {
+      return `<div class="gap-card">\n\n${header}\n${body}\n\n</div>`;
+    });
+
+    // 6. Tier Table Wrapper
+    md = md.replace(/(\nTier \| Score \| Available \| %.*?\n[\-\s|]+\n(?:.*?\n)+)/, (match) => {
+      return `\n<div class="tier-scores-table-wrapper">\n\n${match}\n\n</div>\n`;
+    });
+
+    return marked.parse(md);
+  }, [content]);
 
   return (
     <div className="bg-white min-h-screen">
       {/* Screen only banner */}
-      <div className="print:hidden bg-navy-dark text-white p-4 text-center sticky top-0 z-50">
+      <div className="no-print print:hidden bg-navy-dark text-white p-4 text-center sticky top-0 z-50">
         <p className="font-medium">
           RoE Document for <span className="font-bold">{exchangeName}</span>. 
           Use <kbd className="bg-white/10 px-1 rounded">Cmd+P</kbd> or <kbd className="bg-white/10 px-1 rounded">Ctrl+P</kbd> to Save as PDF.
@@ -38,9 +87,9 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, exchangeName }) => {
             prose-code:font-mono prose-code:text-navy-dark prose-code:bg-slate-50 prose-code:px-1 prose-code:rounded
             print:prose-p:text-sm print:prose-headings:text-lg
             [&>h1]:text-3xl [&>h1]:border-b [&>h1]:border-slate-200 [&>h1]:pb-4 [&>h1]:mb-8
-            [&>h2]:text-xl [&>h2]:border-b [&>h2]:border-slate-100 [&>h2]:pb-2 [&>h2]:mt-12 [&>h2]:mb-6 [&>h2]:break-before-page
+            [&>.section-heading]:text-xl [&>.section-heading]:border-b [&>.section-heading]:border-slate-100 [&>.section-heading]:pb-2 [&>.section-heading]:mt-12 [&>.section-heading]:mb-6
           "
-          dangerouslySetInnerHTML={{ __html: htmlContent }}
+          dangerouslySetInnerHTML={{ __html: htmlContent as string }}
         />
         
         <div className="mt-16 pt-8 border-t border-slate-200 text-xs text-slate-400 font-serif italic text-center print:mt-8">
@@ -49,20 +98,127 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, exchangeName }) => {
       </div>
 
       <style jsx global>{`
+        /* Screen versions */
+        .metadata-block { margin: 16px 0; font-size: 14px; line-height: 1.6; }
+        .meta-row { display: block; }
+        .meta-label { font-weight: 600; color: #64748B; margin-right: 8px; }
+        .meta-label::after { content: ":"; }
+        .overall-score-block { margin: 20px 0; padding: 12px; border-left: 4px solid #F59E0B; background: #FFFBEB; }
+        .score-main { font-size: 24px; font-weight: bold; color: #0A1628; }
+        .score-sub { display: inline-flex; gap: 8px; align-items: baseline; }
+
         @media print {
-          nav, footer, .print-hidden {
-            display: none !important;
-          }
-          @page {
-            margin: 1in;
-            size: letter;
-          }
+          .no-print { display: none !important; }
+          nav, footer { display: none !important; }
+
+          @page { margin: 0.75in; size: A4; }
+
           body {
             background: white !important;
-            color: black !important;
+            color: #000000 !important;
+            font-size: 11pt !important;
           }
+
+          /* Force all text to black */
+          .prose, .prose p, .prose span, .prose div, .prose h1, .prose h2, .prose h3, .prose table, .prose td, .prose th {
+            color: #000000 !important;
+          }
+
           .prose {
             max-width: none !important;
+          }
+
+          /* 1. METADATA BLOCK */
+          .metadata-block {
+            display: grid !important;
+            grid-template-columns: 140px 1fr;
+            gap: 4px 16px;
+            margin: 16px 0 24px !important;
+            font-size: 14px !important;
+          }
+          .meta-row { display: contents !important; }
+          .meta-label { color: #64748B !important; font-weight: normal !important; }
+          .meta-label::after { content: "" !important; }
+          .meta-value { color: #000000 !important; }
+
+          /* 2. OVERALL SCORE */
+          .overall-score-block {
+            margin: 24px 0 !important;
+            padding: 16px !important;
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 8px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 24px !important;
+            background: transparent !important;
+            border-left: 1px solid #E2E8F0 !important;
+          }
+          .score-main {
+            font-size: 48px !important;
+            font-weight: 700 !important;
+            color: #0A1628 !important;
+          }
+          .score-denominator { font-size: 14px !important; color: #64748B !important; }
+          .score-text { font-size: 18px !important; font-weight: 600 !important; color: #F59E0B !important; }
+
+          /* 3. TIER SCORES TABLE */
+          .tier-scores-table-wrapper table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+          }
+          .tier-scores-table-wrapper th:nth-child(1) { width: 200px !important; }
+          .tier-scores-table-wrapper th:nth-child(2) { width: 80px !important; }
+          .tier-scores-table-wrapper th:nth-child(3) { width: 80px !important; }
+          .tier-scores-table-wrapper th:nth-child(4) { width: 60px !important; }
+          
+          table tr:nth-child(odd) { background-color: #F8FAFC !important; }
+          table tr:nth-child(even) { background-color: #ffffff !important; }
+          table thead tr { border-bottom: 2px solid #0A1628 !important; background: transparent !important; }
+          table th, table td { padding: 8px !important; text-align: left !important; }
+
+          /* 4. SECTION HEADINGS */
+          h2.section-heading {
+            margin-top: 40px !important;
+            padding-top: 16px !important;
+            border-top: 2px solid #0A1628 !important;
+            border-bottom: none !important;
+            font-size: 14pt !important;
+            font-weight: 600 !important;
+            color: #000000 !important;
+            break-before: auto !important;
+          }
+          
+          /* Specific page breaks for Section 4 and 7 */
+          .section-4, .section-7 {
+            page-break-before: always !important;
+          }
+
+          /* 5. GAP ANALYSIS ITEMS */
+          .gap-card {
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 6px !important;
+            padding: 12px 16px !important;
+            margin-bottom: 12px !important;
+            page-break-inside: avoid !important;
+          }
+          .gap-card h3 { margin-top: 0 !important; border: none !important; }
+
+          /* 7. CRITICAL GAPS TABLE */
+          .critical-gaps-table {
+            width: 100% !important;
+            border-collapse: separate !important;
+            border-spacing: 0 4px !important;
+          }
+          .critical-gaps-table td {
+            padding: 8px !important;
+            border-top: 1px solid #E2E8F0 !important;
+            border-bottom: 1px solid #E2E8F0 !important;
+          }
+          .critical-gaps-table tr td:first-child {
+            border-left: 3px solid #EF4444 !important;
+          }
+          .critical-gaps-table td:last-child {
+            border-right: 1px solid #E2E8F0 !important;
           }
         }
       `}</style>
