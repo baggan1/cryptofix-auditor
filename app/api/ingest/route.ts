@@ -26,67 +26,75 @@ export async function POST(req: NextRequest) {
         };
 
         let html = await fetchPage(spec_source);
-        let baseUrl = new URL(spec_source);
-        let links: string[] = [];
-        
-        // Simple regex to find hrefs
-        const regex = /<a[^>]+href="([^"]+)"/g;
-        let match;
-        while ((match = regex.exec(html)) !== null) {
-          let link = match[1];
-          if (!link.startsWith('http')) {
-            try {
-               link = new URL(link, baseUrl).href;
-            } catch { continue; }
-          }
-          if (link.includes(baseUrl.hostname) && !links.includes(link) && link !== spec_source) {
-            links.push(link);
+        specContent = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+        const KNOWN_SUBPAGES: Record<string, string[]> = {
+          'docs.cdp.coinbase.com/international-exchange': [
+            'https://docs.cdp.coinbase.com/international-exchange/fix-api/fix-api-overview',
+            'https://docs.cdp.coinbase.com/international-exchange/fix-api/admin-messages',
+          ],
+          'docs.kraken.com': [
+            'https://docs.kraken.com/api/docs/fix-api/er-fix',
+            'https://docs.kraken.com/api/docs/fix-api/cancel-fix',
+          ],
+        };
+
+        const hostname = new URL(spec_source).hostname + new URL(spec_source).pathname;
+        for (const [pattern, subpages] of Object.entries(KNOWN_SUBPAGES)) {
+          if (hostname.includes(pattern)) {
+            for (const subUrl of subpages) {
+              try {
+                const subHtml = await fetchPage(subUrl);
+                const subClean = subHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                specContent += '\n\n--- SUB-PAGE: ' + subUrl + ' ---\n\n' + subClean.slice(0, 15000);
+              } catch (e) {
+                console.warn('Sub-page fetch failed:', subUrl, e);
+              }
+            }
+            break;
           }
         }
 
-        // Fetch up to 4 additional pages
-        const pagesToFetch = links.slice(0, 4);
-        let combinedHtml = html;
-        for (const link of pagesToFetch) {
-           try {
-             const subHtml = await fetchPage(link);
-             combinedHtml += '\n\n' + subHtml;
-           } catch {
-             // Ignore sub-page fetch errors
-           }
-        }
+        // Trim to 60k chars but try to end at a natural boundary
+        let trimmed = specContent.slice(0, 60000);
+        const lastNewline = trimmed.lastIndexOf('\n');
+        if (lastNewline > 50000) trimmed = trimmed.slice(0, lastNewline);
+        specContent = trimmed;
 
-        specContent = combinedHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-        specContent = specContent.slice(0, 80000); // Cap at 80k chars
+        console.log('Spec content length after fetch:', specContent.length);
+        console.log('Spec content preview:', specContent.slice(0, 300));
       } catch (fetchErr: any) {
         return NextResponse.json({ error: `URL fetch failed: ${fetchErr.message}` }, { status: 400 });
       }
     } else {
-      specContent = spec_source.slice(0, 80000);
+      specContent = spec_source.slice(0, 60000);
     }
 
     // Step 2 — build prompt and call Gemini Pro
     const { systemPrompt, userPrompt } = getExtractionPrompt(exchange_name, specContent, asset_classes);
 
-    let result;
+    let rawText = '';
     try {
-      result = await extractionModel.generateContent([
+      const result = await extractionModel.generateContent([
         { text: systemPrompt + '\n\n' + userPrompt }
       ]);
-    } catch (geminiError: any) {
-      if (geminiError.status === 429 || geminiError.message?.includes('429')) {
-        return NextResponse.json({ error: 'Audit quota reached, try again in a few minutes' }, { status: 429 });
-      }
-      throw geminiError;
+      rawText = result.response.text();
+    } catch (geminiError) {
+      console.error('Gemini API call failed:', geminiError);
+      return NextResponse.json(
+        { error: 'Gemini extraction failed', details: String(geminiError) },
+        { status: 500 }
+      );
     }
 
-    const responseText = result.response.text();
+    console.log('Gemini raw response length:', rawText.length);
+    console.log('Gemini raw response preview:', rawText.slice(0, 500));
 
     // Step 3 — parse and validate JSON
     let extraction: ExtractionResult;
     try {
       // Clean up markdown markers
-      let cleanText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+      let cleanText = rawText.replace(/```json\n?|```\n?/g, '').trim();
       
       // Robustly extract just the JSON
       const match = cleanText.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
@@ -111,8 +119,15 @@ export async function POST(req: NextRequest) {
       }
       
     } catch (parseError) {
-      console.error('JSON Parse Error in /ingest. Raw response:', responseText);
-      return NextResponse.json({ error: 'Failed to parse JSON', rawResponse: responseText }, { status: 500 });
+      console.error('JSON parse failed. Raw response:', rawText.slice(0, 2000));
+      return NextResponse.json(
+        { 
+          error: 'JSON parse failed', 
+          rawPreview: rawText.slice(0, 1000),
+          details: String(parseError)
+        },
+        { status: 500 }
+      );
     }
 
     // Ensure we have the basic required fields

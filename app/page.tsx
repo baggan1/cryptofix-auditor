@@ -37,6 +37,8 @@ export default function Home() {
       setLoading(true);
       try {
         // Step 0 & 1: Fetching & Extracting via /api/ingest
+        sessionStorage.removeItem('live_audit_report');
+        sessionStorage.removeItem('liveAuditResult');
         setCurrentStep(0);
         
         const ingestRes = await fetch('/api/ingest', {
@@ -52,8 +54,8 @@ export default function Home() {
         setCurrentStep(1);
 
         if (!ingestRes.ok) {
-          const errData = await ingestRes.json();
-          throw new Error(errData.error || 'Ingest failed');
+          const errData = await ingestRes.json().catch(() => ({}));
+          throw new Error(`Extraction failed: ${errData.error || ingestRes.statusText}. ${errData.rawPreview ? 'Raw preview: ' + errData.rawPreview.slice(0, 200) : ''}`);
         }
 
         const extractionResult = await ingestRes.json();
