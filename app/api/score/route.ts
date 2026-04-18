@@ -90,10 +90,10 @@ export async function POST(req: NextRequest) {
     const tmpDir = path.join(os.tmpdir(), exchange_slug);
     fs.mkdirSync(tmpDir, { recursive: true });
     
-    // Save report
+    // Save report to tmp for local environments (ephemeral in Vercel)
     fs.writeFileSync(path.join(tmpDir, 'scored_report.json'), JSON.stringify(report, null, 2));
 
-    return NextResponse.json({ success: true, slug: exchange_slug });
+    return NextResponse.json({ success: true, slug: exchange_slug, report });
   } catch (error: any) {
     console.error('Score API Error:', error);
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });

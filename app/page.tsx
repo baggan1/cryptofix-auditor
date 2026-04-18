@@ -77,7 +77,10 @@ export default function Home() {
         setCurrentStep(3);
         await new Promise(r => setTimeout(r, 500)); // Brief pause for UX
 
-        router.push(`/audit/${scoreData.slug}`);
+        // Hydrate sessionStorage for client-side routing persistence
+        sessionStorage.setItem('live_audit_report', JSON.stringify(scoreData.report));
+        
+        router.push(`/audit/live`);
       } catch (error: any) {
         console.error(error);
         setErrorText(error.message || 'Error occurred during audit.');
