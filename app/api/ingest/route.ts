@@ -154,13 +154,14 @@ export async function POST(req: NextRequest) {
         extraction = { checks: parsed } as ExtractionResult;
       } else {
         extraction = parsed as ExtractionResult;
-        // Fix "results" vs "checks" hallucination
-        if (extraction.results && !extraction.checks) {
-          extraction.checks = extraction.results.map((r: any) => ({
+        // Fix "results" vs "checks" hallucination - cast to any for legacy check
+        const extAny = extraction as any;
+        if (extAny.results && !extraction.checks) {
+          extraction.checks = extAny.results.map((r: any) => ({
             ...r,
             status: r.status ?? r.determination ?? 'no_credit',
           }));
-          delete (extraction as any).results;
+          delete extAny.results;
         }
         // Also normalize any "determination" → "status" in checks array
         if (extraction.checks) {
