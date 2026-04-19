@@ -145,12 +145,14 @@ export default function Home() {
             />
 
             {!selectedExchange && (
-              <details className="mt-4 max-w-sm mx-auto">
-                <summary className="text-sm text-slate-500 cursor-pointer hover:text-slate-700 text-center">
-                  ↳ Or paste spec content directly (for SPAs)
+              <details className="mt-3">
+                <summary className="text-sm text-slate-500 cursor-pointer hover:text-slate-700">
+                  ↳ Or paste spec content directly (for JavaScript-rendered sites)
                 </summary>
                 <textarea
-                  className="mt-4 w-full h-40 p-4 text-sm border border-slate-300 rounded-xl font-mono resize-y focus:outline-none focus:ring-2 focus:ring-[#10B901] shadow-inner bg-slate-50"
+                  className="mt-2 w-full h-40 p-3 text-sm border border-slate-300 
+                    rounded-lg font-mono resize-y focus:outline-none 
+                    focus:ring-2 focus:ring-[#10B981]"
                   placeholder="Paste FIX spec text here (copy from browser, PDF, or API docs)..."
                   value={pastedSpec}
                   onChange={(e) => {
