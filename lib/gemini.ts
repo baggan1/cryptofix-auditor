@@ -8,7 +8,7 @@ export const extractionModel = genAI.getGenerativeModel({
   generationConfig: {
     responseMimeType: 'application/json',
     temperature: 0.1,  // Low temperature for consistent structured extraction
-    maxOutputTokens: 8192,
+    maxOutputTokens: 16384,
   },
 });
 

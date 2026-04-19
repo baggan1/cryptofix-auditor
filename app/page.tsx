@@ -16,6 +16,7 @@ export default function Home() {
   const router = useRouter();
   const [selectedExchange, setSelectedExchange] = useState('');
   const [url, setUrl] = useState('');
+  const [pastedSpec, setPastedSpec] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState<number | null>(null);
   const [errorText, setErrorText] = useState('');
@@ -33,7 +34,7 @@ export default function Home() {
       return;
     }
 
-    if (url) {
+    if (url || pastedSpec) {
       setLoading(true);
       try {
         // Step 0 & 1: Fetching & Extracting via /api/ingest
@@ -45,9 +46,10 @@ export default function Home() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            exchange_name: new URL(url).hostname.replace('www.', ''),
-            spec_source: url,
-            asset_classes: 'spot, futures'
+            exchange_name: url ? new URL(url).hostname.replace('www.', '') : 'Pasted-Spec-Exchange',
+            spec_source: url || pastedSpec,
+            asset_classes: 'spot, futures',
+            is_pasted: !!pastedSpec && !url
           })
         });
 
@@ -133,11 +135,31 @@ export default function Home() {
               url={url}
               onUrlChange={(val) => {
                 setUrl(val);
-                if (val) setSelectedExchange('');
+                if (val) {
+                  setSelectedExchange('');
+                  setPastedSpec('');
+                }
               }}
               onRunAudit={handleRunAudit}
               loading={loading}
             />
+
+            {!selectedExchange && (
+              <details className="mt-4 max-w-sm mx-auto">
+                <summary className="text-sm text-slate-500 cursor-pointer hover:text-slate-700 text-center">
+                  ↳ Or paste spec content directly (for SPAs)
+                </summary>
+                <textarea
+                  className="mt-4 w-full h-40 p-4 text-sm border border-slate-300 rounded-xl font-mono resize-y focus:outline-none focus:ring-2 focus:ring-[#10B901] shadow-inner bg-slate-50"
+                  placeholder="Paste FIX spec text here (copy from browser, PDF, or API docs)..."
+                  value={pastedSpec}
+                  onChange={(e) => {
+                    setPastedSpec(e.target.value);
+                    if (e.target.value) setUrl('');
+                  }}
+                />
+              </details>
+            )}
 
             {errorText && (
               <div className="mt-8 text-center text-red-600 bg-red-50 border border-red-200 p-4 rounded-xl font-medium max-w-lg mx-auto">
