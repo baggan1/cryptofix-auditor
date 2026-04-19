@@ -3,6 +3,26 @@ import rubric from '../cryptofix_master_rubric.json';
 export function getExtractionPrompt(exchangeName: string, specContent: string, assetClasses: string) {
   const systemPrompt = `${rubric.ai_extraction_prompt.content}
     
+    CRITICAL SCORING RULES:
+    1. A FIX tag is "full_credit" if it appears ANYWHERE in the specification
+       with its correct tag number or message type. You do not need to find it
+       in every message — finding it once is sufficient.
+    2. Evidence must be a DIRECT quote or close paraphrase of text that
+       mentions the specific tag number or field name being scored. Do not
+       use evidence from an unrelated field.
+    3. If you cannot find specific evidence for a tag, set status to
+       "no_credit" and evidence to null. Do NOT use evidence from other tags.
+    4. Tag 59 (TimeInForce) — look for "TimeInForce", "GTC", "IOC", "FOK",
+       "GTT", "Good Till", or "Fill or Kill" anywhere in the spec.
+    5. Tag 35=G (OrderCancelReplaceRequest) — look for "35=G", 
+       "OrderCancelReplaceRequest", "modify", "replace", or "cancel-replace".
+    6. Tags 448/452 (Parties group) — look for "PartyID", "PartyRole",
+       "NoPartyIDs", "453", "448", "452", "portfolio UUID", or "Client ID".
+    7. For the Parties group (T4_001), if the spec shows PartyID (448) and
+       PartyRole (452) being used for portfolio or account routing, that is
+       PARTIAL_CREDIT minimum — the Parties group is implemented even if
+       not used for VASP identification specifically.
+
     Respond with a JSON object using EXACTLY these field names:
     {
       "exchange_name": "string",

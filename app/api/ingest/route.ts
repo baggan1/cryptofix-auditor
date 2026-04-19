@@ -34,6 +34,33 @@ function extractTextFromHTML(html: string): string {
     .trim();
 }
 
+function addStructureMarkers(text: string, specUrl: string): string {
+  // Add a header so Gemini knows what it's reading
+  let domain = 'Manual Upload';
+  try {
+    if (specUrl.startsWith('http')) {
+      domain = new URL(specUrl).hostname;
+    } else {
+      domain = specUrl;
+    }
+  } catch (e) {
+    domain = specUrl;
+  }
+
+  const header = `
+=== FIX API SPECIFICATION ===
+Source: ${specUrl}
+Domain: ${domain}
+Instructions: The following is a FIX protocol specification document.
+Each section describes a FIX message type. Tags listed under a message
+type are supported by that message. A tag present anywhere in the
+document should be scored full_credit unless explicitly restricted.
+=== SPECIFICATION CONTENT FOLLOWS ===
+
+`;
+  return header + text;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { exchange_name, spec_source, asset_classes = 'spot', is_pasted = false } = await req.json();
@@ -70,10 +97,15 @@ export async function POST(req: NextRequest) {
           'docs.cdp.coinbase.com/international-exchange': [
             'https://docs.cdp.coinbase.com/international-exchange/fix-api/fix-api-overview',
             'https://docs.cdp.coinbase.com/international-exchange/fix-api/admin-messages',
+            'https://docs.cdp.coinbase.com/international-exchange/fix-api/common-components',
+          ],
+          'docs.cdp.coinbase.com/exchange': [
+            'https://docs.cdp.coinbase.com/exchange/fix-api/connectivity',
+            'https://docs.cdp.coinbase.com/exchange/fix-api/drop-copy',
           ],
           'docs.kraken.com': [
             'https://docs.kraken.com/api/docs/fix-api/er-fix',
-            'https://docs.kraken.com/api/docs/fix-api/cancel-fix',
+            'https://docs.kraken.com/api/docs/fix-api/session-fix',
           ],
         };
 
@@ -115,6 +147,10 @@ export async function POST(req: NextRequest) {
     } else {
       specContent = spec_source.slice(0, 60000);
     }
+
+    // Apply structure markers to help Gemini understand the context
+    specContent = addStructureMarkers(specContent, is_pasted ? `Pasted content for ${exchange_name}` : spec_source);
+    console.log('Final content sent to Gemini (first 800 chars):', specContent.slice(0, 800));
 
     // Step 2 — build prompt and call Gemini Pro
     const { systemPrompt, userPrompt } = getExtractionPrompt(exchange_name, specContent, asset_classes);
@@ -221,6 +257,19 @@ export async function POST(req: NextRequest) {
     
     // Attach slug for downstream passing
     (extraction as any).exchange_slug = exchange_slug;
+
+    const fullCredit = extraction.checks.filter((c: any) => c.status === 'full_credit').length;
+    const partialCredit = extraction.checks.filter((c: any) => c.status === 'partial_credit').length;
+    const noCredit = extraction.checks.filter((c: any) => c.status === 'no_credit').length;
+    const withEvidence = extraction.checks.filter((c: any) => c.evidence !== null).length;
+
+    console.log(`Extraction quality: ${fullCredit} full / ${partialCredit} partial / ${noCredit} missing`);
+    console.log(`Checks with evidence: ${withEvidence}/27`);
+
+    // Flag if too many are missing (likely a content quality issue)
+    if (noCredit > 20) {
+      console.warn('HIGH MISS RATE: >20 checks missing. Spec content may be low quality.');
+    }
 
     return NextResponse.json(extraction);
   } catch (error: any) {
