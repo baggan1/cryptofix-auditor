@@ -165,7 +165,7 @@ export async function POST(req: NextRequest) {
         }
         // Also normalize any "determination" → "status" in checks array
         if (extraction.checks) {
-          extraction.checks = extraction.checks.map((c: any) => ({
+          extraction.checks = (extraction.checks as any[]).map((c: any) => ({
             ...c,
             status: c.status ?? c.determination ?? 'no_credit',
           }));
@@ -193,13 +193,13 @@ export async function POST(req: NextRequest) {
           check_id: id,
           fix_tag: '',
           field_name: id,
-          status: 'no_credit',
+          status: 'no_credit' as const,
           points_available: 0,
           evidence: null,
           asset_class_limitation: null,
           custom_tag_notes: 'Not returned by extraction — spec may not cover this field'
         }));
-        extraction.checks = [...(extraction.checks ?? []), ...missingChecks];
+        extraction.checks = [...(extraction.checks ?? []), ...(missingChecks as any[])];
       }
       
     } catch (parseError) {
