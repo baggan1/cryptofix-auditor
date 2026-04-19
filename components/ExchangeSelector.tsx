@@ -23,6 +23,7 @@ interface ExchangeSelectorProps {
   onUrlChange: (url: string) => void;
   onRunAudit: () => void;
   loading: boolean;
+  pastedReady?: boolean;
 }
 
 const ExchangeSelector: React.FC<ExchangeSelectorProps> = ({
@@ -31,7 +32,8 @@ const ExchangeSelector: React.FC<ExchangeSelectorProps> = ({
   url,
   onUrlChange,
   onRunAudit,
-  loading
+  loading,
+  pastedReady = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -198,7 +200,7 @@ const ExchangeSelector: React.FC<ExchangeSelectorProps> = ({
       <div className="flex justify-center">
         <button
           onClick={onRunAudit}
-          disabled={loading || (!selectedExchange && !url)}
+          disabled={loading || (!selectedExchange && !url && !pastedReady)}
           className="bg-[#10B981] hover:bg-[#059669] text-white font-medium px-10 h-14 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-accent/20 flex items-center gap-3"
         >
           {loading ? (
@@ -207,7 +209,8 @@ const ExchangeSelector: React.FC<ExchangeSelectorProps> = ({
               Running Audit...
             </>
           ) : (
-            selectedExchange ? 'View Scored Report' : 'Run New Audit'
+            selectedExchange ? 'View Scored Report' : 
+            pastedReady ? 'Analyze Pasted Spec' : 'Run New Audit'
           )}
         </button>
       </div>

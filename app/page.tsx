@@ -17,6 +17,8 @@ export default function Home() {
   const [selectedExchange, setSelectedExchange] = useState('');
   const [url, setUrl] = useState('');
   const [pastedSpec, setPastedSpec] = useState('');
+  const [exchangeName, setExchangeName] = useState('');
+  const [assetClasses, setAssetClasses] = useState('spot');
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState<number | null>(null);
   const [errorText, setErrorText] = useState('');
@@ -34,62 +36,74 @@ export default function Home() {
       return;
     }
 
-    if (url || pastedSpec) {
-      setLoading(true);
-      try {
-        // Step 0 & 1: Fetching & Extracting via /api/ingest
-        sessionStorage.removeItem('live_audit_report');
-        sessionStorage.removeItem('liveAuditResult');
-        setCurrentStep(0);
-        
-        const ingestRes = await fetch('/api/ingest', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            exchange_name: url ? new URL(url).hostname.replace('www.', '') : 'Pasted-Spec-Exchange',
-            spec_source: url || pastedSpec,
-            asset_classes: 'spot, futures',
-            is_pasted: !!pastedSpec && !url
-          })
-        });
+    // Determine input source — priority: pasted spec > URL
+    const hasPasted = pastedSpec.trim().length > 100;
+    const hasUrl = url.trim().length > 0;
+    
+    if (!hasPasted && !hasUrl) {
+      setErrorText('Please enter a FIX spec URL or paste spec content.');
+      return;
+    }
 
-        setCurrentStep(1);
+    setLoading(true);
+    try {
+      // Step 0 & 1: Fetching & Extracting via /api/ingest
+      sessionStorage.removeItem('live_audit_report');
+      sessionStorage.removeItem('liveAuditResult');
+      setCurrentStep(0);
+      
+      const payload = {
+        exchange_name: hasPasted ? (exchangeName || 'Pasted-Spec-Exchange') : (url ? new URL(url).hostname.replace('www.', '') : 'Unknown Exchange'),
+        spec_source: hasPasted ? pastedSpec.trim() : url.trim(),
+        asset_classes: assetClasses || 'spot',
+        is_pasted: hasPasted,
+      };
 
-        if (!ingestRes.ok) {
-          const errData = await ingestRes.json().catch(() => ({}));
-          throw new Error(`Extraction failed: ${errData.error || ingestRes.statusText}. ${errData.rawPreview ? 'Raw preview: ' + errData.rawPreview.slice(0, 200) : ''}`);
-        }
+      const ingestRes = await fetch('/api/ingest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-        const extractionResult = await ingestRes.json();
-        
-        // Step 2: Scoring
-        setCurrentStep(2);
-        const scoreRes = await fetch('/api/score', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(extractionResult)
-        });
+      setCurrentStep(1);
 
-        if (!scoreRes.ok) {
-          const errData = await scoreRes.json();
-          throw new Error(errData.error || 'Scoring failed');
-        }
-
-        const scoreData = await scoreRes.json();
-
-        // Step 3: Building report
-        setCurrentStep(3);
-        await new Promise(r => setTimeout(r, 500)); // Brief pause for UX
-
-        // Hydrate sessionStorage for client-side routing persistence
-        sessionStorage.setItem('live_audit_report', JSON.stringify(scoreData.report));
-        
-        router.push(`/audit/live`);
-      } catch (error: any) {
-        console.error(error);
-        setErrorText(error.message || 'Error occurred during audit.');
-        setLoading(false);
+      if (!ingestRes.ok) {
+        const errData = await ingestRes.json().catch(() => ({}));
+        throw new Error(`Extraction failed: ${errData.error || ingestRes.statusText}. ${errData.rawPreview ? 'Raw preview: ' + errData.rawPreview.slice(0, 200) : ''}`);
       }
+
+      const extractionResult = await ingestRes.json();
+      
+      // Step 2: Scoring
+      setCurrentStep(2);
+      const scoreRes = await fetch('/api/score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(extractionResult)
+      });
+
+      if (!scoreRes.ok) {
+        const errData = await scoreRes.json();
+        throw new Error(errData.error || 'Scoring failed');
+      }
+
+      const scoreData = await scoreRes.json();
+
+      // Step 3: Building report
+      setCurrentStep(3);
+      await new Promise(r => setTimeout(r, 500)); // Brief pause for UX
+
+      // Hydrate sessionStorage for client-side routing persistence
+      sessionStorage.setItem('live_audit_report', JSON.stringify(scoreData.report));
+      
+      // Clear paste content after successful submission
+      setPastedSpec('');
+      
+      router.push(`/audit/live`);
+    } catch (error: any) {
+      console.error(error);
+      setErrorText(error.message || 'Error occurred during audit.');
+      setLoading(false);
     }
   };
 
@@ -142,6 +156,7 @@ export default function Home() {
               }}
               onRunAudit={handleRunAudit}
               loading={loading}
+              pastedReady={pastedSpec.trim().length > 100}
             />
 
             {!selectedExchange && (
@@ -160,6 +175,26 @@ export default function Home() {
                     if (e.target.value) setUrl('');
                   }}
                 />
+                
+                {pastedSpec.trim().length > 100 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 mt-2 text-sm text-emerald-600">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                      </svg>
+                      <span>{pastedSpec.trim().length.toLocaleString()} characters ready — click Analyze Pasted Spec to analyze</span>
+                    </div>
+
+                    <input
+                      type="text"
+                      placeholder="Exchange name (e.g. Coinbase INTX)"
+                      value={exchangeName}
+                      onChange={(e) => setExchangeName(e.target.value)}
+                      className="mt-2 w-full p-3 text-sm border border-slate-300 rounded-lg
+                        focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                    />
+                  </div>
+                )}
               </details>
             )}
 
