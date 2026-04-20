@@ -31,24 +31,57 @@ const tierScores = {};
 const details = [];
 
 rubric.tiers.forEach(tier => {
-  let earned = 0;
+  // Group checks by message_type
+  const byMessage = {};
   tier.checks.forEach(check => {
-    const r = extraction.checks.find(c => c.check_id === check.id);
-    const f = r ? (factors[r.status] ?? 0) : 0;
-    const pts = (check.weight ?? 0) * f;
-    earned += pts; total += pts;
-    details.push({
-      check_id: check.id, fix_tag: check.fix_tag, field_name: check.field_name,
-      tier: tier.tier, weight: check.weight, status: r ? r.status : 'no_credit',
-      points_earned: pts, points_available: check.weight,
-      evidence: r ? r.evidence : null,
-      asset_class_limitation: r ? r.asset_class_limitation : null
+    const mt = check.message_type;
+    if (!byMessage[mt]) byMessage[mt] = { message: null, tags: [] };
+    if (check.level === 'message') byMessage[mt].message = check;
+    else byMessage[mt].tags.push(check);
+  });
+
+  let tierEarned = 0;
+  Object.entries(byMessage).forEach(([msgType, group]) => {
+    // Score message-level check (if exists)
+    let msgFactor = 0;
+    if (group.message) {
+      const msgResult = extraction.checks.find(c => c.check_id === group.message.id);
+      msgFactor = factors[msgResult?.status ?? 'no_credit'] ?? 0;
+      const pts = group.message.weight * msgFactor;
+      tierEarned += pts;
+      details.push({
+        check_id: group.message.id, message_type: msgType, message_name: group.message.message_name,
+        level: 'message', tag_number: null, tag_name: null,
+        tier: tier.tier, weight: group.message.weight, status: msgResult ? msgResult.status : 'no_credit',
+        points_earned: pts, points_available: group.message.weight,
+        evidence: msgResult ? msgResult.evidence : null
+      });
+    }
+
+    // Score tag-level checks
+    group.tags.forEach(check => {
+      const result = extraction.checks.find(c => c.check_id === check.id);
+      const factor = factors[result?.status ?? 'no_credit'] ?? 0;
+      const pts = check.weight * factor;
+      tierEarned += pts;
+      details.push({
+        check_id: check.id, message_type: msgType, message_name: check.message_name,
+        level: 'tag', tag_number: check.tag_number, tag_name: check.tag_name,
+        tier: tier.tier, weight: check.weight, status: result ? result.status : 'no_credit',
+        points_earned: pts, points_available: check.weight,
+        evidence: result ? result.evidence : null
+      });
     });
   });
+
+  tierEarned = Math.min(tierEarned, tier.weight_total); // cap at tier max
   tierScores[`tier${tier.tier}`] = {
-    label: tier.label, earned, available: tier.weight_total,
-    pct: Math.round((earned / tier.weight_total) * 100)
+    label: tier.label,
+    earned: Math.round(tierEarned * 10) / 10,
+    available: tier.weight_total,
+    pct: Math.round((tierEarned / tier.weight_total) * 100)
   };
+  total += tierEarned;
 });
 
 const score = Math.round(total);

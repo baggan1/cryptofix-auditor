@@ -62,31 +62,66 @@ const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) =>
             
             {isOpen && (
               <div className="border-t border-slate-100">
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] tracking-widest font-bold">
-                    <tr>
-                      <th className="px-4 py-3">Tag</th>
-                      <th className="px-4 py-3">Field</th>
-                      <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3">Evidence</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {tierDetails.map((check) => (
-                      <tr key={check.check_id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-4 py-4 font-mono text-slate-900">{check.fix_tag}</td>
-                        <td className="px-4 py-4">
-                          <div className="font-semibold text-slate-900">{check.field_name}</div>
-                          {check.asset_class_limitation && (
-                            <div className="text-[10px] text-amber-600 font-bold uppercase mt-0.5">{check.asset_class_limitation}</div>
-                          )}
-                        </td>
-                        <td className="px-4 py-4">{getStatusPill(check.status)}</td>
-                        <td className="px-4 py-4 text-slate-500 text-xs leading-relaxed max-w-xs">{check.evidence || '-'}</td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left border-collapse">
+                    <thead className="bg-[#f8fafc] text-slate-500 uppercase text-[10px] tracking-widest font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="px-4 py-3">Tag / Level</th>
+                        <th className="px-4 py-3">Field / Context</th>
+                        <th className="px-4 py-3">Status</th>
+                        <th className="px-4 py-3">Evidence / Gaps</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {(() => {
+                        // Grouping by message_type
+                        const msgGroups: Record<string, CheckResult[]> = {};
+                        tierDetails.forEach(d => {
+                          if (!msgGroups[d.message_type]) msgGroups[d.message_type] = [];
+                          msgGroups[d.message_type].push(d);
+                        });
+
+                        return Object.entries(msgGroups).map(([msgType, checks]) => {
+                          const msgCheck = checks.find(c => c.level === 'message');
+                          const tagChecks = checks.filter(c => c.level === 'tag');
+
+                          return (
+                            <React.Fragment key={msgType}>
+                              {/* Message Header Row */}
+                              <tr className="bg-slate-50/80">
+                                <td className="px-4 py-3 font-bold text-navy-dark">
+                                  {msgType}
+                                </td>
+                                <td className="px-4 py-3">
+                                  <div className="font-bold text-slate-900">{msgCheck?.message_name || checks[0].message_name}</div>
+                                  <div className="text-[10px] text-slate-400 font-semibold tracking-tight uppercase">Message Documentation</div>
+                                </td>
+                                <td className="px-4 py-3">{msgCheck ? getStatusPill(msgCheck.status) : '-'}</td>
+                                <td className="px-4 py-3 text-[11px] text-slate-500 italic">{msgCheck?.evidence?.substring(0, 80) || '-'}</td>
+                              </tr>
+                              {/* Tag Rows */}
+                              {tagChecks.map((check) => (
+                                <tr key={check.check_id} className="hover:bg-slate-50/50 transition-colors">
+                                  <td className="px-4 py-3 pl-8 font-mono text-slate-600 text-xs">
+                                    {check.tag_number || '-'}
+                                  </td>
+                                  <td className="px-4 py-3 pl-8">
+                                    <div className="font-medium text-slate-800">{check.tag_name}</div>
+                                    {check.asset_class_limitation && (
+                                      <div className="text-[9px] text-amber-600 font-bold uppercase mt-0.5">{check.asset_class_limitation}</div>
+                                    )}
+                                  </td>
+                                  <td className="px-4 py-3">{getStatusPill(check.status)}</td>
+                                  <td className="px-4 py-3 text-slate-500 text-[11px] leading-relaxed max-w-xs">{check.evidence || '-'}</td>
+                                </tr>
+                              ))}
+                            </React.Fragment>
+                          );
+                        });
+                      })()}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>

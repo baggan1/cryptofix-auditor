@@ -1,1037 +1,199 @@
 {
   "meta": {
-    "schema_version": "1.1.0",
+    "schema_version": "2.0.0",
     "tool_name": "CryptoFIX Institutional Readiness Auditor",
     "author": "Opound LLC — Navilla Bagga",
-    "author_credentials": "15+ years FIX protocol implementation: Wellington Management (9 years, 20+ broker certifications, ATDL, dark pool ATS), Solidus Labs (25+ crypto exchange onboardings, digital asset FIX standard)",
-    "last_updated": "2026-04-09",
-    "rubric_basis": "Wellington Management institutional FIX standards, CME iLink3 FIX 5.0, FIX Trading Community Digital Assets Working Group (DAWG) Gap Analysis v0.2 May 2022, FIX Trading Community DAWG March 2022 presentation, FATF Travel Rule, MiFID II RTS 6/25/27",
-    "dawg_reference": {
-      "document_1": "FIX Digital Asset WG — Extensions for Digital Asset Trading, v0.2, May 10 2022 (Draft proposal to FIX Global Technical Committee)",
-      "document_2": "FIX Digital Assets Working Group — March 1 2022 presentation (Symbology, FIX Protocol changes, Recommended Practices)",
-      "fiximate_url": "https://fiximate.fixtrading.org/",
-      "license": "Creative Commons Attribution-NoDerivatives 4.0 International — FIX Protocol Limited, copyright 2003-2022",
-      "status_note": "Tier 5 checks are based on DAWG draft proposals. Tag numbers marked TBD pending GTC ratification. Exchanges are not penalized for non-implementation — Tier 5 is informational and forward-looking only.",
-      "action_required": "Verify current ratification status and assigned tag numbers with FIX Trading Community before production use of Tier 5 scores"
-    },
-    "disclaimer": "Rubric reflects TradFi institutional connectivity standards applied to crypto venue FIX implementations. Scores are indicative. Independent verification against exchange RoE documentation recommended.",
+    "scoring_model": "two-level: message-type presence + essential tag coverage",
+    "fix_reference_primary": "https://fiximate.fixtrading.org/",
+    "tier_structure_note": "Tier 1 covers order lifecycle messages. Tier 2 covers execution quality tags within 35=8. Tier 3 covers post-trade and RFQ messages. Session reliability removed from Tier 3. Tier 4 tags evaluated in context of 35=8 or 35=AE.",
     "scoring_guide": {
-      "90-100": "Institutional grade — suitable for direct OMS connectivity without workarounds",
-      "70-89": "Near-institutional — minor gaps addressable via configuration or REST fallback",
-      "50-69": "Partial — significant gaps; suitable for prop trading but not prime brokerage",
-      "30-49": "Basic — electronic trading possible but institutional workflow gaps are material",
-      "0-29": "Pre-institutional — not suitable for institutional connectivity in current form"
+      "90-100": "Institutional grade",
+      "70-89": "Near-institutional",
+      "50-69": "Partial",
+      "30-49": "Basic",
+      "0-29": "Pre-institutional"
     }
   },
   "scoring": {
-    "max_score": 100,
-    "tier5_max_informational": 12,
     "tier_weights": {
-      "tier1_order_lifecycle": 35,
+      "tier1_order_lifecycle": 40,
       "tier2_execution_quality_tca": 25,
       "tier3_post_trade_allocation": 25,
-      "tier4_aml_travel_rule": 15,
-      "tier5_digital_asset_extensions": 0
-    },
-    "tier5_scoring_note": "Tier 5 checks do NOT affect the 0-100 score. They are scored separately as: implemented (full_credit), roadmapped_or_documented (partial_credit), no_mention (no_credit). A Tier 5 summary section appears in the RoE document after the main scorecard.",
-    "scoring_logic": {
-      "full_credit": 1,
-      "partial_credit": 0.5,
-      "no_credit": 0
-    },
-    "score_formula": "sum(check.weight * score_factor) across all checks, where score_factor is 1.0 / 0.5 / 0.0",
-    "bonus_points": {
-      "rules_of_engagement_doc_quality": {
-        "max": 3,
-        "description": "Bonus for exchanges that publish a formal RoE document with session config, custom tag dictionary, and UAT environment"
-      },
-      "fix_conformance_certification": {
-        "max": 2,
-        "description": "Bonus if exchange has formal FIX Trading Community conformance certification"
-      }
+      "tier4_aml_travel_rule": 10,
+      "tier5_dawg_extensions": 0
     }
   },
   "ai_extraction_prompt": {
     "role": "system",
-    "content": "You are a FIX protocol specialist with deep knowledge of institutional trading infrastructure. Your task is to analyze a provided FIX API specification document (from a crypto exchange) and extract a structured JSON object indicating which FIX fields and behaviors are present, partially present, or absent. For each check_id in the rubric, return one of: full_credit, partial_credit, or no_credit, along with a brief evidence string (quote or paraphrase from the spec that supports your determination). If evidence is absent from the spec, return no_credit with evidence: null. Be conservative: if a field is mentioned but behavior is ambiguous or undocumented, return partial_credit. Do not infer presence from related fields — only score what is explicitly documented. For Tier 5 checks (T5_001 through T5_005), use a different scoring scale: full_credit = exchange explicitly implements this DAWG-proposed field or its functional equivalent; partial_credit = exchange has roadmapped it, references it in documentation, or has a non-standard workaround; no_credit = no mention found. Tier 5 does not affect the total score — flag it clearly in notes as informational.",
-    "output_schema": {
-      "exchange_name": "string",
-      "spec_source_url": "string or null",
-      "extraction_date": "ISO 8601 date",
-      "checks": [
-        {
-          "check_id": "string (e.g. T1_001)",
-          "status": "full_credit | partial_credit | no_credit",
-          "evidence": "string or null",
-          "notes": "string or null"
-        }
-      ]
-    },
-    "user_prompt_template": "Below is the FIX API specification for [EXCHANGE_NAME]. Please extract the rubric fields according to the system instructions and return a JSON object matching the output_schema.\n\n[PASTE SPEC CONTENT HERE]"
-  },
-  "roe_output_template": {
-    "description": "Template for the Rules of Engagement document generated as output of the audit",
-    "sections": [
-      {
-        "section": "1. Executive Summary",
-        "content": "Exchange name, audit date, overall score, tier scores, recommendation (Institutional Grade / Near-Institutional / Partial / Basic / Pre-Institutional)"
-      },
-      {
-        "section": "2. Session Configuration",
-        "content": "FIX version, TargetCompID, SenderCompID, host/port, authentication method, heartbeat interval, TLS version, reconnect policy"
-      },
-      {
-        "section": "3. Tier Scorecard",
-        "content": "Color-coded table: check_id, field name, status (Present/Partial/Missing), weight, points earned, evidence note"
-      },
-      {
-        "section": "4. Gap Analysis & Remediation",
-        "content": "For each missing or partial check: gap description, institutional impact, recommended remediation, workaround (if any), estimated implementation effort (S/M/L)"
-      },
-      {
-        "section": "5. Custom Tag Dictionary",
-        "content": "Exchange-specific non-standard FIX tags: tag number, field name, data type, valid values, applicable messages"
-      },
-      {
-        "section": "6. Supported Order Types Matrix",
-        "content": "Grid: order type vs asset class (spot / futures / perps / options) — Present / Partial / Missing"
-      },
-      {
-        "section": "7. UAT Checklist",
-        "content": "Step-by-step test cases for institutional connectivity validation: logon, NOS, partial fill, cancel, amend, mass cancel, COD trigger, gap-fill recovery"
-      }
-    ]
+    "content": "You are a FIX protocol specialist with deep knowledge of institutional trading. Analyze the provided exchange FIX specification and score each check_id in the rubric using a TWO-LEVEL model:\n\nFor message-level checks (check_id ends in _000):\n  full_credit   = message type is explicitly documented with a tag table\n  partial_credit = message is mentioned but documentation is incomplete\n  no_credit     = message is absent\n\nFor tag-level checks (check_id contains a tag number):\n  full_credit   = tag explicitly listed in that specific message type's table\n  partial_credit = tag present but conditional, restricted, or via custom tag\n  no_credit     = tag absent from that message type's documentation\n\nIMPORTANT: Score each tag WITHIN its message type context. Tag 55 (Symbol) may be present in 35=D but not 35=F — score each separately. Do not assume a tag present in one message is present in another."
   },
   "tiers": [
     {
       "tier": 1,
       "id": "order_lifecycle",
-      "label": "Order lifecycle — core order management",
-      "description": "Fundamental FIX messages and fields required to place, modify, cancel, and receive status on orders. An exchange missing any Tier 1 item cannot be used by an institutional client for live trading.",
-      "weight_total": 35,
-      "institutional_rationale": "TradFi prime brokers and institutional OMS systems (Bloomberg EMSX, Charles River, Fidessa) expect these fields verbatim. Missing Tier 1 fields block connectivity at the session layer — no workaround exists.",
+      "label": "Order Lifecycle",
+      "weight_total": 40,
       "checks": [
-        {
-          "id": "T1_001",
-          "fix_tag": "35=D",
-          "field_name": "NewOrderSingle",
-          "category": "order_entry",
-          "weight": 5,
-          "required": true,
-          "description": "Core order entry message. Must support submission of a new order with all standard parameters.",
-          "required_subtags": [
-            "11",
-            "38",
-            "40",
-            "44",
-            "54",
-            "55",
-            "59",
-            "60"
-          ],
-          "expected_order_types": [
-            "1-Market",
-            "2-Limit",
-            "3-Stop",
-            "4-StopLimit"
-          ],
-          "institutional_gap_if_missing": "Exchange cannot accept orders from institutional OMS. Hard blocker.",
-          "tradfi_reference": "CME iLink3 tag 35=D; FIX 4.2/4.4 standard",
-          "crypto_notes": "Most crypto exchanges implement this. Verify futures and options parity with spot.",
-          "scoring_logic": {
-            "full_credit": "NOS present with all required_subtags; market + limit + stop order types supported",
-            "partial_credit": "NOS present but missing stop types or futures parity",
-            "no_credit": "NOS not documented or not available"
-          }
-        },
-        {
-          "id": "T1_002",
-          "fix_tag": "35=8",
-          "field_name": "ExecutionReport",
-          "category": "order_status",
-          "weight": 5,
-          "required": true,
-          "description": "Execution report covering all order state transitions: New (150=0), Partial Fill (150=1), Fill (150=2), Cancel (150=4), Reject (150=8), Pending Cancel (150=6), Expired (150=C).",
-          "required_exec_types": [
-            "0-New",
-            "1-PartialFill",
-            "2-Fill",
-            "4-Canceled",
-            "8-Rejected",
-            "C-Expired"
-          ],
-          "required_subtags": [
-            "11",
-            "14",
-            "17",
-            "20",
-            "31",
-            "32",
-            "37",
-            "38",
-            "39",
-            "44",
-            "54",
-            "55",
-            "60",
-            "150",
-            "151"
-          ],
-          "institutional_gap_if_missing": "Without complete ER lifecycle, institutional OMS cannot maintain accurate position state. Critical failure.",
-          "tradfi_reference": "CME iLink3 35=8; FIX 4.4 Section 5",
-          "crypto_notes": "Many exchanges omit Pending Cancel (150=6) and Expired (150=C). These are required for GTD order management.",
-          "scoring_logic": {
-            "full_credit": "All 6 ExecType values documented and testable",
-            "partial_credit": "Core fills present but Pending Cancel, Expired, or Replaced missing",
-            "no_credit": "ER not documented or limited to fills only"
-          }
-        },
-        {
-          "id": "T1_003",
-          "fix_tag": "59",
-          "field_name": "TimeInForce",
-          "category": "order_entry",
-          "weight": 5,
-          "required": true,
-          "description": "Controls how long an order remains active. Institutional workflows require at minimum: GTC (1), IOC (3), FOK (4), GTD (6). Day (0) and At-Open (2) are TradFi standard but less relevant in 24/7 crypto markets.",
-          "required_values": {
-            "0": {
-              "name": "Day",
-              "label": "Day Order",
-              "required": false,
-              "note": "Less critical in 24/7 crypto but expected by some OMS systems"
-            },
-            "1": {
-              "name": "GTC",
-              "label": "Good Till Cancel",
-              "required": true
-            },
-            "3": {
-              "name": "IOC",
-              "label": "Immediate or Cancel",
-              "required": true
-            },
-            "4": {
-              "name": "FOK",
-              "label": "Fill or Kill",
-              "required": true,
-              "crypto_gap": "Frequently missing on futures legs"
-            },
-            "6": {
-              "name": "GTD",
-              "label": "Good Till Date",
-              "required": true,
-              "crypto_gap": "Often spot-only; missing on derivatives"
-            }
-          },
-          "institutional_gap_if_missing": "FOK absence blocks algos that require guaranteed full fill or no fill (e.g. block trades, index rebalancing). GTD absence breaks scheduled execution workflows.",
-          "tradfi_reference": "FIX 4.4 tag 59; standard across all TradFi venues",
-          "scoring_logic": {
-            "full_credit": "GTC + IOC + FOK + GTD all supported across spot and derivatives",
-            "partial_credit": "GTC + IOC present; FOK or GTD missing, or present on spot only",
-            "no_credit": "Only GTC or IOC supported"
-          }
-        },
-        {
-          "id": "T1_004",
-          "fix_tag": "1138",
-          "field_name": "DisplayQty (Iceberg)",
-          "category": "order_entry",
-          "weight": 3,
-          "required": false,
-          "description": "Specifies the visible quantity for an iceberg/reserve order. The displayed portion refreshes automatically as it fills. Critical for institutional block order management — prevents market impact signaling.",
-          "constraints": {
-            "min_display_ratio": "1/15 of total OrderQty (Kraken constraint; varies by exchange)",
-            "order_type_restriction": "Limit orders only (standard across all venues)"
-          },
-          "institutional_gap_if_missing": "Institutions executing large block orders cannot hide full size. Forced to use manual order slicing or OMS-side iceberg simulation, which is operationally inferior.",
-          "tradfi_reference": "CME iLink3 tag 1138; standard on all lit equity and futures venues",
-          "crypto_notes": "Spot-only on Kraken. Absent on most crypto derivatives exchanges. Flag if derivatives parity missing.",
-          "scoring_logic": {
-            "full_credit": "DisplayQty supported on both spot and derivatives, documented with min ratio constraint",
-            "partial_credit": "Spot only or missing minimum ratio documentation",
-            "no_credit": "Iceberg not supported"
-          }
-        },
-        {
-          "id": "T1_005",
-          "fix_tag": "7928",
-          "field_name": "SelfTradePrevention (STP)",
-          "category": "compliance",
-          "weight": 4,
-          "required": true,
-          "description": "Prevents wash trading by canceling one or both legs when an institution's orders would match against themselves. CME Rule 534 equivalent in TradFi.",
-          "required_modes": {
-            "0": "Cancel Both — both arriving and resting orders canceled",
-            "1": "Cancel Newest — arriving order canceled (default; most common institutional preference)",
-            "2": "Cancel Oldest — resting order canceled"
-          },
-          "institutional_gap_if_missing": "Without STP, institutional clients face regulatory wash-trade exposure. Prime brokers will not connect to exchanges lacking STP controls.",
-          "tradfi_reference": "CME Rule 534 Self-Match Prevention; Euronext Tag 7928; standard on US futures and equity venues",
-          "crypto_notes": "Kraken implements all 3 modes. Many smaller exchanges offer only Cancel Newest. Verify all 3 modes are present.",
-          "scoring_logic": {
-            "full_credit": "All 3 modes (cancel-both, cancel-newest, cancel-oldest) documented and configurable per order",
-            "partial_credit": "Only 1-2 modes supported or STP is account-level only (not order-level)",
-            "no_credit": "No STP controls documented"
-          }
-        },
-        {
-          "id": "T1_006",
-          "fix_tag": "35=F",
-          "field_name": "OrderCancelRequest",
-          "category": "order_management",
-          "weight": 3,
-          "required": true,
-          "description": "Single order cancel. Must support cancel by ClOrdID (tag 11) and by ExchangeOrderID (tag 37). Institutional OMS systems use both identifiers depending on cancel source.",
-          "required_subtags": [
-            "11",
-            "37",
-            "41",
-            "54",
-            "55"
-          ],
-          "institutional_gap_if_missing": "Without reliable cancel, risk management systems cannot exit positions during market stress. Unacceptable for institutional use.",
-          "tradfi_reference": "FIX 4.4 tag 35=F; standard",
-          "scoring_logic": {
-            "full_credit": "Cancel by ClOrdID and OrigClOrdID both supported; cancel reject (35=9) properly documented",
-            "partial_credit": "Cancel supported but only by one identifier type; cancel reject behavior undocumented",
-            "no_credit": "Cancel not documented via FIX"
-          }
-        },
-        {
-          "id": "T1_007",
-          "fix_tag": "35=q",
-          "field_name": "OrderMassCancelRequest + Cancel-on-Disconnect",
-          "category": "risk_controls",
-          "weight": 4,
-          "required": true,
-          "description": "Mass cancel all open orders (kill switch). Cancel-on-Disconnect (COD) automatically cancels all open orders if the FIX session drops. Both are mandatory risk controls for institutional clients and regulators.",
-          "cod_behavior": {
-            "trigger": "FIX session TCP disconnect",
-            "scope": "All open orders for that session/CompID",
-            "latency_target": "< 500ms from disconnect detection (best practice)"
-          },
-          "institutional_gap_if_missing": "Without kill switch + COD, a connectivity failure leaves live orders in the market with no recall mechanism. Unacceptable under MiFID II, CFTC, and most prime broker agreements.",
-          "tradfi_reference": "CME iLink3 Cancel-on-Disconnect; FIX 4.4 35=q; MiFID II RTS6 kill-switch requirement",
-          "scoring_logic": {
-            "full_credit": "Mass cancel (35=q) documented; COD behavior documented with scope and latency; testable in UAT",
-            "partial_credit": "Mass cancel present but COD behavior undocumented or opt-in only",
-            "no_credit": "No mass cancel or kill-switch mechanism documented"
-          }
-        },
-        {
-          "id": "T1_008",
-          "fix_tag": "35=G",
-          "field_name": "OrderCancelReplaceRequest (Amend)",
-          "category": "order_management",
-          "weight": 4,
-          "required": true,
-          "description": "Modify an existing live order — price, quantity, or TIF — without cancel-and-resubmit. Must preserve queue priority where applicable. Institutional algos depend on amend for price-chasing and quantity adjustment.",
-          "amendable_fields": [
-            "38-OrderQty",
-            "44-Price",
-            "99-StopPx",
-            "59-TimeInForce"
-          ],
-          "atomic_amend_note": "Kraken supports atomic amends (amend fails without cancel if rejected). Verify atomicity guarantees — a non-atomic amend that cancels before confirming the new order is a significant operational risk.",
-          "institutional_gap_if_missing": "Without amend, institutional algos must cancel + resubmit, losing queue position and increasing fill latency. Many TradFi systems refuse to connect to venues without amend.",
-          "tradfi_reference": "FIX 4.4 35=G; standard across all TradFi venues",
-          "scoring_logic": {
-            "full_credit": "Amend supported on price, qty, and TIF; atomic amend behavior documented; amend reject (35=9) handling documented",
-            "partial_credit": "Amend supported but atomicity not guaranteed or limited to price-only amends",
-            "no_credit": "No order amend via FIX; cancel-resubmit only"
-          }
-        },
-        {
-          "id": "T1_009",
-          "fix_tag": "35=H",
-          "field_name": "OrderStatusRequest",
-          "category": "order_status",
-          "weight": 2,
-          "required": false,
-          "description": "On-demand order status query. Returns current state of a specific order as an ExecutionReport. Critical for OMS reconciliation after session recovery or gap-fill.",
-          "required_subtags": [
-            "11",
-            "37",
-            "54"
-          ],
-          "institutional_gap_if_missing": "Without status request, post-reconnect reconciliation requires waiting for unsolicited ERs or using REST fallback. Increases operational risk during session recovery.",
-          "tradfi_reference": "FIX 4.4 35=H; standard",
-          "scoring_logic": {
-            "full_credit": "OSR documented; response is a full ER; behavior during session gap documented",
-            "partial_credit": "OSR present but limited (e.g. only returns last state, not full history)",
-            "no_credit": "No order status request via FIX"
-          }
-        }
+        { "id": "T1_D_000", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "message", "tag_number": null, "tag_name": null, "weight": 3.0, "required": true, "description": "Is NOS explicitly documented with tag tables?" },
+        { "id": "T1_D_011", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "tag", "tag_number": 11, "tag_name": "ClOrdID", "weight": 0.7, "required": true, "description": "Unique client order identifier" },
+        { "id": "T1_D_055", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "tag", "tag_number": 55, "tag_name": "Symbol", "weight": 0.7, "required": true, "description": "Instrument identifier" },
+        { "id": "T1_D_054", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "tag", "tag_number": 54, "tag_name": "Side", "weight": 0.7, "required": true, "description": "Buy(1) / Sell(2)" },
+        { "id": "T1_D_060", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "tag", "tag_number": 60, "tag_name": "TransactTime", "weight": 0.7, "required": true, "description": "UTC timestamp of order" },
+        { "id": "T1_D_038", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "tag", "tag_number": 38, "tag_name": "OrderQty", "weight": 0.7, "required": true, "description": "Total order quantity" },
+        { "id": "T1_D_040", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "tag", "tag_number": 40, "tag_name": "OrdType", "weight": 0.7, "required": true, "description": "1=Market, 2=Limit, 3=Stop, 4=StopLimit" },
+        { "id": "T1_D_044", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "tag", "tag_number": 44, "tag_name": "Price", "weight": 0.7, "required": false, "conditional": true, "description": "Required for Limit OrdTypes" },
+        { "id": "T1_D_167", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "tag", "tag_number": 167, "tag_name": "SecurityType", "weight": 0.7, "required": false, "description": "FUT/OPT (required for derivatives)" },
+        
+        { "id": "T1_8_000", "message_type": "35=8", "message_name": "ExecutionReport", "level": "message", "tag_number": null, "tag_name": null, "weight": 2.0, "required": true, "description": "Is ER explicitly documented?" },
+        { "id": "T1_8_037", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 37, "tag_name": "OrderID", "weight": 0.7, "required": true, "description": "Exchange-assigned order identifier" },
+        { "id": "T1_8_017", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 17, "tag_name": "ExecID", "weight": 0.7, "required": true, "description": "Unique execution identifier" },
+        { "id": "T1_8_150", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 150, "tag_name": "ExecType", "weight": 0.7, "required": true, "description": "0=New, 1=PartialFill, 2=Fill, 4=Cancel, 8=Reject" },
+        { "id": "T1_8_039", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 39, "tag_name": "OrdStatus", "weight": 0.7, "required": true, "description": "0=New, 1=PartiallyFilled, 2=Filled, 4=Cancelled" },
+        { "id": "T1_8_055", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 55, "tag_name": "Symbol", "weight": 0.7, "required": true, "description": "Instrument identifier" },
+        { "id": "T1_8_054", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 54, "tag_name": "Side", "weight": 0.7, "required": true, "description": "Buy(1) / Sell(2)" },
+        { "id": "T1_8_151", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 151, "tag_name": "LeavesQty", "weight": 0.7, "required": true, "description": "Remaining open quantity" },
+        { "id": "T1_8_014", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 14, "tag_name": "CumQty", "weight": 0.7, "required": true, "description": "Cumulative filled quantity" },
+        { "id": "T1_8_044", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 44, "tag_name": "Price", "weight": 0.7, "required": true, "description": "Order limit price" },
+
+        { "id": "T1_F_000", "message_type": "35=F", "message_name": "OrderCancelRequest", "level": "message", "tag_number": null, "tag_name": null, "weight": 2.0, "required": true, "description": "Is CxReq explicitly documented?" },
+        { "id": "T1_F_011", "message_type": "35=F", "message_name": "OrderCancelRequest", "level": "tag", "tag_number": 11, "tag_name": "ClOrdID", "weight": 0.7, "required": true, "description": "New cancel request identifier" },
+        { "id": "T1_F_041", "message_type": "35=F", "message_name": "OrderCancelRequest", "level": "tag", "tag_number": 41, "tag_name": "OrigClOrdID", "weight": 0.7, "required": true, "description": "Identifier of order being cancelled" },
+        { "id": "T1_F_055", "message_type": "35=F", "message_name": "OrderCancelRequest", "level": "tag", "tag_number": 55, "tag_name": "Symbol", "weight": 0.7, "required": true, "description": "Instrument identifier" },
+        { "id": "T1_F_054", "message_type": "35=F", "message_name": "OrderCancelRequest", "level": "tag", "tag_number": 54, "tag_name": "Side", "weight": 0.7, "required": true, "description": "Must match original order" },
+        { "id": "T1_F_060", "message_type": "35=F", "message_name": "OrderCancelRequest", "level": "tag", "tag_number": 60, "tag_name": "TransactTime", "weight": 0.7, "required": true, "description": "UTC timestamp" },
+
+        { "id": "T1_G_000", "message_type": "35=G", "message_name": "OrderCancelReplaceRequest", "level": "message", "tag_number": null, "tag_name": null, "weight": 2.0, "required": true, "description": "Is AmReq explicitly documented?" },
+        { "id": "T1_G_011", "message_type": "35=G", "message_name": "OrderCancelReplaceRequest", "level": "tag", "tag_number": 11, "tag_name": "ClOrdID", "weight": 0.75, "required": true, "description": "New identifier for amended order" },
+        { "id": "T1_G_041", "message_type": "35=G", "message_name": "OrderCancelReplaceRequest", "level": "tag", "tag_number": 41, "tag_name": "OrigClOrdID", "weight": 0.75, "required": true, "description": "Identifier of order being amended" },
+        { "id": "T1_G_055", "message_type": "35=G", "message_name": "OrderCancelReplaceRequest", "level": "tag", "tag_number": 55, "tag_name": "Symbol", "weight": 0.75, "required": true, "description": "Instrument identifier" },
+        { "id": "T1_G_054", "message_type": "35=G", "message_name": "OrderCancelReplaceRequest", "level": "tag", "tag_number": 54, "tag_name": "Side", "weight": 0.75, "required": true, "description": "Must match original order" },
+        { "id": "T1_G_060", "message_type": "35=G", "message_name": "OrderCancelReplaceRequest", "level": "tag", "tag_number": 60, "tag_name": "TransactTime", "weight": 0.75, "required": true, "description": "UTC timestamp" },
+
+        { "id": "T1_UC_000", "message_type": "35=8", "message_name": "ExecutionReport (Unsolicited)", "level": "message", "tag_number": null, "tag_name": null, "weight": 1.5, "required": true, "description": "Is unsolicited cancel documented?" },
+        { "id": "T1_UC_150", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 150, "tag_name": "ExecType=4", "weight": 1.5, "required": true, "description": "Exchange initiates cancel unsolicited" },
+
+        { "id": "T1_9_000", "message_type": "35=9", "message_name": "OrderCancelReject", "level": "message", "tag_number": null, "tag_name": null, "weight": 2.0, "required": true, "description": "Is CxRej explicitly documented?" },
+        { "id": "T1_9_037", "message_type": "35=9", "message_name": "OrderCancelReject", "level": "tag", "tag_number": 37, "tag_name": "OrderID", "weight": 0.75, "required": true, "description": "Exchange order identifier" },
+        { "id": "T1_9_011", "message_type": "35=9", "message_name": "OrderCancelReject", "level": "tag", "tag_number": 11, "tag_name": "ClOrdID", "weight": 0.75, "required": true, "description": "Client cancel request identifier" },
+        { "id": "T1_9_039", "message_type": "35=9", "message_name": "OrderCancelReject", "level": "tag", "tag_number": 39, "tag_name": "OrdStatus", "weight": 0.75, "required": true, "description": "Current order status at time of reject" },
+        { "id": "T1_9_434", "message_type": "35=9", "message_name": "OrderCancelReject", "level": "tag", "tag_number": 434, "tag_name": "CxlRejResponseTo", "weight": 0.75, "required": true, "description": "1=CxReq, 2=AmReq" },
+
+        { "id": "T1_Q_000", "message_type": "35=Q", "message_name": "DontKnowTrade", "level": "message", "tag_number": null, "tag_name": null, "weight": 1.5, "required": true, "description": "Is DK explicitly documented?" },
+        { "id": "T1_Q_037", "message_type": "35=Q", "message_name": "DontKnowTrade", "level": "tag", "tag_number": 37, "tag_name": "OrderID", "weight": 0.3, "required": true, "description": "Original order identifier" },
+        { "id": "T1_Q_017", "message_type": "35=Q", "message_name": "DontKnowTrade", "level": "tag", "tag_number": 17, "tag_name": "ExecID", "weight": 0.3, "required": true, "description": "Execution being DK'd" },
+        { "id": "T1_Q_127", "message_type": "35=Q", "message_name": "DontKnowTrade", "level": "tag", "tag_number": 127, "tag_name": "DKReason", "weight": 0.3, "required": true, "description": "0=Unknown, 1=WrongSide, 2=WrongSecurity, 3=WrongPrice, 4=WrongSettlDate, 5=Other" },
+        { "id": "T1_Q_055", "message_type": "35=Q", "message_name": "DontKnowTrade", "level": "tag", "tag_number": 55, "tag_name": "Symbol", "weight": 0.3, "required": true, "description": "Instrument identifier" },
+        { "id": "T1_Q_054", "message_type": "35=Q", "message_name": "DontKnowTrade", "level": "tag", "tag_number": 54, "tag_name": "Side", "weight": 0.3, "required": true, "description": "Buy(1) / Sell(2)" }
       ]
     },
     {
       "tier": 2,
       "id": "execution_quality_tca",
-      "label": "Execution quality & TCA fields",
-      "description": "Fields required to measure, analyze, and report on execution quality. Without these, institutions cannot perform Transaction Cost Analysis (TCA), meet MiFID II best execution obligations, or benchmark fill quality against VWAP/TWAP/arrival price benchmarks.",
+      "label": "Execution Quality & TCA",
       "weight_total": 25,
-      "institutional_rationale": "Every institutional asset manager subject to MiFID II, ERISA, or internal best-execution policy requires these fields. Absence means TCA must be reconstructed from REST endpoints post-trade — operationally fragile and often inaccurate.",
       "checks": [
-        {
-          "id": "T2_001",
-          "fix_tag": "29",
-          "field_name": "LastCapacity",
-          "category": "tca",
-          "weight": 5,
-          "required": true,
-          "description": "Identifies how the exchange/broker acted on the fill: Agent (1), Cross as Agent (2), Cross as Principal (4), or Principal (5). Required for best-execution analysis and regulatory reporting. Distinguishes riskless principal (common in crypto OTC) from pure agency execution.",
-          "required_values": {
-            "1": "Agent — exchange acted as agent only",
-            "2": "Cross as Agent — matched two client orders",
-            "4": "Cross as Principal — internalization with exchange inventory",
-            "5": "Principal — exchange traded from own book"
-          },
-          "institutional_gap_if_missing": "Without LastCapacity, institutions cannot determine if they were filled against exchange inventory (principal) vs. other market participants (agency). Regulatory reporting under MiFID II RTS 27/28 requires this field. Prime brokers will flag its absence.",
-          "tradfi_reference": "FIX 4.4 tag 29; MiFID II RTS 27 Article 3(1)(f); CME iLink3 tag 29",
-          "crypto_notes": "Almost universally absent from crypto exchange FIX specs. Crypto venues typically act as pure matching engines (agency) but do not tag fills accordingly. Flag as critical gap.",
-          "scoring_logic": {
-            "full_credit": "Tag 29 present in ER with all 4 values documented; behavior on internalized fills documented",
-            "partial_credit": "Tag 29 present but only 1-2 values implemented (e.g. Agent only)",
-            "no_credit": "Tag 29 absent from ExecutionReport"
-          }
-        },
-        {
-          "id": "T2_002",
-          "fix_tag": "30",
-          "field_name": "LastMkt / Execution Venue",
-          "category": "tca",
-          "weight": 5,
-          "required": true,
-          "description": "Identifies the market or venue where the trade was executed. Critical when an exchange routes to external liquidity pools, OTC desks, or dark pools. Required for multi-venue TCA and MiFID II best-execution venue analysis.",
-          "expected_values_example": [
-            "XKRAKEN",
-            "XCOINBASE",
-            "OTC-DESK",
-            "DARK-INTERNAL"
-          ],
-          "institutional_gap_if_missing": "Without venue tagging, institutions cannot determine where their fill occurred — especially when exchanges route to external liquidity or internalize. Best-execution analysis becomes meaningless.",
-          "tradfi_reference": "FIX 4.4 tag 30; MiFID II RTS 27 Article 3; ISO 10383 MIC codes for traditional venues",
-          "crypto_notes": "Most crypto exchanges are single-venue and tag nothing here. However, as OTC desks, dark pools (Coinbase Prime, Kraken OTC), and liquidity aggregators become common, this gap becomes critical. Use exchange-defined MIC equivalent.",
-          "scoring_logic": {
-            "full_credit": "Tag 30 present in ER; venue codes documented; OTC/dark pool routing tagged separately",
-            "partial_credit": "Tag 30 present but only single static value (e.g. always 'XKRAK'); no routing differentiation",
-            "no_credit": "Tag 30 absent from ExecutionReport"
-          }
-        },
-        {
-          "id": "T2_003",
-          "fix_tag": "31",
-          "field_name": "LastPx (fill price)",
-          "category": "execution_data",
-          "weight": 3,
-          "required": true,
-          "description": "Price at which the last partial fill occurred. Distinct from the order's limit price (tag 44). Required for accurate P&L attribution and VWAP calculation.",
-          "precision_requirement": "Must match instrument's tick size; denominated in quote currency",
-          "institutional_gap_if_missing": "Without LastPx, fill-level P&L attribution and VWAP reconstruction are impossible from FIX data alone.",
-          "tradfi_reference": "FIX 4.4 tag 31; universal",
-          "scoring_logic": {
-            "full_credit": "LastPx present in all partial and full fill ERs; precision documented",
-            "partial_credit": "LastPx present but only on full fills, not partials",
-            "no_credit": "LastPx absent"
-          }
-        },
-        {
-          "id": "T2_004",
-          "fix_tag": "32",
-          "field_name": "LastQty (fill quantity)",
-          "category": "execution_data",
-          "weight": 3,
-          "required": true,
-          "description": "Quantity filled on the last partial execution. Combined with LastPx enables per-fill VWAP calculation. Distinct from CumQty (tag 14) which is cumulative.",
-          "institutional_gap_if_missing": "Without LastQty, partial fill analysis and execution benchmark calculations (VWAP, IS) require REST reconciliation.",
-          "tradfi_reference": "FIX 4.4 tag 32; universal",
-          "scoring_logic": {
-            "full_credit": "LastQty present in all fill ERs; denominated in base asset; documented",
-            "partial_credit": "Present but only CumQty reported (no incremental fill quantity)",
-            "no_credit": "Absent"
-          }
-        },
-        {
-          "id": "T2_005",
-          "fix_tag": "60",
-          "field_name": "TransactTime — microsecond precision",
-          "category": "tca",
-          "weight": 4,
-          "required": true,
-          "description": "Timestamp of the transaction at the exchange matching engine. Must be microsecond precision (not millisecond) for latency-sensitive TCA and regulatory audit trail. Format: YYYYMMDD-HH:MM:SS.uuuuuu",
-          "precision_requirement": "Microsecond (6 decimal places). Millisecond is insufficient for HFT TCA and regulatory audit.",
-          "institutional_gap_if_missing": "Millisecond timestamps create ambiguity in order sequencing and latency measurement. Regulators require microsecond-level audit trails for algorithmic trading.",
-          "tradfi_reference": "CME iLink3 TransactTime nanosecond; MiFID II RTS 25 clock synchronization (microsecond); FIX 4.4 tag 60",
-          "crypto_notes": "Kraken provides microsecond precision. Many exchanges provide millisecond only. Verify precision level explicitly.",
-          "scoring_logic": {
-            "full_credit": "TransactTime present with microsecond precision (6 decimal places); exchange clock sync policy documented",
-            "partial_credit": "TransactTime present but millisecond precision only",
-            "no_credit": "TransactTime absent or second-level precision only"
-          }
-        },
-        {
-          "id": "T2_006",
-          "fix_tag": "851",
-          "field_name": "LastLiquidityInd (maker/taker)",
-          "category": "tca",
-          "weight": 4,
-          "required": true,
-          "description": "Indicates whether the fill was as liquidity provider (maker, value=1) or liquidity taker (value=2). Directly affects fee calculation and is required for fee-adjusted TCA, VWAP net-of-fees analysis, and rebate reconciliation.",
-          "required_values": {
-            "1": "Added Liquidity (maker) — passive order rested and was filled",
-            "2": "Removed Liquidity (taker) — aggressive order crossed the spread",
-            "4": "Auction (if applicable)"
-          },
-          "institutional_gap_if_missing": "Without maker/taker flag, net-of-fees TCA is impossible from FIX data. Fee models differ significantly (maker rebate vs. taker charge). Institutions cannot reconcile execution costs without this field.",
-          "tradfi_reference": "FIX 4.4 tag 851; standard on lit equity and futures venues post-2010",
-          "crypto_notes": "Frequently absent from crypto FIX specs despite being straightforward to implement. Crypto fee models are highly maker/taker dependent — this gap is more impactful in crypto than in TradFi.",
-          "scoring_logic": {
-            "full_credit": "Tag 851 present in all fill ERs with maker (1) and taker (2) values documented",
-            "partial_credit": "Tag 851 present but limited OR functionally equivalent custom tag (e.g. 1057 or 5050) is documented and consistently populated",
-            "no_credit": "Tag 851 absent from ExecutionReport"
-          }
-        },
-        {
-          "id": "T2_007",
-          "fix_tag": "375",
-          "field_name": "ContraTrader / counterparty identifier",
-          "category": "tca",
-          "weight": 3,
-          "required": false,
-          "description": "Identifier of the contra-party (the other side of the trade). In TradFi, used to identify internalized fills, dark pool contra parties, and for post-trade bilateral confirmation. In crypto, relevant for OTC desk fills and block trades.",
-          "institutional_gap_if_missing": "Without contra-party ID, institutions cannot identify internalized fills (exchange trading against own inventory) or analyze counterparty concentration risk. Required for prime broker reporting.",
-          "tradfi_reference": "FIX 4.4 tag 375; common on equities and OTC derivatives venues",
-          "crypto_notes": "Not commonly implemented. Most relevant for exchanges with OTC desks or internal liquidity pools. Flag as a gap for exchanges offering prime brokerage services.",
-          "scoring_logic": {
-            "full_credit": "Tag 375 present on fills involving OTC desk or internal contra; documented",
-            "partial_credit": "Tag 375 present but populated inconsistently",
-            "no_credit": "Tag 375 absent (acceptable for pure-agency lit venues; flag for exchanges with OTC/dark liquidity)"
-          }
-        },
-        {
-          "id": "T2_008",
-          "fix_tag": "14",
-          "field_name": "CumQty — cumulative fill tracking",
-          "category": "execution_data",
-          "weight": 2,
-          "required": true,
-          "description": "Cumulative quantity filled across all partial executions for a parent order. Required to compute remaining open quantity (tag 151 = tag 38 - tag 14) and determine order completion state.",
-          "relationship": "LeavesQty (151) = OrderQty (38) - CumQty (14). All three must be present and consistent.",
-          "institutional_gap_if_missing": "Without CumQty, OMS cannot accurately track partial fills. Order state becomes ambiguous after the first partial execution.",
-          "tradfi_reference": "FIX 4.4 tag 14; universal across all FIX venues",
-          "scoring_logic": {
-            "full_credit": "CumQty present in all ERs; consistent with LeavesQty (151) and OrderQty (38)",
-            "partial_credit": "CumQty present but LeavesQty (151) absent or inconsistent",
-            "no_credit": "CumQty absent"
-          }
-        }
+        { "id": "T2_8_000", "message_type": "35=8", "message_name": "ExecutionReport", "level": "message", "tag_number": null, "tag_name": null, "weight": 1.0, "required": true, "description": "Placeholder for quality tags" },
+        { "id": "T2_8_029", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 29, "tag_name": "LastCapacity", "weight": 5.0, "required": true, "description": "A=Agency, P=Principal, R=Riskless Principal" },
+        { "id": "T2_8_030", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 30, "tag_name": "LastMkt", "weight": 4.0, "required": true, "description": "ISO 10383 MIC code of execution venue" },
+        { "id": "T2_8_528", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 528, "tag_name": "OrderCapacity", "weight": 4.0, "required": true, "description": "A=Agency, P=Principal, R=Riskless Principal, G=Individual" },
+        { "id": "T2_8_031", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 31, "tag_name": "LastPx", "weight": 3.0, "required": true, "description": "Fill price on partial and full executions" },
+        { "id": "T2_8_032", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 32, "tag_name": "LastQty", "weight": 3.0, "required": true, "description": "Quantity of last partial fill" },
+        { "id": "T2_8_060", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 60, "tag_name": "TransactTime", "weight": 3.0, "required": true, "description": "Microsecond precision required" },
+        { "id": "T2_8_851", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 851, "tag_name": "LastLiquidityInd", "weight": 3.0, "required": true, "description": "1=Added, 2=Removed, 4=Auction" },
+        { "id": "T2_8_375", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 375, "tag_name": "ContraTrader", "weight": 2.0, "required": false, "description": "Contra-party identifier on fill" }
       ]
     },
     {
       "tier": 3,
-      "id": "post_trade_allocation_session",
-      "label": "Post-trade, allocation & session reliability",
-      "description": "Fields and behaviors required for block trade allocation, multi-account management, post-trade confirmation workflows, and reliable FIX session management including gap-fill and recovery. These separate exchanges that support institutional prime brokerage workflows from those that only support single-account electronic trading.",
+      "id": "post_trade_allocation",
+      "label": "Post-Trade & Allocation",
       "weight_total": 25,
-      "institutional_rationale": "Asset managers running multi-fund portfolios must allocate block trades across sub-accounts post-execution. Prime brokers require bilateral confirmation before settlement. Without Tier 3, exchanges can only serve single-account prop traders — not institutional asset managers or fund administrators.",
       "checks": [
-        {
-          "id": "T3_001",
-          "fix_tag": "78/79",
-          "field_name": "NoAllocs / AllocAccount — sub-account order routing",
-          "category": "allocation",
-          "weight": 5,
-          "required": true,
-          "description": "Allows a single order to be tagged to a specific sub-account (fund, sleeve, or client account) at order entry time. Tag 78 (NoAllocs) = number of allocations, tag 79 (AllocAccount) = account identifier. Required for institutional clients managing multiple fund sleeves under one master account.",
-          "expected_scope": "Should work for all account types: master/sub, fund-of-funds, prime broker omnibus",
-          "institutional_gap_if_missing": "Without sub-account tagging, institutions must manually allocate post-trade via separate instructions. Operationally fragile and creates settlement risk.",
-          "tradfi_reference": "FIX 4.4 tags 78/79; standard on prime brokerage and institutional execution platforms",
-          "crypto_notes": "Kraken supports NoAllocs/AllocAccount for broker accounts only. Most crypto exchanges limit this to institutional/prime tiers. Verify if available to standard API clients.",
-          "scoring_logic": {
-            "full_credit": "NoAllocs/AllocAccount supported on NOS for all institutional account types; sub-account IDs documented",
-            "partial_credit": "Supported for broker/prime accounts only; not available to standard institutional API",
-            "no_credit": "No sub-account tagging at order entry"
-          }
-        },
-        {
-          "id": "T3_002",
-          "fix_tag": "35=J",
-          "field_name": "AllocationInstruction",
-          "category": "allocation",
-          "weight": 5,
-          "required": false,
-          "description": "Post-trade block allocation message. Sent after a block execution to split the filled quantity across multiple accounts with specific prices, quantities, and settlement instructions per slice. This is the standard TradFi workflow for multi-fund block execution.",
-          "allocation_fields": {
-            "70": "AllocID — unique allocation instruction identifier",
-            "71": "AllocTransType — New (0), Replace (1), Cancel (2)",
-            "73": "NoOrders — number of orders in the block",
-            "78": "NoAllocs — number of allocation slices",
-            "79": "AllocAccount — account per slice",
-            "80": "AllocShares — quantity per slice",
-            "366": "AllocPrice — price per slice (if different from avg fill)"
-          },
-          "institutional_gap_if_missing": "Without 35=J, block trade allocation must occur via proprietary API or manual process. This breaks the end-to-end FIX workflow that institutional prime brokers require.",
-          "tradfi_reference": "FIX 4.4 35=J; required by prime brokers (Goldman Sachs PB, Morgan Stanley PB) for block allocation",
-          "crypto_notes": "Absent from all major crypto exchange FIX specs as of 2025. A significant gap that limits institutional prime brokerage use cases. Flag as strategic gap.",
-          "scoring_logic": {
-            "full_credit": "35=J documented with all required fields; New/Replace/Cancel transaction types supported",
-            "partial_credit": "Partial allocation support (e.g. new only; no replace/cancel)",
-            "no_credit": "AllocationInstruction not supported via FIX (most crypto exchanges today)"
-          }
-        },
-        {
-          "id": "T3_003",
-          "fix_tag": "35=AK",
-          "field_name": "AllocationInstructionAck",
-          "category": "allocation",
-          "weight": 3,
-          "required": false,
-          "description": "Exchange acknowledgment of an AllocationInstruction (35=J). Bilateral confirmation that the allocation has been accepted, partially accepted, or rejected. Required to close the allocation loop before settlement instructions are sent to custodians.",
-          "ack_statuses": {
-            "0": "Received — allocation instruction received",
-            "1": "Rejected — allocation instruction rejected (with reason in tag 88)",
-            "2": "Partial Accept — some slices accepted",
-            "3": "Accepted — all slices accepted"
-          },
-          "institutional_gap_if_missing": "Without AllocationAck, institutions cannot confirm bilateral agreement on allocation terms before settlement. Creates settlement break risk.",
-          "tradfi_reference": "FIX 4.4 35=AK; required by DTCC and prime brokers as part of trade confirmation workflow",
-          "crypto_notes": "Not implemented anywhere in crypto FIX as of 2025. Prerequisite: 35=J must exist first.",
-          "scoring_logic": {
-            "full_credit": "35=AK documented with all 4 status values; reject reason (tag 88) populated on rejections",
-            "partial_credit": "Ack message exists but limited status values",
-            "no_credit": "Not supported (prerequisite 35=J missing)"
-          }
-        },
-        {
-          "id": "T3_004",
-          "fix_tag": "63",
-          "field_name": "SettlType",
-          "category": "post_trade",
-          "weight": 4,
-          "required": false,
-          "description": "Settlement cycle for the trade: Regular (0 = exchange default), Cash (1 = T+0), Next Day (2 = T+1), T+2 (7), etc. In crypto, settlement is typically T+0 on-chain or instant for exchange-internal trades, but institutional clients need this tagged explicitly for their settlement systems and ISDA/CSA agreements.",
-          "required_values": {
-            "0": "Regular (exchange default — must define what this means in RoE)",
-            "1": "Cash / T+0 (on-chain settlement or instant internal transfer)",
-            "7": "T+2 (if exchange supports deferred settlement for prime brokerage)"
-          },
-          "institutional_gap_if_missing": "Custodians and settlement systems need explicit SettlType to route instructions correctly. 'Undefined' settlement creates operational risk in prime brokerage workflows.",
-          "tradfi_reference": "FIX 4.4 tag 63; SWIFT MT54x settlement instructions; DTCC settlement cycles",
-          "crypto_notes": "Crypto settles on-chain (T+0 effectively) but exchanges with prime brokerage tiers may offer T+1 or T+2 for institutional accounts. Map on-chain settlement to tag 1 (Cash/T+0).",
-          "scoring_logic": {
-            "full_credit": "SettlType present in ER; exchange default value defined in RoE; on-chain settlement explicitly tagged",
-            "partial_credit": "SettlType present in ER but default value undefined or undocumented",
-            "no_credit": "SettlType absent from ExecutionReport"
-          }
-        },
-        {
-          "id": "T3_005",
-          "fix_tag": "Session",
-          "field_name": "Session management — logon / heartbeat / gap-fill",
-          "category": "session_reliability",
-          "weight": 5,
-          "required": true,
-          "description": "FIX session management covering: Logon (35=A) with authentication, Heartbeat (35=0) with configurable interval, TestRequest (35=1) / Heartbeat echo, Sequence reset (35=4) with gap-fill behavior, and message recovery (ResendRequest 35=2). Critical for production resilience.",
-          "session_requirements": {
-            "logon": {
-              "tag": "35=A",
-              "auth_method": "API key + signature (HMAC-SHA256 or Ed25519 preferred)",
-              "encryption": "TLS 1.2 minimum; TLS 1.3 preferred",
-              "reset_on_logon": "Flag 141 behavior must be documented (reset vs. resume sequence numbers)"
-            },
-            "heartbeat": {
-              "tag": "35=0",
-              "configurable_interval": "Must be configurable 10–60 seconds",
-              "missed_heartbeat_behavior": "Documented — typically 3 missed = disconnect"
-            },
-            "gap_fill": {
-              "resend_request": "35=2 — exchange must respond with missed messages or gap-fill (35=4)",
-              "recovery_window": "How far back can messages be recovered? 24h minimum for institutional use.",
-              "behavior_on_seq_reset": "Must not drop messages between seq reset and next in-sequence msg"
-            }
-          },
-          "institutional_gap_if_missing": "Session instability is a hard blocker. OMS systems require predictable reconnect behavior and message recovery to maintain position integrity after network events.",
-          "tradfi_reference": "FIX 4.4 Session Protocol; FIXT 1.1 transport layer; CME iLink3 session management",
-          "scoring_logic": {
-            "full_credit": "All session messages documented; gap-fill behavior explicit; recovery window stated; TLS 1.3 supported",
-            "partial_credit": "Core session present but gap-fill behavior undocumented or recovery window unclear",
-            "no_credit": "Session documentation insufficient to configure a production OMS connection"
-          }
-        },
-        {
-          "id": "T3_006",
-          "fix_tag": "58",
-          "field_name": "Text field — reject reason quality",
-          "category": "operational",
-          "weight": 3,
-          "required": true,
-          "description": "Human-readable rejection reason in tag 58 on all reject message types: OrderCancelReject (35=9), BusinessMessageReject (35=j), Reject (35=3). Quality of reject reasons directly impacts time-to-resolution for production issues.",
-          "quality_standard": {
-            "minimum": "Non-empty string; distinguishes between common reject scenarios",
-            "good": "Structured reason code + human description (e.g. 'INSUFFICIENT_MARGIN: Available margin 0.05 BTC, required 0.12 BTC')",
-            "best_practice": "Machine-parseable error codes documented in RoE; human description in Text"
-          },
-          "institutional_gap_if_missing": "Vague or absent reject reasons (e.g. 'Order rejected') require time-consuming support escalation for every production issue. Unacceptable in 24/7 crypto markets.",
-          "tradfi_reference": "FIX 4.4 tag 58; operational best practice across all venues",
-          "scoring_logic": {
-            "full_credit": "Tag 58 populated on all rejects with structured reason codes; reason code dictionary in RoE",
-            "partial_credit": "Tag 58 populated but generic messages only (no structured codes)",
-            "no_credit": "Tag 58 absent or empty on rejects"
-          }
-        }
+        { "id": "T3_AE_000", "message_type": "35=AE", "message_name": "TradeCaptureReport", "level": "message", "tag_number": null, "tag_name": null, "weight": 2.0, "required": true, "description": "Is TCR explicitly documented?" },
+        { "id": "T3_AE_828", "message_type": "35=AE", "message_name": "TradeCaptureReport", "level": "tag", "tag_number": 828, "tag_name": "TrdType", "weight": 0.7, "required": true, "description": "0=Regular, 1=BlockTrade, 2=EFP etc." },
+        { "id": "T3_AE_880", "message_type": "35=AE", "message_name": "TradeCaptureReport", "level": "tag", "tag_number": 880, "tag_name": "TrdMatchID", "weight": 0.7, "required": true, "description": "Unique trade match identifier" },
+        { "id": "T3_AE_017", "message_type": "35=AE", "message_name": "TradeCaptureReport", "level": "tag", "tag_number": 17, "tag_name": "ExecID", "weight": 0.7, "required": true, "description": "Links trade capture to execution" },
+        { "id": "T3_AE_055", "message_type": "35=AE", "message_name": "TradeCaptureReport", "level": "tag", "tag_number": 55, "tag_name": "Symbol", "weight": 0.7, "required": true, "description": "Instrument identifier" },
+        { "id": "T3_AE_552", "message_type": "35=AE", "message_name": "TradeCaptureReport", "level": "tag", "tag_number": 552, "tag_name": "NoSides", "weight": 0.7, "required": true, "description": "Number of sides in trade" },
+        { "id": "T3_AE_054", "message_type": "35=AE", "message_name": "TradeCaptureReport", "level": "tag", "tag_number": 54, "tag_name": "Side", "weight": 0.7, "required": true, "description": "Buy/Sell within NoSides" },
+        { "id": "T3_AE_032", "message_type": "35=AE", "message_name": "TradeCaptureReport", "level": "tag", "tag_number": 32, "tag_name": "LastQty", "weight": 0.7, "required": true, "description": "Trade quantity" },
+        { "id": "T3_AE_031", "message_type": "35=AE", "message_name": "TradeCaptureReport", "level": "tag", "tag_number": 31, "tag_name": "LastPx", "weight": 0.7, "required": true, "description": "Trade price" },
+
+        { "id": "T3_J_000", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "message", "tag_number": null, "tag_name": null, "weight": 2.0, "required": true, "description": "Is AllocInstruction documented?" },
+        { "id": "T3_J_070", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 70, "tag_name": "AllocID", "weight": 0.6, "required": true, "description": "Unique allocation identifier" },
+        { "id": "T3_J_071", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 71, "tag_name": "AllocTransType", "weight": 0.6, "required": true, "description": "0=New, 1=Replace, 2=Cancel" },
+        { "id": "T3_J_626", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 626, "tag_name": "AllocType", "weight": 0.6, "required": true, "description": "1=Calculated, 2=Preliminary, 5=ReadyToBook" },
+        { "id": "T3_J_078", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 78, "tag_name": "NoAllocs", "weight": 0.6, "required": true, "description": "Count of slices" },
+        { "id": "T3_J_079", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 79, "tag_name": "AllocAccount", "weight": 0.6, "required": true, "description": "Account ID per slice" },
+        { "id": "T3_J_366", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 366, "tag_name": "AllocPrice", "weight": 0.6, "required": true, "description": "Price per slice" },
+        { "id": "T3_J_080", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 80, "tag_name": "AllocShares", "weight": 0.6, "required": true, "description": "Quantity per slice" },
+        { "id": "T3_J_153", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 153, "tag_name": "AllocAvgPx", "weight": 0.6, "required": true, "description": "Avg price per slice" },
+        { "id": "T3_J_120", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 120, "tag_name": "SettlCurrency", "weight": 0.6, "required": true, "description": "Settlement currency per slice" },
+        { "id": "T3_J_055", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 55, "tag_name": "Symbol", "weight": 0.6, "required": true, "description": "Instrument identifier" },
+        { "id": "T3_J_054", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 54, "tag_name": "Side", "weight": 0.6, "required": true, "description": "Buy/Sell" },
+        { "id": "T3_J_075", "message_type": "35=J", "message_name": "AllocationInstruction", "level": "tag", "tag_number": 75, "tag_name": "TradeDate", "weight": 0.6, "required": true, "description": "Trade date for settlement" },
+
+        { "id": "T3_P_000", "message_type": "35=P", "message_name": "AllocationInstructionAck", "level": "message", "tag_number": null, "tag_name": null, "weight": 1.0, "required": true, "description": "Is AllocAck documented?" },
+        { "id": "T3_P_070", "message_type": "35=P", "message_name": "AllocationInstructionAck", "level": "tag", "tag_number": 70, "tag_name": "AllocID", "weight": 1.0, "required": true, "description": "References original AllocInstruction" },
+        { "id": "T3_P_087", "message_type": "35=P", "message_name": "AllocationInstructionAck", "level": "tag", "tag_number": 87, "tag_name": "AllocStatus", "weight": 1.0, "required": true, "description": "0=Accepted, 1=Rejected, etc." },
+
+        { "id": "T3_R_000", "message_type": "35=R", "message_name": "RequestForQuote", "level": "message", "tag_number": null, "tag_name": null, "weight": 1.5, "required": true, "description": "Is RFQ documented?" },
+        { "id": "T3_R_131", "message_type": "35=R", "message_name": "RequestForQuote", "level": "tag", "tag_number": 131, "tag_name": "QuoteReqID", "weight": 0.4, "required": true, "description": "Unique quote request identifier" },
+        { "id": "T3_R_055", "message_type": "35=R", "message_name": "RequestForQuote", "level": "tag", "tag_number": 55, "tag_name": "Symbol", "weight": 0.4, "required": true, "description": "Instrument identifier" },
+        { "id": "T3_R_038", "message_type": "35=R", "message_name": "RequestForQuote", "level": "tag", "tag_number": 38, "tag_name": "OrderQty", "weight": 0.4, "required": true, "description": "Quantity to be quoted" },
+        { "id": "T3_R_054", "message_type": "35=R", "message_name": "RequestForQuote", "level": "tag", "tag_number": 54, "tag_name": "Side", "weight": 0.4, "required": true, "description": "Buy/Sell" },
+        { "id": "T3_R_044", "message_type": "35=R", "message_name": "RequestForQuote", "level": "tag", "tag_number": 44, "tag_name": "Price", "weight": 0.4, "required": false, "description": "Indicative price" },
+        { "id": "T3_R_528", "message_type": "35=R", "message_name": "RequestForQuote", "level": "tag", "tag_number": 528, "tag_name": "OrderCapacity", "weight": 0.4, "required": true, "description": "A=Agency, P=Principal" },
+
+        { "id": "T3_S_000", "message_type": "35=S", "message_name": "Quote", "level": "message", "tag_number": null, "tag_name": null, "weight": 1.5, "required": true, "description": "Is Quote documented?" },
+        { "id": "T3_S_131", "message_type": "35=S", "message_name": "Quote", "level": "tag", "tag_number": 131, "tag_name": "QuoteReqID", "weight": 0.6, "required": true, "description": "References original QuoteRequest" },
+        { "id": "T3_S_117", "message_type": "35=S", "message_name": "Quote", "level": "tag", "tag_number": 117, "tag_name": "QuoteID", "weight": 0.6, "required": true, "description": "Unique quote identifier" },
+        { "id": "T3_S_055", "message_type": "35=S", "message_name": "Quote", "level": "tag", "tag_number": 55, "tag_name": "Symbol", "weight": 0.6, "required": true, "description": "Instrument identifier" },
+        { "id": "T3_S_132", "message_type": "35=S", "message_name": "Quote", "level": "tag", "tag_number": 132, "tag_name": "BidPx", "weight": 0.6, "required": true, "description": "Bid price" },
+        { "id": "T3_S_133", "message_type": "35=S", "message_name": "Quote", "level": "tag", "tag_number": 133, "tag_name": "OfferPx", "weight": 0.6, "required": true, "description": "Offer price" },
+        { "id": "T3_S_134", "message_type": "35=S", "message_name": "Quote", "level": "tag", "tag_number": 134, "tag_name": "BidSize", "weight": 0.6, "required": true, "description": "Bid quantity" },
+        { "id": "T3_S_135", "message_type": "35=S", "message_name": "Quote", "level": "tag", "tag_number": 135, "tag_name": "OfferSize", "weight": 0.6, "required": true, "description": "Offer quantity" },
+
+        { "id": "T3_AJ_000", "message_type": "35=AJ", "message_name": "QuoteResponse", "level": "message", "tag_number": null, "tag_name": null, "weight": 1.5, "required": true, "description": "Is QuoteResponse documented?" },
+        { "id": "T3_AJ_693", "message_type": "35=AJ", "message_name": "QuoteResponse", "level": "tag", "tag_number": 693, "tag_name": "QuoteRespID", "weight": 0.6, "required": true, "description": "Unique quote response identifier" },
+        { "id": "T3_AJ_694", "message_type": "35=AJ", "message_name": "QuoteResponse", "level": "tag", "tag_number": 694, "tag_name": "QuoteRespType", "weight": 0.6, "required": true, "description": "1=Hit/Lift, 2=Counter, etc." },
+        { "id": "T3_AJ_054", "message_type": "35=AJ", "message_name": "QuoteResponse", "level": "tag", "tag_number": 54, "tag_name": "Side", "weight": 0.6, "required": true, "description": "Initiation direction" },
+        { "id": "T3_AJ_055", "message_type": "35=AJ", "message_name": "QuoteResponse", "level": "tag", "tag_number": 55, "tag_name": "Symbol", "weight": 0.6, "required": true, "description": "Instrument identifier" }
       ]
     },
     {
       "tier": 4,
-      "id": "aml_travel_rule_compliance",
-      "label": "AML, Travel Rule & compliance data hooks",
-      "description": "Fields and data hooks required to support AML/KYC obligations, FATF Travel Rule compliance, on-chain wallet attribution, and regulatory audit trail requirements. This tier is crypto-native — it has no direct TradFi equivalent but draws from TradFi party identification and regulatory reporting frameworks.",
-      "weight_total": 15,
-      "institutional_rationale": "Regulated institutional clients (banks, asset managers, registered broker-dealers) face increasing regulatory scrutiny on crypto trade flows. VASPs must transmit originator and beneficiary information (Travel Rule) on transactions above threshold. Without these hooks in FIX, compliance teams must reconcile FIX trade data against separate AML systems manually — creating audit gaps and operational risk.",
+      "id": "aml_travel_rule",
+      "label": "AML & Travel Rule",
+      "weight_total": 10,
       "checks": [
-        {
-          "id": "T4_001",
-          "fix_tag": "453/448/452",
-          "field_name": "Parties group — VASP / counterparty identification",
-          "category": "travel_rule",
-          "weight": 5,
-          "required": true,
-          "description": "The FIX Parties repeating group (tag 453 = NoPartyIDs, 448 = PartyID, 452 = PartyRole) is the standard mechanism for identifying all parties to a trade. For crypto/VASP compliance, this group must carry: originating VASP identifier, beneficiary VASP identifier, and client identifiers required by Travel Rule.",
-          "required_party_roles": {
-            "1": "ExecutingFirm — the exchange executing the order",
-            "24": "CustomerAccount — institutional client account ID",
-            "67": "OriginatingFirm — originating VASP (for Travel Rule)",
-            "100": "InvestmentDecisionMaker — portfolio manager / fund (if applicable)"
-          },
-          "vasp_travel_rule_mapping": {
-            "originator_vasp": "Tag 452 = 67 (OriginatingFirm) + Tag 448 = VASP LEI or GLEIF identifier",
-            "beneficiary_vasp": "Tag 452 = 7 (ContraFirm) or custom value + beneficiary VASP identifier",
-            "threshold": "FATF Travel Rule applies to transfers >= USD 1,000 (varies by jurisdiction)"
-          },
-          "institutional_gap_if_missing": "Without Parties group, FIX trade records cannot carry the VASP identification data required for FATF Travel Rule compliance. Institutions must reconcile FIX data against separate AML platforms for every trade — creating audit gaps.",
-          "tradfi_reference": "FIX 4.4 / FIX 5.0 Parties group (453/448/452); FATF Recommendation 16 (Travel Rule); FinCEN Travel Rule 31 CFR 103",
-          "crypto_notes": "This is where your Solidus experience is directly relevant. The FIX Parties group maps to Travel Rule originator/beneficiary fields. Most crypto exchange FIX specs partially implement the Parties group for account routing but do not extend it to VASP identification.",
-          "scoring_logic": {
-            "full_credit": "Parties group (453/448/452) implemented with at minimum ExecutingFirm (1) and CustomerAccount (24) roles; VASP identifier (role 67) documented or roadmapped",
-            "partial_credit": "Parties group present but limited to account routing only; no VASP identifier role",
-            "no_credit": "No Parties group in FIX spec"
-          }
-        },
-        {
-          "id": "T4_002",
-          "fix_tag": "custom / 448",
-          "field_name": "Wallet address attribution",
-          "category": "aml",
-          "weight": 4,
-          "required": false,
-          "description": "Mechanism to associate on-chain wallet addresses with FIX order/trade records. Either via a custom FIX tag in the Parties group (tag 448 with a custom PartyRole) or via a cross-reference ID that links FIX ExecID to a blockchain transaction hash and wallet address. Critical for linking exchange FIX data to on-chain AML analytics (Chainalysis, Elliptic, TRM Labs).",
-          "implementation_options": [
-            {
-              "option": "Custom FIX tag in Parties group",
-              "description": "Add a custom PartyRole value (e.g. 5001 = 'OnChainWallet') with tag 448 carrying the wallet address. Maintains FIX message integrity.",
-              "pros": "All data in FIX stream; no separate reconciliation",
-              "cons": "Non-standard; requires custom tag documentation in RoE"
-            },
-            {
-              "option": "ExecID → blockchain TxHash cross-reference",
-              "description": "FIX ExecutionReport tag 17 (ExecID) is mapped to a blockchain transaction hash via REST API or separate data feed. Links FIX trade to on-chain settlement record.",
-              "pros": "No FIX spec changes; leverages existing ExecID",
-              "cons": "Requires REST reconciliation; not real-time in FIX stream"
-            }
-          ],
-          "institutional_gap_if_missing": "Without wallet attribution, institutions cannot link their FIX trade records to on-chain AML screening results. Required for SOC2, GDPR audit trails, and Chainalysis/Elliptic integration workflows.",
-          "tradfi_reference": "No direct TradFi equivalent. Conceptually similar to settlement account cross-reference in post-trade workflows.",
-          "crypto_notes": "This is a crypto-native requirement that emerges from the combination of FIX execution data and on-chain settlement. Your Solidus experience with Chainalysis AML and wallet attribution is directly applicable here.",
-          "scoring_logic": {
-            "full_credit": "Wallet address linkage mechanism documented (either FIX-native or ExecID cross-reference); integration path with blockchain analytics tools described in RoE",
-            "partial_credit": "ExecID → TxHash mapping available via REST but not in FIX stream",
-            "no_credit": "No documented mechanism to link FIX trade records to on-chain wallet data"
-          }
-        },
-        {
-          "id": "T4_003",
-          "fix_tag": "17",
-          "field_name": "ExecID — audit trail uniqueness & recoverability",
-          "category": "audit_trail",
-          "weight": 3,
-          "required": true,
-          "description": "Unique identifier for each execution report (tag 17). Must be globally unique per exchange, immutable, and recoverable via message replay or REST query. Forms the backbone of the regulatory audit trail linking pre-trade, execution, and post-trade records.",
-          "uniqueness_requirements": {
-            "scope": "Globally unique per exchange — not just per session",
-            "persistence": "Must be queryable after FIX session close (via REST or message log)",
-            "format": "UUID or timestamp-based; documented in RoE",
-            "replay": "Recoverable via ResendRequest (35=2) within recovery window"
-          },
-          "institutional_gap_if_missing": "Non-unique or non-recoverable ExecIDs create audit trail breaks. Regulators require unambiguous trade-level identifiers. Prime brokers use ExecID as the primary key for trade reconciliation.",
-          "tradfi_reference": "FIX 4.4 tag 17; universal; CME ExecID globally unique across sessions",
-          "crypto_notes": "Most crypto exchanges implement ExecID correctly at the session level but may not guarantee global uniqueness across sessions or make IDs queryable after session close.",
-          "scoring_logic": {
-            "full_credit": "ExecID globally unique; persists after session close; queryable via REST; uniqueness guarantee documented in RoE",
-            "partial_credit": "ExecID unique per session but not globally; or not queryable after session close",
-            "no_credit": "ExecID not documented or uniqueness not guaranteed"
-          }
-        },
-        {
-          "id": "T4_004",
-          "fix_tag": "18",
-          "field_name": "ExecInst — regulatory execution instructions",
-          "category": "compliance",
-          "weight": 3,
-          "required": false,
-          "description": "Execution instructions relevant for compliance and regulatory contexts: Do Not Increase (E = Reduce Only for derivatives), Post Only (P = no liquidity taking), and others. For institutional clients, Reduce-Only and Post-Only are required for derivatives risk management and market making compliance.",
-          "required_values": {
-            "E": "Reduce Only — reduces existing position without opening opposite. Required for derivatives risk management.",
-            "P": "Post Only — passive order only; rejects if would take liquidity. Required for market makers managing their MiFID II systematic internaliser status.",
-            "f": "Fee in base currency (crypto-native; relevant for fee accounting)",
-            "q": "Fee in quote currency (crypto-native; relevant for fee accounting)"
-          },
-          "institutional_gap_if_missing": "Without Reduce Only, institutional risk managers cannot enforce position reduction constraints at the order level. Without Post Only, market makers cannot guarantee passive execution for regulatory compliance.",
-          "tradfi_reference": "FIX 4.4 tag 18; CME iLink3 ExecInst for Reduce Only",
-          "crypto_notes": "Kraken implements Reduce Only (E) and Post Only (P) plus crypto-native fee instructions. Verify derivatives parity.",
-          "scoring_logic": {
-            "full_credit": "Reduce Only (E) and Post Only (P) present on both spot and derivatives; documented behavior on instruction conflict",
-            "partial_credit": "Post Only present; Reduce Only absent or derivatives-only",
-            "no_credit": "ExecInst values absent or undocumented"
-          }
-        }
+        { "id": "T4_453", "message_type": "35=8/AE", "message_name": "ExecReport or TCR", "level": "tag", "tag_number": 453, "tag_name": "Parties Group", "weight": 4.0, "required": true, "description": "NoPartyIDs(453), PartyID(448), PartyRole(452)" },
+        { "id": "T4_WAL", "message_type": "35=8/AE", "message_name": "ExecReport or TCR", "level": "tag", "tag_number": null, "tag_name": "Wallet Attribution", "weight": 2.0, "required": true, "description": "Custom tag or 803 carrying wallet address" },
+        { "id": "T4_017", "message_type": "35=8", "message_name": "ExecutionReport", "level": "tag", "tag_number": 17, "tag_name": "ExecID Uniqueness", "weight": 2.0, "required": true, "description": "Globally unique and persistent ExecIDs" },
+        { "id": "T4_018", "message_type": "35=D/8", "message_name": "NOS or ExecReport", "level": "tag", "tag_number": 18, "tag_name": "ExecInst", "weight": 2.0, "required": true, "description": "E=Reduce Only, P=Post Only" }
       ]
     },
     {
       "tier": 5,
-      "id": "digital_asset_extensions",
-      "label": "Digital asset FIX extensions — DAWG proposed standards",
-      "description": "Forward-looking checks based on the FIX Trading Community Digital Assets Working Group (DAWG) proposed extensions (v0.2, May 2022). These checks measure whether exchanges implement or roadmap emerging FIX standards specifically designed for digital asset trading. This tier does NOT affect the 0-100 institutional readiness score — it is scored separately and presented as a forward-looking section in the RoE document.",
+      "id": "dawg_extensions",
+      "label": "DAWG FIX Extensions",
       "weight_total": 0,
-      "informational_only": true,
-      "scoring_scale": {
-        "full_credit": "Exchange explicitly implements this field or a documented functional equivalent",
-        "partial_credit": "Exchange has roadmapped it, references it in changelog/docs, or implements a non-standard workaround",
-        "no_credit": "No mention found in public documentation"
-      },
-      "institutional_rationale": "Institutional clients connecting from TradFi OMS systems expect standardized instrument identification and currency disambiguation. As digital asset volumes grow and regulatory scrutiny increases, these DAWG-proposed extensions will become connectivity requirements. Exchanges that implement them early reduce integration friction for institutional onboarding.",
-      "dawg_source": "FIX Digital Asset WG — Extensions for Digital Asset Trading v0.2 (Draft, May 10 2022). All tag numbers marked TBD are pending GTC ratification. Verify current status at fiximate.fixtrading.org before production use.",
       "checks": [
-
-        {
-          "id": "T5_001",
-          "fix_tag": "22=Y / 456=Y",
-          "field_name": "SecurityIDSource=Y (DTI)",
-          "category": "instrument_identification",
-          "weight": 0,
-          "informational": true,
-          "required": false,
-          "description": "DAWG proposes adding a new enumeration value (TBD, referred to as 'Y' in draft) to SecurityIDSource(22) and SecurityAltIDSource(456) for ISO 24165 Digital Token Identifier (DTI). This allows an exchange to unambiguously identify a digital asset by its globally unique DTI rather than an exchange-specific ticker (e.g. 'BTC'). The same CodeSet extension automatically applies to all FIX fields using SecurityIDSourceCodeSet.",
-          "ep273_update": {
-            "change_type": "New enumeration value Y added to existing fields in EP273. Not a new field — an extension of the existing SecurityIDSourceCodeSet shared codeset.",
-            "ep_status": "Ratified — EP273",
-            "pedigree_note": "Tag 22 updated EP161, added FIX.2.7. Tag 456 added EP273. Both now include Y = Digital Token Identifier (ISO 24165).",
-            "fiximate_ref_22": "https://fiximate.fixtrading.org/en/FIX.Latest/tag22.html",
-            "fiximate_ref_456": "https://fiximate.fixtrading.org/en/FIX.Latest/tag456.html",
-            "iso_standard": "ISO 24165 — Digital Token Identifier",
-            "dti_registry": "https://www.dtif.org"
-          },
-          "new_fields": [
-            {
-              "field_name": "SecurityIDSource",
-              "tag": "22",
-              "data_type": "String (Reserved100Plus / SecurityIDSourceCodeSet enumeration)",
-              "ep_added": "EP273 (Y value); field exists since FIX.2.7",
-              "new_value": {
-                "Y": "Digital Token Identifier (ISO 24165)"
-              },
-              "applies_to": "SecurityID(48)",
-              "usage": "Set SecurityIDSource(22) = Y when SecurityID(48) carries an ISO 24165 DTI value. Both fields must be populated together.",
-              "fiximate_ref": "https://fiximate.fixtrading.org/en/FIX.Latest/tag22.html"
-            },
-            {
-              "field_name": "SecurityAltIDSource",
-              "tag": "456",
-              "data_type": "String (Reserved100Plus / SecurityIDSourceCodeSet enumeration)",
-              "ep_added": "EP273 (Y value and field)",
-              "new_value": {
-                "Y": "Digital Token Identifier (ISO 24165)"
-              },
-              "applies_to": "SecurityAltID(455) within SecAltIDGrp (NoSecurityAltID(454))",
-              "usage": "Set SecurityAltIDSource(456) = Y when SecurityAltID(455) carries an ISO 24165 DTI. Enables DTI as a secondary identifier alongside exchange-native Symbol(55) tickers.",
-              "fiximate_ref": "https://fiximate.fixtrading.org/en/FIX.Latest/tag456.html"
-            }
-          ],
-          "example": "SecurityID(48) = 4H95J0R2X, SecurityIDSource(22) = Y — Bitcoin identified by ISO 24165 DTI in primary ID. SecurityAltID(455) = 4H95J0R2X, SecurityAltIDSource(456) = Y — same DTI carried in SecAltIDGrp as secondary identifier alongside Symbol(55) = BTC/USD.",
-          "institutional_gap_if_missing": "Without DTI support, instrument identification across exchanges is inconsistent and relies on exchange-specific tickers. Institutional OMS systems cannot unambiguously identify the same asset across multiple venues — creating settlement and reconciliation risk.",
-          "tradfi_reference": "Analogous to ISIN (SecurityIDSource=4) or CUSIP (SecurityIDSource=1) in TradFi — a globally unique, exchange-independent instrument identifier.",
-          "crypto_notes": "Most crypto exchanges currently use Symbol(55) with ticker-based pairs (e.g. BTC/USD). DTI adoption requires exchanges to maintain a mapping from their internal symbols to ISO 24165 DTI values via the DTIF registry.",
-          "scoring_logic": {
-            "full_credit": "Exchange documents SecurityIDSource(22) = Y and/or SecurityAltIDSource(456) = Y to identify ISO 24165 DTI values; present in spec examples or custom tag data dictionary",
-            "partial_credit": "Exchange references ISO 24165 or DTI in documentation without full implementation; or uses FIGI (asset-level) as a proxy",
-            "no_credit": "No reference to DTI, ISO 24165, or standardized digital asset identifier beyond exchange-native tickers"
-          }
-        },
-
-        {
-          "id": "T5_002",
-          "fix_tag": "15 + 2897 / 120 + 2899",
-          "field_name": "Currency(15) + CurrencyCodeSource(2897) / SettlCurrency(120) + SettlCurrencyCodeSource(2899) — ISO 4217 / ISO 24165 disambiguation",
-          "category": "currency_identification",
-          "weight": 0,
-          "informational": true,
-          "required": false,
-          "description": "DAWG proposes extending the Currency FIX datatype to support both ISO 4217 (fiat currency codes, e.g. USD, EUR) and ISO 24165 (digital token DTIs, e.g. Bitcoin DTI '4H95J0R2X'). A new companion field CurrencySource(TBD) disambiguates which standard the Currency(15) value uses. The same pattern applies to SettlCurrency(120) via a new SettlCurrencySource(TBD) field. This pattern is required across all FIX messages that carry currency fields.",
-          "dawg_proposal": {
-            "change_type": "New CurrencyCodeSource(2897) and SettlCurrencyCodeSource(2899) fields added in EP273. Both use the CurrencyCodeSourceCodeSet shared codeset. Tag numbers are ratified — no longer TBD.",
-            "ep_status": "Ratified — EP273",
-            "new_fields": [
-              {
-                "field_name": "CurrencyCodeSource",
-                "tag": "2897",
-                "data_type": "String (CurrencyCodeSourceCodeSet enumeration)",
-                "ep_added": "EP273",
-                "values": {
-                  "1": "CUSIP",
-                  "2": "SEDOL",
-                  "4": "ISIN",
-                  "6": "ISO Currency Code (ISO 4217)",
-                  "S": "Financial Instrument Global Identifier (FIGI / OMG standard)",
-                  "Y": "Digital Token Identifier (ISO 24165)"
-                },
-                "applies_to": "Currency(15)",
-                "fiximate_ref": "https://fiximate.fixtrading.org/en/FIX.Latest/tag2897.html"
-              },
-              {
-                "field_name": "SettlCurrencyCodeSource",
-                "tag": "2899",
-                "data_type": "String (CurrencyCodeSourceCodeSet enumeration)",
-                "ep_added": "EP273",
-                "values": {
-                  "1": "CUSIP",
-                  "2": "SEDOL",
-                  "4": "ISIN",
-                  "6": "ISO Currency Code (ISO 4217)",
-                  "S": "Financial Instrument Global Identifier (FIGI / OMG standard)",
-                  "Y": "Digital Token Identifier (ISO 24165)"
-                },
-                "applies_to": "SettlCurrency(120)",
-                "fiximate_ref": "https://fiximate.fixtrading.org/en/FIX.Latest/tag2899.html"
-              }
-            ],
-            "example_btc_usd_order": "Currency(15) = 4H95J0R2X, CurrencyCodeSource(2897) = Y — identifies Bitcoin as dealt currency via ISO 24165 DTI. SettlCurrency(120) = USD, SettlCurrencyCodeSource(2899) = 6 — identifies USD via ISO 4217.",
-            "example_eth_btc_order": "Currency(15) = 'X9J9K8725' (Ether DTI), SettlCurrency(120) = '4H95J0R2X' (Bitcoin DTI), both with ISO24165 source flags"
-          },
-          "institutional_gap_if_missing": "Without CurrencySource disambiguation, OMS systems cannot distinguish whether Currency(15)='BTC' is a ticker symbol or a DTI. For digital-asset-vs-digital-asset trades (e.g. ETH/BTC), currency identification is structurally ambiguous in standard FIX without this extension.",
-          "tradfi_reference": "Analogous to existing FX handling — FIX uses Ccy1/Ccy2 convention in Symbol(55) for FX-style orders. The DAWG extension applies similar rigor to the Currency field itself.",
-          "crypto_notes": "This is the most operationally impactful DAWG proposal for institutional clients. Current crypto exchange FIX specs use tickers in Currency(15) without a source qualifier — any institutional integration to multi-asset portfolios must build custom mapping logic as a workaround.",
-          "scoring_logic": {
-            "full_credit": "Exchange documents CurrencyCodeSource(2897) = Y and/or SettlCurrencyCodeSource(2899) = Y to identify ISO 24165 DTI values in Currency(15) and SettlCurrency(120)",
-            "partial_credit": "Exchange acknowledges the ambiguity in documentation and provides a mapping table (ticker to standard identifier) as a workaround",
-            "no_credit": "Currency(15) uses exchange-native tickers only with no disambiguation mechanism"
-          }
-        },
-
-        {
-          "id": "T5_003",
-          "fix_tag": "167=DIGITAL",
-          "field_name": "SecurityType(167) — DIGITAL enumeration value (ISO 24165)",
-          "category": "instrument_classification",
-          "weight": 0,
-          "informational": true,
-          "required": false,
-          "description": "EP273 ratifies DIGITAL as a new enumeration value for SecurityType(167), defined as: a digital asset that exists only in digital form or which is the digital representation of another asset (ISO 24165 — Terms and Definitions). The DAWG draft proposed this value and it has been confirmed as-is. Provides standardized instrument taxonomy for digital assets within the existing SecurityTypeCodeSet.",
-          "ep273_update": {
-            "change_type": "New enumeration value DIGITAL added to existing SecurityTypeCodeSet in EP273. Not a new field — an extension of the existing field.",
-            "ep_status": "Ratified — EP273",
-            "confirmed_from_draft": "DAWG draft proposed DIGITAL — ratified value is DIGITAL, confirmed as-is. Note: DIGITAL is a SecurityTypeCodeSet value, distinct from the Y = DTI pattern used in SecurityIDSource(22) and SecurityAltIDSource(456) of T5_001. Different codesets, different roles: SecurityType classifies the asset class; SecurityIDSource identifies the identifier scheme.",
-            "definition": "Digital Asset — asset that exists only in digital form or which is the digital representation of another asset",
-            "definition_source": "ISO 24165 — Terms and Definitions",
-            "sub_classification_note": "Granular sub-classification (utility token, security token, stablecoin) deferred pending industry consensus — consistent with original DAWG position",
-            "fiximate_ref": "https://fiximate.fixtrading.org/en/FIX.Latest/tag167.html"
-          },
-          "new_fields": [
-            {
-              "field_name": "SecurityType",
-              "tag": "167",
-              "data_type": "String (SecurityTypeCodeSet enumeration)",
-              "ep_added": "EP273 (DIGITAL value); field is long-standing FIX standard",
-              "new_value": {
-                "DIGITAL": "Digital Asset — asset that exists only in digital form or which is the digital representation of another asset (ISO 24165)"
-              },
-              "applies_to": "Instrument component block — NewOrderSingle(D), ExecutionReport(8), SecurityDefinition(d), and all messages carrying SecurityType",
-              "usage": "Set SecurityType(167) = DIGITAL to classify the instrument as a digital asset per ISO 24165. Independent of SecurityIDSource(22) = Y — SecurityType classifies the asset class; SecurityIDSource identifies the identifier scheme. Both should be present in a fully compliant implementation.",
-              "fiximate_ref": "https://fiximate.fixtrading.org/en/FIX.Latest/tag167.html"
-            }
-          ],
-          "example": "SecurityType(167) = DIGITAL, SecurityID(48) = 4H95J0R2X, SecurityIDSource(22) = Y — SecurityType classifies the instrument as a digital asset (ISO 24165); SecurityIDSource carries the DTI as the identifier scheme. Complementary roles: classification vs identification.",
-          "institutional_gap_if_missing": "Without a standardized SecurityType for digital assets, institutional OMS systems must use proprietary mappings or misuse existing SecurityType values. This complicates multi-asset portfolio management, risk system integration, and regulatory reporting.",
-          "tradfi_reference": "SecurityType(167) values such as CS (Common Stock), FUT (Futures), OPT (Option) allow OMS systems to apply asset-class-specific processing rules. DIGITAL would enable equivalent treatment for crypto assets.",
-          "crypto_notes": "Exchanges currently use CS or custom values for spot, FUT for derivatives. SecurityType(167) = DIGITAL is the ratified EP273 standard for asset classification. Important distinction for RoE authors: DIGITAL is a SecurityTypeCodeSet value (instrument taxonomy); Y is a SecurityIDSourceCodeSet value (identifier scheme). They serve different roles and should both be present in a fully compliant implementation.",
-          "scoring_logic": {
-            "full_credit": "Exchange documents SecurityType(167) = DIGITAL per EP273 in their FIX spec or data dictionary",
-            "partial_credit": "Exchange uses a non-standard custom SecurityType value serving the same purpose, or references ISO 24165 / digital asset classification without the ratified DIGITAL value; documented in custom tag dictionary",
-            "no_credit": "SecurityType absent, uses standard TradFi values only (CS, FUT), or no digital-asset-specific classification present"
-          }
-        },
-
-        {
-          "id": "T5_004",
-          "fix_tag": "803 (PartySubIDType) — new wallet value",
-          "field_name": "Wallet identifier — PartySubIDType extension",
-          "category": "wallet_identification",
-          "weight": 0,
-          "informational": true,
-          "required": false,
-          "description": "DAWG proposes a new value for PartySubIDType(803) in the PtysSubGrp sub-component of the Parties repeating group, specifically to carry a wallet address tied to the appropriate PartyRole. This is the FIX-standard mechanism for on-chain wallet attribution — linking a FIX trade record to a blockchain wallet address without requiring a separate REST call or custom tag outside the standard Parties group.",
-          "dawg_proposal": {
-            "change_type": "New enumeration value in PartySubIDTypeCodeSet",
-            "field": "PartySubIDType(803)",
-            "proposed_value": "TBD — 'Wallet identifier' (tag number pending GTC ratification)",
-            "usage": "Convey wallet identifier in PtysSubGrp so that wallet information is attached to the appropriate party role and its identifier. Format of wallet identifier is specific to the type of digital asset (e.g. Ethereum address format differs from Bitcoin address format).",
-            "relationship_to_t4_002": "This DAWG proposal is the FIX-standard solution to the wallet attribution gap identified in rubric check T4_002. T4_002 measures whether any wallet attribution mechanism exists; T5_004 measures whether the exchange uses the FIX-standard DAWG approach specifically."
-          },
-          "institutional_gap_if_missing": "Without a standardized wallet identifier in the Parties group, on-chain AML screening (Chainalysis, Elliptic, TRM Labs) cannot be triggered automatically from FIX trade data. Institutions must reconcile FIX ExecIDs against blockchain transaction hashes via a separate process.",
-          "tradfi_reference": "No direct TradFi equivalent. Closest analogy is LEI (Legal Entity Identifier) in the Parties group for MiFID II counterparty identification — a standardized identifier tied to a party role.",
-          "crypto_notes": "Your Solidus Labs experience implementing AML/Travel Rule compliance for 25+ crypto exchanges makes this the check where you can write the most authoritative remediation guidance. The DAWG proposal maps directly to the Travel Rule originator/beneficiary wallet identification requirement.",
-          "scoring_logic": {
-            "full_credit": "Exchange documents wallet address in PartySubIDType(803) with a DAWG-aligned or functionally equivalent party sub-ID type; wallet-to-trade linkage achievable within FIX message stream",
-            "partial_credit": "Exchange provides wallet address via a custom tag or via ExecID-to-TxHash mapping in REST, with documentation; not FIX-native but functional",
-            "no_credit": "No documented mechanism to associate wallet addresses with FIX trade records"
-          }
-        },
-
-        {
-          "id": "T5_005",
-          "fix_tag": "55 + 454/455/456",
-          "field_name": "Symbol + SecAltIDGrp — FX-style DTI pair identification",
-          "category": "instrument_identification",
-          "weight": 0,
-          "informational": true,
-          "required": false,
-          "description": "DAWG proposes that for FX-style digital asset trading (e.g. BTC/USD pairs), exchanges recommend use of Symbol(55) for the human-readable pair and the SecAltIDGrp repeating group (NoSecurityAltID(454), SecurityAltID(455), SecurityAltIDSource(456)) to carry the ISO 24165 DTIs for each currency in the pair. A new companion field in the SecAltID group associates each DTI with the first or second currency in the Symbol. The 'dealt' currency is always first in Symbol(55) — a Recommended Practice, not mandated.",
-          "dawg_proposal": {
-            "change_type": "New field added to SecAltIDGrp component; new usage rules for existing fields",
-            "fields_affected": ["NoSecurityAltID(454)", "SecurityAltID(455)", "SecurityAltIDSource(456)"],
-            "new_field": "A new field in SecAltIDGrp to associate each SecurityAltID with either the first or second currency in Symbol(55)",
-            "recommended_practice": "Dealt currency is always first in Symbol(55). Symbol carries human-readable ticker pair. DTIs carried in SecAltIDGrp for unambiguous machine identification.",
-            "example": {
-              "symbol_55": "BTC/USD",
-              "no_security_alt_id_454": 2,
-              "alt_id_1_455": "4H95J0R2X",
-              "alt_id_source_1_456": "[DTI value]",
-              "new_field_1": "Denotes first currency (Bitcoin)",
-              "alt_id_2_455": "USD",
-              "alt_id_source_2_456": "6 (ISO 4217)",
-              "new_field_2": "Denotes second currency (USD)"
-            }
-          },
-          "institutional_gap_if_missing": "Without DTI pairs in SecAltIDGrp, institutional systems receiving BTC/USD orders cannot unambiguously identify which Bitcoin (which chain, which token standard) is being traded. As wrapped tokens and cross-chain assets proliferate, ticker ambiguity becomes a real settlement risk.",
-          "tradfi_reference": "Analogous to how TradFi uses Symbol(55) for human display and SecurityID(48)/SecurityIDSource(22) for machine-readable ISIN or CUSIP identification — the dual-field pattern is already standard practice.",
-          "crypto_notes": "This is the most practically useful DAWG proposal for FX-style exchanges (which is most crypto spot trading). Kraken, Coinbase Exchange, and Binance all use BTC/USD style Symbol(55) without DTI disambiguation in SecAltIDGrp. Implementing this would be low-effort for exchanges but high-value for institutional integrators.",
-          "scoring_logic": {
-            "full_credit": "Exchange documents SecAltIDGrp usage with DTI values alongside Symbol(55) ticker pairs; both currencies in the pair have DTI entries; new companion field or equivalent documented",
-            "partial_credit": "Exchange uses SecAltIDGrp for one currency in the pair but not both; or references FIGI in SecAltIDGrp as an asset-level (not token-level) identifier",
-            "no_credit": "SecAltIDGrp not used for instrument identification; Symbol(55) ticker_only with no secondary identifier"
-          }
-        }
-
+        { "id": "T5_001", "message_type": "35=D/8/AE", "message_name": "NOS/ER/TCR", "level": "tag", "tag_number": 22, "tag_name": "SecurityIDSource=Y", "weight": 0.0, "required": false, "description": "ISO 24165 DTI support" },
+        { "id": "T5_002", "message_type": "35=D/8/AE", "message_name": "NOS/ER/TCR", "level": "tag", "tag_number": 2897, "tag_name": "CurrencyCodeSource", "weight": 0.0, "required": false, "description": "Disambiguates ISO 4217 vs DTI" },
+        { "id": "T5_003", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "tag", "tag_number": 167, "tag_name": "SecurityType=DIGITAL", "weight": 0.0, "required": false, "description": "Ratified DIGITAL security type" },
+        { "id": "T5_004", "message_type": "35=8/AE", "message_name": "ER/TCR", "level": "tag", "tag_number": 803, "tag_name": "Wallet PartySubID", "weight": 0.0, "required": false, "description": "DAWG wallet value in 803" },
+        { "id": "T5_005", "message_type": "35=D", "message_name": "NewOrderSingle", "level": "tag", "tag_number": null, "tag_name": "Symbol + SecAltIDGrp", "weight": 0.0, "required": false, "description": "Human-readable pair + DTI values" }
       ]
     }
-  ]
+  ],
+  "roe_output_template": {
+    "description": "Template for RoE document generation based on v2.0 rubric",
+    "sections": [
+      "1. Executive Summary",
+      "2. Scorecard Matrix",
+      "3. Gap Analysis",
+      "4. Connectivity Specs"
+    ]
+  }
 }

@@ -1,7 +1,10 @@
 export interface CheckResult {
   check_id: string;
-  fix_tag: string;
-  field_name: string;
+  message_type: string;
+  message_name: string;
+  level: 'message' | 'tag';
+  tag_number: number | null;
+  tag_name: string;
   status: 'full_credit' | 'partial_credit' | 'no_credit';
   points_available: number;
   evidence: string | null;

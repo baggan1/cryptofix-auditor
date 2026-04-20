@@ -25,47 +25,85 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
   rubric.tiers.forEach(tier => {
     if (tier.tier > 4) return;
 
-    let earned = 0;
-    tier.checks.forEach(check => {
-      const result = extraction.checks.find(c => c.check_id === check.id);
-      const status = result?.status || 'no_credit';
-      const factor = factors[status] || 0;
-      const pts = check.weight * factor;
-      
-      earned += pts;
-      totalScore += pts;
-
-      const detail: CheckResult = {
-        check_id: check.id,
-        fix_tag: check.fix_tag,
-        field_name: check.field_name,
-        status: status,
-        points_available: check.weight,
-        evidence: result?.evidence || null,
-        asset_class_limitation: result?.asset_class_limitation || null,
-        custom_tag_notes: result?.custom_tag_notes || null
-      };
-      
-      fullDetail.push(detail);
-
-      if (status !== 'full_credit') {
-        gaps.push({
-          check_id: check.id,
-          fix_tag: check.fix_tag,
-          field_name: check.field_name,
-          tier: tier.tier,
-          status: status as 'partial_credit' | 'no_credit',
-          points_lost: check.weight - pts,
-          evidence: detail.evidence
-        });
-      }
+    // Group checks by message_type
+    const byMessage: Record<string, { message: any, tags: any[] }> = {};
+    tier.checks.forEach((check: any) => {
+      const mt = check.message_type;
+      if (!byMessage[mt]) byMessage[mt] = { message: null, tags: [] };
+      if (check.level === 'message') byMessage[mt].message = check;
+      else byMessage[mt].tags.push(check);
     });
 
+    let tierEarned = 0;
+    Object.entries(byMessage).forEach(([msgType, group]) => {
+      // Score message-level check
+      if (group.message) {
+        const result = extraction.checks.find(c => c.check_id === group.message.id);
+        const status = result?.status || 'no_credit';
+        const factor = factors[status] || 0;
+        const pts = group.message.weight * factor;
+        tierEarned += pts;
+        totalScore += pts;
+
+        fullDetail.push({
+          check_id: group.message.id,
+          message_type: msgType,
+          message_name: group.message.message_name,
+          level: 'message',
+          tag_number: null,
+          tag_name: group.message.tag_name || group.message.message_name,
+          status: status,
+          points_available: group.message.weight,
+          evidence: result?.evidence || null,
+          asset_class_limitation: result?.asset_class_limitation || null,
+          custom_tag_notes: null
+        });
+      }
+
+      // Score tag-level checks
+      group.tags.forEach(check => {
+        const result = extraction.checks.find(c => c.check_id === check.id);
+        const status = result?.status || 'no_credit';
+        const factor = factors[status] || 0;
+        const pts = check.weight * factor;
+        tierEarned += pts;
+        totalScore += pts;
+
+        const detail: CheckResult = {
+          check_id: check.id,
+          message_type: msgType,
+          message_name: check.message_name,
+          level: 'tag',
+          tag_number: check.tag_number,
+          tag_name: check.tag_name,
+          status: status,
+          points_available: check.weight,
+          evidence: result?.evidence || null,
+          asset_class_limitation: result?.asset_class_limitation || null,
+          custom_tag_notes: null
+        };
+        fullDetail.push(detail);
+
+        if (status !== 'full_credit') {
+          gaps.push({
+            check_id: check.id,
+            fix_tag: `${check.tag_number || ''}`,
+            field_name: check.tag_name,
+            tier: tier.tier,
+            status: status as 'partial_credit' | 'no_credit',
+            points_lost: check.weight - pts,
+            evidence: detail.evidence
+          });
+        }
+      });
+    });
+
+    tierEarned = Math.min(tierEarned, tier.weight_total);
     tierScores[`tier${tier.tier}`] = {
       label: tier.label,
-      earned,
+      earned: Math.round(tierEarned * 10) / 10,
       available: tier.weight_total,
-      pct: Math.round((earned / tier.weight_total) * 100)
+      pct: Math.round((tierEarned / tier.weight_total) * 100)
     };
   });
 
