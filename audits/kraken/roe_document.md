@@ -6,138 +6,155 @@ Auditor: Opound LLC — Navilla Bagga
 Spec source: https://docs.kraken.com/api/docs/guides/fix-intro/
 Asset classes: [spot, futures]
 
-Overall score: 51 / 100 — Partial
+Overall score: 53 / 100 — Partial
 
-Tier | Score | Available | %
------|-------|-----------|---
-1 Order lifecycle | 33.4 | 40 | 84%
-2 Execution quality & TCA | 10 | 25 | 40%
-3 Post-trade & allocation | 0 | 25 | 0%
-4 AML & Travel Rule | 8 | 10 | 80%
+| Tier | Score | Available | % |
+| :--- | :--- | :--- | :--- |
+| **1 Order lifecycle** | 33.4 | 40 | 84% |
+| **2 Execution quality & TCA** | 11.5 | 25 | 46% |
+| **3 Post-trade & allocation** | 0.0 | 25 | 0% |
+| **4 AML & Travel Rule** | 8.0 | 10 | 80% |
 
-Recommendation: Kraken's FIX API is suitable for simple order entry but lacks the post-trade and TCA instrumentation required for institutional-grade OMS integration. The primary blocker is the absence of TradeCaptureReport (35=AE) and Allocation messages. Priority fix: Implement Tag 453 (Parties) and support for AllocationInstruction (35=J).
+**Informational Tiers:**
+- **5 DAWG Extensions**: 0 checks present
+- **6 Drop Copy readiness**: 0.5 / 10 (Not ready — session-level only)
+- **7 Market Data**: 10 / 10 (Institutional ready)
+- **8 Admin & Session**: 8.6 / 10 (High reliability)
 
-Critical gaps (top 3 by points_lost):
-- T2_8_029 | LastCapacity | 5.0 pts | Absence of Tag 29 prevents automated regulatory reporting of execution capacity.
-- T2_8_030 | LastMkt | 4.0 pts | Lack of ISO MIC venue identification complicates multi-venue TCA.
-- T3_AE_000 | TradeCaptureReport | 2.0 pts | Institutional trade reconciliation must be performed via rest, breaking FIX-native workflows.
+### Recommendation
+Kraken provides a highly reliable baseline for market discovery and session stability, but significant gaps remain in post-trade transparency (LastCapacity/LastMkt) and allocation routing. While "Partial", Kraken is ready for institutional market making and price discovery, though the lack of native FIX RFQ/Allocation limits its use for multi-account investment management without REST-based sidecars.
+
+### Critical Gaps (Top 3)
+- **T2_8_029** | LastCapacity | 5.0 pts | Execution reporting lacks capacity (Agent/Principal) transparency.
+- **T2_8_030** | LastMkt | 4.0 pts | Missing execution venue identifier for multi-asset routing.
+- **T2_8_528** | OrderCapacity | 4.0 pts | Regulatory capacity not captured on order entry.
 
 ---
 
 ## SECTION 2 — Session configuration
 
-FIX version: FIX 4.4
+FIX version: 4.4
 Transport: TCP/TLS 1.2+
 
-Connection parameters:
-TargetCompID: Kraken (Standard) / KrakenPrime (Prime)
-SenderCompID: [client-assigned]
-Host: fix.kraken.com
-Port: 443
-Sandbox: N/A - Demo environment available upon request
+**Connection parameters:**
+- **TargetCompID**: KRAKEN-TRD (Trading) or KRAKEN-MD (Market Data)
+- **SenderCompID**: [Client assigned]
+- **Host**: fix-trd.kraken.com (Example)
+- **Port**: 443
+- **Sandbox**: Y — fix-trd-demo.kraken.com
 
-Authentication: HMAC-SHA256 signature calculated from current timestamp and API Secret.
-Logon tags: Tag 553 (Username/API Key), Tag 554 (Password/Signature), Tag 13416 (Nonce).
-ResetOnLogon (141): Y — Session seq numbers reset at UTC 00:00.
+**Authentication:** 
+- HMAC-SHA512 based signature passed in tag 554 (Password).
+- Logon tags: 553 (Username), 554 (Password), 5025 (Nonce - required).
+- ResetSeqNumFlag (141): Supported (Y/N).
 
-Session management:
-Heartbeat interval (108): 30 sec — configurable: N
-Missed heartbeat threshold: 3 missed = disconnect
-Cancel-on-Disconnect: Y — scope: Account-level or Session-level via Tag 8674.
-Message recovery: ResendRequest (35=2) supported for current session only.
-Forced session reset: Mandatory reset at UTC 00:00 daily.
+**Session management:**
+- **Heartbeat interval (108)**: 60 sec (Recommended).
+- **Cancel-on-Disconnect**: Y (Supported via custom tag 8674).
+- **Message recovery**: Supported via ResendRequest (35=2). Recovery window not explicitly stated.
 
 ---
 
 ## SECTION 3 — Tier scorecard
 
-### Tier 1: Order Lifecycle (Score: 33.4/40)
-Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
----|---|---|---|---|---|---
-T1_D_000 | null | NewOrderSingle | [P] Full | 3.0 | 3.0 | NOS fully documented.
-T1_D_011 | 11 | ClOrdID | [P] Full | 0.7 | 0.7 | Tag 11 is required.
-T1_D_055 | 55 | Symbol | [P] Full | 0.7 | 0.7 | Tag 55 used for instrument.
-T1_D_167 | 167 | SecurityType | [X] Missing | 0.0 | 0.7 | Tag 167 not documented.
-T1_G_000 | null | OrderCancelReplaceRequest | [P] Full | 2.0 | 2.0 | Supported on Spot.
+### Tier 1 (Order Lifecycle): 33.4 / 40 pts
+| Check ID | Tag | Field | Status | Pts | Max | Evidence |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| T1_D_000 | 35=D | NOS | [P] | 3.0 | 3.0 | NOS fully documented for Spot and Prime. |
+| T1_8_000 | 35=8 | ER | [P] | 3.0 | 3.0 | ER primary feedback mechanism. |
+| T1_F_000 | 35=F | Cancel | [P] | 2.5 | 2.5 | Supported. |
+| T1_G_000 | 35=G | Replace | [P] | 2.5 | 2.5 | Supported on Spot accounts. |
+| ... | ... | ... | ... | ... | ... | ... |
 
-### Tier 2: Execution Quality & TCA (Score: 10/25)
-Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
----|---|---|---|---|---|---
-T2_8_029 | 29 | LastCapacity | [X] Missing | 0.0 | 5.0 | Tag 29 not documented.
-T2_8_060 | 60 | TransactTime | [~] Partial | 1.5 | 3.0 | Millisecond precision instead of microsecond.
-T2_8_851 | 851 | LastLiquidityInd | [~] Partial | 1.5 | 3.0 | Uses custom Tag 5050.
+### Tier 7 (Market Data): 10 / 10 pts
+| Check ID | Tag | Field | Status | Pts | Max | Evidence |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| T7_V_000 | 35=V | Request | [P] | 0.75 | 0.75 | 35=V documented in SLR-FIX spec. |
+| T7_W_000 | 35=W | Snapshot | [P] | 1.0 | 1.0 | 35=W supported. |
+| T7_X_000 | 35=X | Incremental | [P] | 1.0 | 1.0 | 35=X supported for book updates. |
+| T7_x_000 | 35=x | SecList | [P] | 0.5 | 0.5 | InstrumentListRequest supported. |
 
-### Tier 3: Post-Trade & Allocation (Score: 0/25)
-Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
----|---|---|---|---|---|---
-T3_AE_000 | null | TradeCaptureReport | [X] Missing | 0.0 | 2.0 | Not supported in FIX.
-T3_J_000 | null | AllocationInstruction | [X] Missing | 0.0 | 2.0 | Not supported in FIX.
-
-### Tier 4: AML & Travel Rule (Score: 8/10)
-Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
----|---|---|---|---|---|---
-T4_453 | 453 | Parties Group | [P] Full | 4.0 | 4.0 | Documented in Kraken Prime NOS FIX.
-T4_WAL | null | Wallet Attribution | [X] Missing | 0.0 | 2.0 | No documented mechanism.
-T4_017 | 17 | ExecID Uniqueness | [P] Full | 2.0 | 2.0 | Globally unique.
+### Tier 8 (Admin & Session): 8.6 / 10 pts
+| Check ID | Tag | Field | Status | Pts | Max | Evidence |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| T8_A_000 | 35=A | Logon | [P] | 1.0 | 1.0 | HMAC-512 auth documented. |
+| T8_HB_COD | 8674 | COD | [P] | 0.5 | 0.5 | Custom tag 8674 documented. |
+| T8_RR_000 | 35=2 | Resend | [P] | 0.75 | 0.75 | 35=2 documented. |
 
 ---
 
 ## SECTION 4 — Gap analysis & remediation
 
 ### T2_8_029 — LastCapacity (tag 29) — 5.0 pts lost
-Status: Missing
-Evidence: Not documented
-Institutional impact: Essential for MiFID II and CFTC recordkeeping. Without Tag 29, the OMS cannot automatically verify if an execution was processed as Agency or Principal.
-TradFi reference: ISO 15022 / FIX 4.4 Standard.
-Recommended remediation: Populate Tag 29 in ExecutionReport (35=8) with valid values: 1=Agent, 3=Principal.
-Workaround: No FIX-native workaround.
-Effort: M 1-4 weeks
+**Status**: Missing
+**Evidence**: Tag 29 not documented in response messages.
+**Institutional impact**: Execution reporting lacks capacity (Agent/Principal) transparency.
+**TradFi reference**: Required for regulatory reporting (MiFID II / CAT).
+**Remediation**: Implement Tag 29 in ExecutionReport (35=8) to indicate whether the exchange filled the order as principal or agent.
 
-### T3_AE_000 — TradeCaptureReport (35=AE) — 2.0 pts lost
-Status: Missing
-Evidence: Not documented
-Institutional impact: Direct market access (DMA) requires real-time trade capture to bypass execution-only report delays.
-TradFi reference: FIX EP211.
-Recommended remediation: Implement TradeCaptureReport to echo all execution details for EOD reconciliation.
-Workaround: Use REST /trades endpoint.
-Effort: L > 1 month
+### T7_X_278 — MDEntryID (tag 278) — 0.4 pts lost
+**Status**: Missing
+**Evidence**: Order-level (L3) MDEntryID not documented for FIX incremental refreshes.
+**Institutional impact**: Limits ability to track specific orders in the book for algo execution.
+**Remediation**: Surface unique MDEntryIDs in 35=X messages to support full L3 book building.
 
 ---
 
 ## SECTION 5 — Custom tag dictionary
-
-Tag # | Field Name | Data Type | Valid Values | Messages | Notes
----|---|---|---|---|---
-5050 | LastLiquidityInd | Char | m=Maker, t=Taker | 35=8 | Non-standard alternative to Tag 851.
-8674 | ExpireTime | Int | Seconds | 35=A | Used for session-level Cancel-on-Disconnect.
-13416 | Nonce | String | Unique number | 35=A | Required for secure authentication.
+| Tag # | Field Name | Data Type | Valid Values | Messages | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 8674 | CancelOrdersOnDisconnect | int | 0=Cancel, 1=Keep | 35=A/0 | Critical risk control. |
+| 5025 | Nonce | string | Unique timestamp | 35=A | Anti-replay authentication. |
+| 5050 | MakerTaker | char | M=Maker, T=Taker | 35=8 | Alternative to Tag 851. |
+| 5001 | Leverage | float | 1-5 | 35=D | Marginal trading metadata. |
 
 ---
 
 ## SECTION 6 — Order types matrix
-
-Order Type | FIX OrdType | Spot | Futures | Perps | Options | Notes
----|---|---|---|---|---|---
-Market | 1 | [P] | [P] | [P] | [X] | Standard support.
-Limit | 2 | [P] | [P] | [P] | [X] | Standard support.
-Stop | 3 | [P] | [P] | [P] | [X] | Spot only for advanced triggers.
-StopLimit | 4 | [P] | [P] | [P] | [X] | 
-Iceberg | 1138 | [P] | [X] | [X] | [X] | Tag 1138 DisplayQty.
-
-TIF table: GTC(1), IOC(3), FOK(4), GTD(6) — Supported on all asset classes (Spot/Futures).
+| Order Type | FIX OrdType | Spot | Futures | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| Market | 1 | [P] | [P] | |
+| Limit | 2 | [P] | [P] | |
+| Stop | 3 | [P] | [P] | |
+| Stop Limit | 4 | [P] | [P] | |
+| Take Profit | R | [P] | [P] | Custom Kraken extension. |
+| Trailing Stop | U | [P] | [P] | Custom Kraken extension. |
 
 ---
 
 ## SECTION 7 — UAT checklist
+**Phase 1 — Session**: Logon with HMAC signature, Nonce validation, COD toggle test.
+**Phase 2 — Order lifecycle**: NOS with Take Profit extensions, Partial fill verification via Tag 32/31.
+**Phase 3 — Modify/cancel**: Amend price/qty (Spot only), Mass cancel by Symbol.
+**Phase 4 — Market Data**: Snapshot reconciliation with Incremental refreshes, InstrumentList sync.
 
-UAT environment: demo-fix.kraken.com:443
+---
 
-Phase 1 — Session: Logon with HMAC, heartbeat echo, COD trigger test.
-Phase 2 — Order lifecycle: NOS with Tag 11 uniqueness, side validation.
-Phase 3 — Modify/cancel: Cancel by OrigClOrdID, verify rejection Tag 58.
-Phase 4 — Execution quality: Verify Tag 5050 maker/taker flags, timestamp ms precision.
-Phase 5 — Recovery: Sequence jump test using ResendRequest.
-Phase 6 — Allocation: Verify Tag 453 on Prime accounts.
+## SECTION 8 — DAWG Extensions (Informational)
+Kraken does not currently implement DAWG (Digital Asset Working Group) ratified extensions like ISO 24165 DTIs or standard Wallet ID sub-groups. Routing is handled via the standard Parties group (453) in Kraken Prime.
+
+---
+
+## SECTION 9 — Drop Copy Analysis
+**Score**: 0.5 / 10
+**Status**: Absent (Session-level only)
+Kraken does not provide a dedicated Drop Copy session type. Institutional clients receive execution reports on the order-entry session. While functionally equivalent for basic tracking, it prevents a "Golden Copy" feed from a separate infrastructure layer favored by compliance systems.
+
+---
+
+## SECTION 10 — Market Data Analysis
+Evaluation of FIX book-building (L2) and order-by-order (L3) capabilities.
+- **Score**: 10 / 10
+- **Status**: Production Ready
+Kraken's market data feed is robust, supporting full snapshots and efficient incremental refreshes. Reference data is easily discovered via Security List (35=x).
+
+---
+
+## SECTION 11 — Admin & Session Analysis
+Baseline FIX connectivity and risk control assessment (Cancel-on-Disconnect).
+- **Score**: 8.6 / 10
+- **Status**: High Reliability
+Kraken implements a secure, signature-based logon process with mandatory anti-replay protection (Nonce). Cancel-on-Disconnect is fully supported via custom tagging, providing a strong risk baseline for institutional traders.
 
 Prepared by: Opound LLC — navilla.bagga@gmail.com
-Version: 1.0 | Date: 2026-04-20
+Version: 2.0.0 | Date: 2026-04-20

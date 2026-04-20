@@ -55,6 +55,38 @@ export interface Tier5Results {
   summary: string;
 }
 
+export interface Tier6Results {
+  label: string;
+  score: number;
+  max_score: number;
+  checks: CheckResult[];
+  summary: string;
+}
+
+export interface Tier7Results {
+  label: string;
+  score: number;
+  max_score: number;
+  checks: CheckResult[];
+  summary: string;
+}
+
+export interface Tier8Results {
+  label: string;
+  score: number;
+  max_score: number;
+  checks: CheckResult[];
+  summary: string;
+}
+
+export interface SeparateTierScore {
+  label: string;
+  earned: number;
+  available: number;
+  pct: number;
+  grade: string;
+}
+
 export interface ScoredReport {
   exchange_name: string;
   audit_date: string;
@@ -68,4 +100,8 @@ export interface ScoredReport {
   gap_summary: GapSummaryItem[];
   full_detail: CheckResult[];
   tier5_results?: Tier5Results;
+  tier6_results?: Tier6Results;
+  tier7_results?: Tier7Results;
+  tier8_results?: Tier8Results;
+  separate_tier_scores?: Record<string, SeparateTierScore>;
 }

@@ -6,7 +6,11 @@ import {
   GapSummaryItem, 
   CheckResult,
   Tier5Results,
-  Tier5CheckResult
+  Tier5CheckResult,
+  Tier6Results,
+  Tier7Results,
+  Tier8Results,
+  SeparateTierScore
 } from './types';
 
 export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
@@ -142,6 +146,139 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
     };
   }
 
+  // Tier 6 (Drop Copy)
+  const tier6Rubric = rubric.tiers.find(t => t.tier === 6);
+  let tier6Results: Tier6Results | undefined;
+
+  if (tier6Rubric) {
+    let tier6Earned = 0;
+    const tier6Checks: CheckResult[] = tier6Rubric.checks.map((check: any) => {
+      const result = extraction.checks.find(c => c.check_id === check.id);
+      const status = result?.status || 'no_credit';
+      const factor = factors[status] || 0;
+      const pts = check.weight * factor;
+      tier6Earned += pts;
+
+      return {
+        check_id: check.id,
+        message_type: check.message_type,
+        message_name: check.message_name,
+        level: check.level,
+        fix_tag: check.fix_tag,
+        field_name: check.field_name || check.message_name,
+        status: status,
+        points_available: check.weight,
+        evidence: result?.evidence || null,
+        asset_class_limitation: result?.asset_class_limitation || null,
+        custom_tag_notes: null
+      };
+    });
+
+    tier6Results = {
+      label: tier6Rubric.label,
+      score: Math.round(tier6Earned * 10) / 10,
+      max_score: tier6Rubric.weight_total,
+      checks: tier6Checks,
+      summary: `Exchange scored ${Math.round(tier6Earned * 10) / 10}/${tier6Rubric.weight_total} on Drop Copy infrastructure readiness.`
+    };
+  }
+
+  // Tier 7
+  const tier7Rubric = rubric.tiers.find(t => t.tier === 7);
+  let tier7Results: Tier7Results | undefined;
+
+  if (tier7Rubric) {
+    let tier7Earned = 0;
+    const tier7Checks: CheckResult[] = tier7Rubric.checks.map((check: any) => {
+      const result = extraction.checks.find(c => c.check_id === check.id);
+      const status = result?.status || 'no_credit';
+      const factor = factors[status] || 0;
+      const pts = check.weight * factor;
+      tier7Earned += pts;
+
+      return {
+        check_id: check.id,
+        message_type: check.message_type,
+        message_name: check.message_name,
+        level: check.level,
+        fix_tag: check.fix_tag,
+        field_name: check.field_name || check.message_name,
+        status: status,
+        points_available: check.weight,
+        evidence: result?.evidence || null,
+        asset_class_limitation: result?.asset_class_limitation || null,
+        custom_tag_notes: null
+      };
+    });
+
+    tier7Results = {
+      label: tier7Rubric.label,
+      score: Math.round(tier7Earned * 10) / 10,
+      max_score: tier7Rubric.weight_total,
+      checks: tier7Checks,
+      summary: `Exchange scored ${Math.round(tier7Earned * 10) / 10}/${tier7Rubric.weight_total} on Tier 7 readiness.`
+    };
+  }
+
+  // Tier 8
+  const tier8Rubric = rubric.tiers.find(t => t.tier === 8);
+  let tier8Results: Tier8Results | undefined;
+
+  if (tier8Rubric) {
+    let tier8Earned = 0;
+    const tier8Checks: CheckResult[] = tier8Rubric.checks.map((check: any) => {
+      const result = extraction.checks.find(c => c.check_id === check.id);
+      const status = result?.status || 'no_credit';
+      const factor = factors[status] || 0;
+      const pts = check.weight * factor;
+      tier8Earned += pts;
+
+      return {
+        check_id: check.id,
+        message_type: check.message_type,
+        message_name: check.message_name,
+        level: check.level,
+        fix_tag: check.fix_tag,
+        field_name: check.field_name || check.message_name,
+        status: status,
+        points_available: check.weight,
+        evidence: result?.evidence || null,
+        asset_class_limitation: result?.asset_class_limitation || null,
+        custom_tag_notes: null
+      };
+    });
+
+    tier8Results = {
+      label: tier8Rubric.label,
+      score: Math.round(tier8Earned * 10) / 10,
+      max_score: tier8Rubric.weight_total,
+      checks: tier8Checks,
+      summary: `Exchange scored ${Math.round(tier8Earned * 10) / 10}/${tier8Rubric.weight_total} on Admin Session reliability.`
+    };
+  }
+
+  // Separate scoring for Tiers 6, 7, 8
+  const separateTierScores: Record<string, SeparateTierScore> = {};
+  [6, 7, 8].forEach(tierNum => {
+    const tierResult = tierNum === 6 ? tier6Results : tierNum === 7 ? tier7Results : tier8Results;
+    if (!tierResult) return;
+
+    const rubricTier = rubric.tiers.find(t => t.tier === tierNum);
+    const guide = rubricTier.scoring_guide;
+    let grade = 'Not available';
+    if (tierResult.score >= 8) grade = guide["8-10"];
+    else if (tierResult.score >= 5) grade = guide["5-7"];
+    else grade = guide["0-4"];
+
+    separateTierScores[`tier${tierNum}`] = {
+      label: rubricTier.separate_score_label || rubricTier.label,
+      earned: tierResult.score,
+      available: tierResult.max_score,
+      pct: Math.round((tierResult.score / tierResult.max_score) * 100),
+      grade
+    };
+  });
+
   return {
     exchange_name: extraction.exchange_name,
     audit_date: extraction.extraction_date,
@@ -152,6 +289,10 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
     gap_count: gaps.length,
     gap_summary: gaps.sort((a, b) => b.points_lost - a.points_lost).slice(0, 10),
     full_detail: fullDetail,
-    tier5_results: tier5Results
+    tier5_results: tier5Results,
+    tier6_results: tier6Results,
+    tier7_results: tier7Results,
+    tier8_results: tier8Results,
+    separate_tier_scores: separateTierScores
   };
 }

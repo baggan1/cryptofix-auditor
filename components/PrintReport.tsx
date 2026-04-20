@@ -3,6 +3,11 @@
 import React, { useMemo } from 'react';
 import { marked } from 'marked';
 import { ScoredReport, GapSummaryItem, CheckResult } from '@/lib/types';
+import Tier5Panel from './Tier5Panel';
+import Tier6DropCopyPanel from './Tier6DropCopyPanel';
+import Tier7MarketDataPanel from './Tier7MarketDataPanel';
+import SeparateTierPanel from './SeparateTierPanel';
+import { Shield, FileText, CheckCircle, AlertCircle, AlertTriangle, Printer, Download, Map, Activity, BarChart3, ShieldAlert } from 'lucide-react';
 
 interface PrintReportProps {
   content: string;
@@ -152,18 +157,44 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                 {report.grade}
               </div>
               <div className="space-y-2">
-                {Object.entries(report.tier_scores).map(([key, tier]) => (
-                  <div key={key} className="flex items-center gap-3 text-sm">
-                    <span className="text-slate-500 w-40 truncate">{tier.label}</span>
-                    <div className="flex-1 bg-slate-100 rounded-full h-2">
-                      <div className="h-2 rounded-full bg-[#10B981] transition-all"
-                        style={{width: `${tier.pct}%`}} />
+                {Object.entries(report.tier_scores)
+                  .filter(([key]) => ['tier1', 'tier2', 'tier3', 'tier4'].includes(key))
+                  .map(([key, tier]) => (
+                    <div key={key} className="flex items-center gap-3 text-sm">
+                      <span className="text-slate-500 w-40 truncate">{tier.label}</span>
+                      <div className="flex-1 bg-slate-100 rounded-full h-2">
+                        <div className="h-2 rounded-full bg-[#10B981] transition-all"
+                          style={{width: `${tier.pct}%`}} />
+                      </div>
+                      <span className="text-slate-600 w-12 text-right font-mono text-xs">
+                        {tier.earned}/{tier.available}
+                      </span>
                     </div>
-                    <span className="text-slate-600 w-12 text-right font-mono text-xs">
-                      {tier.earned}/{tier.available}
-                    </span>
-                  </div>
                 ))}
+              </div>
+
+              {/* Informational / Separate Scores */}
+              <div className="mt-4 pt-4 border-t border-slate-100 flex gap-4">
+                {report.tier5_results && (
+                  <div className="text-[10px] bg-purple-50 text-purple-700 px-2 py-1 rounded-md border border-purple-100">
+                    <span className="font-bold mr-1">Tier 5 (DAWG):</span> 
+                    {report.tier5_results.checks.filter(c => c.status !== 'no_credit').length} present
+                  </div>
+                )}
+                {report.tier7_results && (
+                  <div className="text-[10px] bg-blue-50 text-blue-700 px-2 py-1 rounded-md border border-blue-100 flex items-center gap-1">
+                    <BarChart3 className="w-3 h-3" />
+                    <span className="font-bold">Tier 7 (MD):</span> 
+                    {report.tier7_results.score}/10
+                  </div>
+                )}
+                {report.tier8_results && (
+                  <div className="text-[10px] bg-slate-50 text-slate-700 px-2 py-1 rounded-md border border-slate-200 flex items-center gap-1">
+                    <ShieldAlert className="w-3 h-3" />
+                    <span className="font-bold">Tier 8 (Admin):</span> 
+                    {report.tier8_results.score}/10
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -312,13 +343,76 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                </section>
             ))}
 
-            {/* SECTION 8 (DAWG) */}
             {report.tier5_results && (
               <section>
-                <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 8 — DAWG Digital Asset FIX Extensions — Forward-Looking Assessment</h2>
+                <div className="flex items-center gap-3 mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
+                  <h2 className="text-xl font-semibold text-[#0A1628]">SECTION 8 — DAWG Digital Asset FIX Extensions</h2>
+                  <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Forward-Looking assessment</span>
+                </div>
                 <div className="report-content mb-6">
                   <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(8))) }} />
                 </div>
+                <Tier5Panel results={report.tier5_results} />
+                
+                {/* Tiers 6-8: separate scored panels */}
+                <div className="mt-8 space-y-4">
+                  {[6, 7, 8].map(tierNum => {
+                    const tier = report.separate_tier_scores?.[`tier${tierNum}`];
+                    if (!tier) return null;
+                    return (
+                      <SeparateTierPanel
+                        key={tierNum}
+                        label={tier.label}
+                        score={tier.earned}
+                        maxScore={tier.available}
+                        grade={tier.grade}
+                        pct={tier.pct}
+                      />
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* SECTION 9 (Drop Copy) */}
+            {report.tier6_results && (
+              <section>
+                <div className="flex items-center gap-3 mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
+                  <h2 className="text-xl font-semibold text-[#0A1628]">SECTION 9 — Drop Copy Infrastructure</h2>
+                  <span className="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Connectivity Audit</span>
+                </div>
+                <div className="report-content mb-6">
+                  <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(9))) }} />
+                </div>
+                <Tier6DropCopyPanel results={report.tier6_results} />
+              </section>
+            )}
+            {/* SECTION 10 (Market Data) */}
+            {report.tier7_results && (
+              <section>
+                <div className="flex items-center gap-3 mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
+                  <h2 className="text-xl font-semibold text-[#0A1628]">SECTION 10 — Market Data Analysis</h2>
+                  <span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Book Building & Discovery</span>
+                </div>
+                <div className="report-content mb-6">
+                  <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(10))) }} />
+                </div>
+                <Tier7MarketDataPanel results={report.tier7_results} />
+              </section>
+            )}
+
+            {/* SECTION 11 (Admin & Session) */}
+            {report.tier8_results && (
+              <section>
+                <div className="flex items-center gap-3 mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
+                  <h2 className="text-xl font-semibold text-[#0A1628]">SECTION 11 — Admin & Session Analysis</h2>
+                  <span className="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Connectivity Baseline</span>
+                </div>
+                <div className="report-content mb-6">
+                  <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(11))) }} />
+                </div>
+                {/* Detailed panel for Tier 8 can be added here if needed, 
+                    but using SeparateTierPanel for the overview per request */}
               </section>
             )}
           </div>

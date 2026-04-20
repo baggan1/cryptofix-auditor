@@ -81,7 +81,10 @@ rubric.tiers.forEach(tier => {
     available: tier.weight_total,
     pct: tier.weight_total > 0 ? Math.round((tierEarned / tier.weight_total) * 100) : 0
   };
-  total += tierEarned;
+  
+  if (tier.tier <= 4) {
+    total += tierEarned;
+  }
 });
 
 const score = Math.round(total);
@@ -102,8 +105,63 @@ const report = {
   gap_summary: gaps.map(c=>({ check_id:c.check_id, fix_tag:c.fix_tag,
     field_name:c.field_name, tier:c.tier, status:c.status,
     points_lost: c.weight-c.points_earned, evidence:c.evidence })),
-  full_detail: details
+  full_detail: details,
+  tier5_results: {
+    label: rubric.tiers.find(t=>t.tier===5).label,
+    informational_only: true,
+    checks: details.filter(d=>d.tier===5).map(d=>({
+      check_id: d.check_id, title: d.field_name, status: d.status,
+      evidence: d.evidence, notes: "DAWG Extension"
+    })),
+    summary: `${details.filter(d=>d.tier===5 && d.status!=='no_credit').length} checks present`
+  },
+  tier6_results: {
+    label: rubric.tiers.find(t=>t.tier===6).label,
+    score: tierScores.tier6.earned,
+    max_score: tierScores.tier6.available,
+    checks: details.filter(d=>d.tier===6),
+    summary: `Score ${tierScores.tier6.earned}/${tierScores.tier6.available}`
+  },
+  tier7_results: {
+    label: rubric.tiers.find(t=>t.tier===7).label,
+    score: tierScores.tier7.earned,
+    max_score: tierScores.tier7.available,
+    checks: details.filter(d=>d.tier===7),
+    summary: `Score ${tierScores.tier7.earned}/${tierScores.tier7.available}`
+  },
+  tier8_results: {
+    label: rubric.tiers.find(t=>t.tier===8).label,
+    score: tierScores.tier8.earned,
+    max_score: tierScores.tier8.available,
+    checks: details.filter(d=>d.tier===8),
+    summary: `Score ${tierScores.tier8.earned}/${tierScores.tier8.available}`
+  }
 };
+
+// Separate scoring for Tiers 6, 7, 8
+const separateTierScores = {};
+[6, 7, 8].forEach(tierNum => {
+  const tier = rubric.tiers.find(t => t.tier === tierNum);
+  if (!tier) return;
+
+  const earned = tierScores[`tier${tierNum}`].earned;
+  const label = tier.separate_score_label || tier.label;
+  const guide = tier.scoring_guide;
+  let grade = 'Not available';
+  if (earned >= 8) grade = guide["8-10"];
+  else if (earned >= 5) grade = guide["5-7"];
+  else grade = guide["0-4"];
+
+  separateTierScores[`tier${tierNum}`] = {
+    label,
+    earned,
+    available: tier.weight_total,
+    pct: Math.round((earned / tier.weight_total) * 100),
+    grade
+  };
+});
+
+report.separate_tier_scores = separateTierScores;
 
 fs.writeFileSync(`${dir}/scored_report.json`, JSON.stringify(report, null, 2));
 

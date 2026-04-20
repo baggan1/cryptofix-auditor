@@ -68,7 +68,7 @@ for full extraction rules, scoring criteria, and output format.
   or PDF filename in workspace root
 
 **Output:** `audits/{{exchange_slug}}/extraction_result.json`
-covering all 27 checks (T1_001 through T4_004).
+covering all checks (T1 through T8).
 
 ---
 
@@ -141,7 +141,7 @@ Run: `node score.js {{exchange_slug}}`
 **Agent:** roe-generator
 
 **Before starting:** Read `.antigravity/instructions/roe-template.md`
-for the complete 7-section document structure and formatting rules.
+for the complete 11-section document structure and formatting rules.
 
 **Inputs:**
 1. `cryptofix_master_rubric.json` — institutional rationale and tradfi references per check

@@ -1,6 +1,6 @@
 # RoE document template
 
-Produce `audits/SLUG/roe_document.md` using these 7 sections exactly.
+Produce `audits/SLUG/roe_document.md` using these 11 sections exactly.
 Replace all [bracketed] placeholders with real data from the scored_report
 and extraction_result files. Be direct — never soften real gaps.
 
@@ -21,10 +21,16 @@ Overall score: [XX] / 100 — [Grade]
 
 Tier | Score | Available | %
 -----|-------|-----------|---
-1 Order lifecycle | XX | 35 | XX%
+1 Order lifecycle | XX | 40 | XX%
 2 Execution quality & TCA | XX | 25 | XX%
 3 Post-trade & allocation | XX | 25 | XX%
-4 AML & Travel Rule | XX | 15 | XX%
+4 AML & Travel Rule | XX | 10 | XX%
+
+Informational Tiers:
+5 DAWG Extensions | [Tier 5 present count] checks present
+6 Drop Copy readiness | [XX] / 10
+7 Market Data | [XX] / 10
+8 Admin & Session | [XX] / 10
 
 Recommendation: [1-2 sentences. Is this exchange ready for direct institutional
 OMS connectivity? What are the primary blockers? What is the priority fix?]
@@ -73,10 +79,14 @@ Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
 
 Status icons: [P] Full credit / [~] Partial / [X] Missing
 
-Tier 1 (9 checks, 35 pts): T1_001 through T1_009
-Tier 2 (8 checks, 25 pts): T2_001 through T2_008
-Tier 3 (6 checks, 25 pts): T3_001 through T3_006
-Tier 4 (4 checks, 15 pts): T4_001 through T4_004
+Tier 1 (Order Lifecycle): 40 pts
+Tier 2 (Execution Quality): 25 pts
+Tier 3 (Post-trade/RFQ): 25 pts
+Tier 4 (AML/Travel Rule): 10 pts
+Tier 5 (DAWG Extensions): Informational
+Tier 6 (Drop Copy): 10 pts / Separate Score
+Tier 7 (Market Data): 10 pts / Separate Score
+Tier 8 (Admin/Session): 10 pts / Separate Score
 
 ---
 
@@ -155,5 +165,53 @@ sub-account isolation
 Sign-off: Phases 1-3 and 5 required before go-live.
 Phase 4 gaps flagged as known — remediation timeline TBD with exchange.
 
+---
+
+## SECTION 8 — DAWG Extensions (Informational)
+
+Assess specific support for DAWG standardized FIX tags:
+- ISO 24165 DTI (SecurityIDSource=Y)
+- CurrencyCodeSource (tag 2897)
+- DIGITAL security type (167=DIGITAL)
+- Wallet PartySubID (803)
+
+[Detailed evidence for each T5 check from scored_report]
+
+---
+
+## SECTION 9 — Drop Copy Infrastructure
+
+Drop Copy evaluation (0–10 scale):
+- Score: [XX] / 10
+- Status: [Production Ready / Partial / Absent]
+
+Dedicated session: [Y/N - endpoint info]
+Scope coverage: [FIX Only / All Channels / Undocumented]
+
+Checks:
+[Table of T6_DC checks with evidence]
+
+---
+
+## SECTION 10 — Market Data Analysis
+
+Evaluation of FIX book-building (L2) and order-by-order (L3) capabilities.
+
+- Score: [XX] / 10
+- Status: [Production Ready / Partial / Basic]
+
+[Table of T7_ Market Data checks with evidence]
+
+---
+
+## SECTION 11 — Admin & Session Analysis
+
+Baseline FIX connectivity and risk control assessment (Cancel-on-Disconnect).
+
+- Score: [XX] / 10
+- Status: [High Reliability / Medium / Low]
+
+[Table of T8_ Admin/Session checks with evidence]
+
 Prepared by: Opound LLC — navilla.bagga@gmail.com
-Version: 1.0 | Date: [audit_date]
+Version: 2.0.0 | Date: [audit_date]

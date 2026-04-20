@@ -4,8 +4,11 @@
     "tool_name": "CryptoFIX Institutional Readiness Auditor",
     "author": "Opound LLC — Navilla Bagga",
     "scoring_model": "two-level: message-type presence + essential tag coverage",
-    "fix_reference_primary": "https://fiximate.fixtrading.org/",
-    "tier_structure_note": "Tier 1 covers order lifecycle messages. Tier 2 covers execution quality tags within 35=8. Tier 3 covers post-trade and RFQ messages. Session reliability removed from Tier 3. Tier 4 tags evaluated in context of 35=8 or 35=AE.",
+    "fix_reference_primary": {
+      "primary": "https://fiximate.fixtrading.org/",
+      "note": "FIXimate is the FIX Trading Community's official tag reference. All fix_reference fields in this rubric cite FIXimate as the canonical source for tag numbers, data types, and valid values."
+    },
+    "tier_structure_note": "Tier 1: Order Lifecycle. Tier 2: Execution Quality. Tier 3: Post-trade/RFQ. Tier 4: AML/Travel Rule. Tier 5: DAWG (Informational). Tier 6: Drop Copy (Separate score). Tier 7: Market Data (Separate score). Tier 8: Admin/Session (Separate score).",
     "scoring_guide": {
       "90-100": "Institutional grade",
       "70-89": "Near-institutional",
@@ -20,7 +23,10 @@
       "tier2_execution_quality_tca": 25,
       "tier3_post_trade_allocation": 25,
       "tier4_aml_travel_rule": 10,
-      "tier5_dawg_extensions": 0
+      "tier5_dawg_extensions": 0,
+      "tier6_drop_copy": 0,
+      "tier7_market_data": 0,
+      "tier8_admin_session": 0
     }
   },
   "ai_extraction_prompt": {
@@ -1245,6 +1251,826 @@
           "description": "Symbol(55)+SecurityAltID(455) pair with DTI values"
         }
       ]
+    },
+    {
+      "tier": 6,
+      "id": "drop_copy",
+      "label": "Drop Copy — consolidated execution feed",
+      "description": "Dedicated FIX session delivering real-time execution reports for all orders regardless of entry channel. Essential for compliance providers, risk systems, and prime brokers.",
+      "weight_total": 11,
+      "informational_only": false,
+      "separate_score": true,
+      "separate_score_label": "Drop Copy Readiness",
+      "scoring_guide": {
+        "8-10": "Production ready — full DC feed with all channels covered",
+        "5-7": "Partial — DC available but with scope or tag gaps",
+        "0-4": "Not available — DC absent or critically incomplete"
+      },
+      "fix_references": [
+        "Coinbase Exchange Drop Copy: https://docs.cdp.coinbase.com/exchange/fix-api/drop-copy",
+        "FIX 4.4 Session Protocol; tag 9406 (Coinbase custom DropCopyFlag)",
+        "FIX standard tag 797 CopyMsgIndicator: https://fiximate.fixtrading.org/ (search CopyMsgIndicator or tag 797)",
+        "ASX 24 FIX Drop Copy Specification v2.05 — production reference implementation",
+        "FINRA TRACE FIX Specification v1.5 — CopyMsgIndicator usage in regulated reporting"
+      ],
+      "checks": [
+        {
+          "id": "T6_DC_000",
+          "message_type": "35=A",
+          "message_name": "Logon (Drop Copy)",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 1.5,
+          "required": true,
+          "description": "Is a dedicated Drop Copy session documented with separate endpoint/port?"
+        },
+        {
+          "id": "T6_DC_9406",
+          "message_type": "35=A",
+          "message_name": "Logon",
+          "level": "tag",
+          "fix_tag": 9406,
+          "field_name": "DropCopyFlag",
+          "weight": 0.5,
+          "required": true,
+          "description": "Custom tag to establish Drop Copy session (Coinbase standard)"
+        },
+        {
+          "id": "T6_DC_108",
+          "message_type": "35=A",
+          "message_name": "Logon",
+          "level": "tag",
+          "fix_tag": 108,
+          "field_name": "HeartBtInt",
+          "weight": 0.5,
+          "required": true,
+          "description": "Configurable heartbeat interval for Drop Copy session"
+        },
+        {
+          "id": "T6_DC_141",
+          "message_type": "35=A",
+          "message_name": "Logon",
+          "level": "tag",
+          "fix_tag": 141,
+          "field_name": "ResetSeqNumFlag",
+          "weight": 0.5,
+          "required": true,
+          "description": "Sequence number reset behavior documented for DC session"
+        },
+        {
+          "id": "T6_DC_8_000",
+          "message_type": "35=8",
+          "message_name": "ExecutionReport (Drop Copy)",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 2.0,
+          "required": true,
+          "description": "Does DC feed cover ALL order entry channels (FIX + REST + others)?"
+        },
+        {
+          "id": "T6_DC_8_017",
+          "message_type": "35=8",
+          "message_name": "ExecutionReport",
+          "level": "tag",
+          "fix_tag": 17,
+          "field_name": "ExecID",
+          "weight": 0.5,
+          "required": true,
+          "description": "Execution ID in DC matches order entry session for recon"
+        },
+        {
+          "id": "T6_DC_8_150",
+          "message_type": "35=8",
+          "message_name": "ExecutionReport",
+          "level": "tag",
+          "fix_tag": 150,
+          "field_name": "ExecType",
+          "weight": 0.5,
+          "required": true,
+          "description": "ExecType=F (Trade) explicitly present in DC feed"
+        },
+        {
+          "id": "T6_DC_8_039",
+          "message_type": "35=8",
+          "message_name": "ExecutionReport",
+          "level": "tag",
+          "fix_tag": 39,
+          "field_name": "OrdStatus",
+          "weight": 0.5,
+          "required": true,
+          "description": "Order status documented in DC execution report"
+        },
+        {
+          "id": "T6_DC_8_011",
+          "message_type": "35=8",
+          "message_name": "ExecutionReport",
+          "level": "tag",
+          "fix_tag": 11,
+          "field_name": "ClOrdID",
+          "weight": 0.5,
+          "required": true,
+          "description": "Client order identifier present in DC feed"
+        },
+        {
+          "id": "T6_DC_8_032",
+          "message_type": "35=8",
+          "message_name": "ExecutionReport",
+          "level": "tag",
+          "fix_tag": 32,
+          "field_name": "LastQty",
+          "weight": 0.5,
+          "required": true,
+          "description": "Fill quantity provided for position tracking"
+        },
+        {
+          "id": "T6_DC_8_031",
+          "message_type": "35=8",
+          "message_name": "ExecutionReport",
+          "level": "tag",
+          "fix_tag": 31,
+          "field_name": "LastPx",
+          "weight": 0.5,
+          "required": true,
+          "description": "Fill price provided for P&L tracking"
+        },
+        {
+          "id": "T6_DC_CONN",
+          "message_type": "Session",
+          "message_name": "Connectivity",
+          "level": "tag",
+          "fix_tag": null,
+          "field_name": "Dedicated Endpoint",
+          "weight": 1.0,
+          "required": true,
+          "description": "Does the exchange provide a dedicated host/port for Drop Copy?"
+        },
+        {
+          "id": "T6_DC_SCOPE",
+          "message_type": "Session",
+          "message_name": "Scope",
+          "level": "tag",
+          "fix_tag": null,
+          "field_name": "Feed Scope",
+          "weight": 1.0,
+          "required": true,
+          "description": "Is the order source scope (FIX/REST/All) explicitly documented?"
+        },
+        {
+          "id": "T6_DC_797",
+          "message_type": "35=8, 35=D, 35=G, 35=F, 35=9, 35=AE, 35=AR, 35=0, 35=H",
+          "message_name": "CopyMsgIndicator — drop copy flag on FIX messages",
+          "level": "tag",
+          "fix_tag": 797,
+          "field_name": "CopyMsgIndicator",
+          "weight": 1.0,
+          "required": false,
+          "conditional": true,
+          "condition_note": "Present only on drop copy messages; absent on order entry session messages",
+          "description": "FIX standard tag indicating whether a message is a copy delivered via drop copy session. Y = message is a drop copy. N = not a drop copy. FIX Trading Community recommends including tag 797=Y on all messages delivered via a drop copy session across: 35=D (NewOrderSingle), 35=G (OrderCancelReplaceRequest), 35=F (OrderCancelRequest), 35=8 (ExecutionReport), 35=9 (OrderCancelReject), 35=AE (TradeCaptureReport), 35=AR (TradeCaptureReportAck), 35=0 (Heartbeat), 35=H (OrderStatusRequest). This allows receiving systems to distinguish drop copy messages from live order entry messages without relying solely on session-level configuration.",
+          "valid_values": {
+            "Y": "Message is a drop copy of another message",
+            "N": "Message is not a drop copy (default; often omitted)"
+          },
+          "fix_reference": "FIX 4.4+ tag 797 CopyMsgIndicator; present in FIX 4.4, FIX 5.0, FIX 5.0SP1, FIX 5.0SP2, FIX 5.0SP2 EP240; https://fiximate.fixtrading.org/ (search CopyMsgIndicator); also documented in ASX 24 FIX Drop Copy Specification v2.05 and FINRA TRACE FIX Specification v1.5",
+          "institutional_gap_if_missing": "Without CopyMsgIndicator (797), receiving systems must rely solely on session-level DropCopyFlag or port/CompID to identify drop copy messages. Any cross-session routing or message aggregation becomes ambiguous — a compliance analytics system receiving messages from multiple sources cannot reliably distinguish DC messages from live order flow without per-message tagging.",
+          "tradfi_reference": "ASX 24 Drop Copy Specification: CopyMsgIndicator included in ALL drop copy messages set to Y. FINRA TRACE FIX Specification v1.5: tag 797 = Y on all drop copy messages. Both cite fiximate.fixtrading.org as the canonical tag reference.",
+          "crypto_notes": "Neither Kraken nor Coinbase Exchange currently documents tag 797 on their drop copy feeds. This is a gap relative to TradFi exchange implementations. Flag as partial_credit if the exchange uses a session-level flag (e.g. DropCopyFlag 9406) as functional equivalent, but note that per-message tagging is the FIX standard recommendation.",
+          "scoring_logic": {
+            "full_credit": "Tag 797 = Y documented on drop copy messages in the spec; applies to at minimum 35=8 (ExecutionReport) in the DC feed",
+            "partial_credit": "Drop copy session uses a session-level flag (e.g. custom DropCopyFlag) as functional equivalent; tag 797 not documented but DC messages are distinguishable at the session level",
+            "no_credit": "No mechanism documented to identify drop copy messages — neither tag 797 nor session-level equivalent"
+          }
+        }
+      ]
+    },
+    {
+      "tier": 7,
+      "id": "market_data",
+      "label": "Market Data — buy-side price discovery & book building",
+      "weight_total": 10,
+      "informational_only": false,
+      "separate_score": true,
+      "separate_score_label": "Market Data Readiness",
+      "scoring_guide": {
+        "8-10": "Full L3/L2 feed — institutional ready",
+        "5-7": "Partial — snapshot or incremental missing key fields",
+        "0-4": "Not available — market data feed absent or incomplete"
+      },
+      "institutional_rationale": "Buy-side institutions require FIX market data for pre-trade liquidity assessment, real-time book building for algo execution, and instrument reference data. L3 (order-level) data is significantly more valuable than L2 for execution quality analysis.",
+      "fix_references": [
+        "FIX Trading Community FIXimate tag reference: https://fiximate.fixtrading.org/",
+        "Coinbase Exchange Market Data: https://docs.cdp.coinbase.com/exchange/fix-api/market-data",
+        "Kraken FIX Market Data: https://docs.kraken.com/api/docs/fix-api/slr-fix",
+        "FIX 4.2+ Market Data messages specification"
+      ],
+      "checks": [
+        {
+          "id": "T7_V_000",
+          "message_type": "35=V",
+          "message_name": "Market Data Request",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.75,
+          "required": true,
+          "description": "Is 35=V documented with subscribe/unsubscribe workflow?"
+        },
+        {
+          "id": "T7_V_262",
+          "message_type": "35=V",
+          "message_name": "Market Data Request",
+          "level": "tag",
+          "fix_tag": 262,
+          "field_name": "MDReqID",
+          "weight": 0.41,
+          "required": true,
+          "description": "Unique client identifier for the MD request",
+          "fix_reference": "FIX 4.2+ tag 262 MDReqID; https://fiximate.fixtrading.org/ — search tag 262"
+        },
+        {
+          "id": "T7_V_263",
+          "message_type": "35=V",
+          "message_name": "Market Data Request",
+          "level": "tag",
+          "fix_tag": 263,
+          "field_name": "SubscriptionRequestType",
+          "weight": 0.41,
+          "required": true,
+          "description": "0=Snapshot, 1=Subscribe, 2=Unsubscribe",
+          "fix_reference": "FIX 4.2+ tag 263 SubscriptionRequestType; https://fiximate.fixtrading.org/ — search tag 263; valid values: 0=Snapshot, 1=Subscribe/SnapshotAndUpdates, 2=Unsubscribe"
+        },
+        {
+          "id": "T7_V_146",
+          "message_type": "35=V",
+          "message_name": "Market Data Request",
+          "level": "tag",
+          "fix_tag": 146,
+          "field_name": "NoRelatedSym",
+          "weight": 0.41,
+          "required": true,
+          "description": "Number of symbols in a multi-symbol subscription request",
+          "fix_reference": "FIX 4.2+ tag 146 NoRelatedSym; https://fiximate.fixtrading.org/ — search tag 146"
+        },
+        {
+          "id": "T7_V_055",
+          "message_type": "35=V",
+          "message_name": "Market Data Request",
+          "level": "tag",
+          "fix_tag": 55,
+          "field_name": "Symbol",
+          "weight": 0.41,
+          "required": true,
+          "description": "Instrument symbol in the NoRelatedSym repeating group",
+          "fix_reference": "FIX 4.0+ tag 55 Symbol; https://fiximate.fixtrading.org/ — search tag 55"
+        },
+        {
+          "id": "T7_W_000",
+          "message_type": "35=W",
+          "message_name": "Market Data Snapshot Full Refresh",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 1.0,
+          "required": true,
+          "description": "Is 35=W documented with book depth levels and entry types?"
+        },
+        {
+          "id": "T7_W_262",
+          "message_type": "35=W",
+          "message_name": "Market Data Snapshot Full Refresh",
+          "level": "tag",
+          "fix_tag": 262,
+          "field_name": "MDReqID",
+          "weight": 0.5,
+          "required": true,
+          "description": "Links snapshot to originating Market Data Request",
+          "fix_reference": "FIX 4.2+ tag 262 MDReqID; https://fiximate.fixtrading.org/ — search tag 262"
+        },
+        {
+          "id": "T7_W_268",
+          "message_type": "35=W",
+          "message_name": "Market Data Snapshot Full Refresh",
+          "level": "tag",
+          "fix_tag": 268,
+          "field_name": "NoMDEntries",
+          "weight": 0.5,
+          "required": true,
+          "description": "Number of market data entries in the snapshot",
+          "fix_reference": "FIX 4.2+ tag 268 NoMDEntries; https://fiximate.fixtrading.org/ — search tag 268; count of entries in MD snapshot repeating group"
+        },
+        {
+          "id": "T7_W_269",
+          "message_type": "35=W",
+          "message_name": "Market Data Snapshot Full Refresh",
+          "level": "tag",
+          "fix_tag": 269,
+          "field_name": "MDEntryType",
+          "weight": 0.5,
+          "required": true,
+          "description": "0=Bid, 1=Offer, 2=Trade, etc.",
+          "fix_reference": "FIX 4.2+ tag 269 MDEntryType; https://fiximate.fixtrading.org/ — search tag 269; 0=Bid, 1=Offer, 2=Trade, 4=Opening, 5=Closing, 6=SettlPrice, 7=SessionHigh, 8=SessionLow"
+        },
+        {
+          "id": "T7_W_270",
+          "message_type": "35=W",
+          "message_name": "Market Data Snapshot Full Refresh",
+          "level": "tag",
+          "fix_tag": 270,
+          "field_name": "MDEntryPx",
+          "weight": 0.5,
+          "required": true,
+          "description": "Price of the market data entry",
+          "fix_reference": "FIX 4.2+ tag 270 MDEntryPx; https://fiximate.fixtrading.org/ — search tag 270"
+        },
+        {
+          "id": "T7_W_271",
+          "message_type": "35=W",
+          "message_name": "Market Data Snapshot Full Refresh",
+          "level": "tag",
+          "fix_tag": 271,
+          "field_name": "MDEntrySize",
+          "weight": 0.5,
+          "required": true,
+          "description": "Quantity at the MDEntryPx level",
+          "fix_reference": "FIX 4.2+ tag 271 MDEntrySize; https://fiximate.fixtrading.org/ — search tag 271"
+        },
+        {
+          "id": "T7_X_000",
+          "message_type": "35=X",
+          "message_name": "Market Data Incremental Refresh",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 1.0,
+          "required": true,
+          "description": "Is 35=X documented; state whether L2 or L3?"
+        },
+        {
+          "id": "T7_X_262",
+          "message_type": "35=X",
+          "message_name": "Market Data Incremental Refresh",
+          "level": "tag",
+          "fix_tag": 262,
+          "field_name": "MDReqID",
+          "weight": 0.4,
+          "required": true,
+          "description": "Links incremental update to originating subscription",
+          "fix_reference": "FIX 4.2+ tag 262 MDReqID; https://fiximate.fixtrading.org/ — search tag 262"
+        },
+        {
+          "id": "T7_X_279",
+          "message_type": "35=X",
+          "message_name": "Market Data Incremental Refresh",
+          "level": "tag",
+          "fix_tag": 279,
+          "field_name": "MDUpdateAction",
+          "weight": 0.4,
+          "required": true,
+          "description": "0=New, 1=Change, 2=Delete",
+          "fix_reference": "FIX 4.2+ tag 279 MDUpdateAction; https://fiximate.fixtrading.org/ — search tag 279; 0=New, 1=Change, 2=Delete"
+        },
+        {
+          "id": "T7_X_269",
+          "message_type": "35=X",
+          "message_name": "Market Data Incremental Refresh",
+          "level": "tag",
+          "fix_tag": 269,
+          "field_name": "MDEntryType",
+          "weight": 0.4,
+          "required": true,
+          "description": "0=Bid, 1=Offer, 2=Trade entries",
+          "fix_reference": "FIX 4.2+ tag 269 MDEntryType; https://fiximate.fixtrading.org/ — search tag 269"
+        },
+        {
+          "id": "T7_X_270",
+          "message_type": "35=X",
+          "message_name": "Market Data Incremental Refresh",
+          "level": "tag",
+          "fix_tag": 270,
+          "field_name": "MDEntryPx",
+          "weight": 0.4,
+          "required": true,
+          "description": "Price of the updated entry",
+          "fix_reference": "FIX 4.2+ tag 270 MDEntryPx; https://fiximate.fixtrading.org/ — search tag 270"
+        },
+        {
+          "id": "T7_X_271",
+          "message_type": "35=X",
+          "message_name": "Market Data Incremental Refresh",
+          "level": "tag",
+          "fix_tag": 271,
+          "field_name": "MDEntrySize",
+          "weight": 0.4,
+          "required": true,
+          "description": "Quantity of the updated entry",
+          "fix_reference": "FIX 4.2+ tag 271 MDEntrySize; https://fiximate.fixtrading.org/ — search tag 271"
+        },
+        {
+          "id": "T7_X_278",
+          "message_type": "35=X",
+          "message_name": "Market Data Incremental Refresh",
+          "level": "tag",
+          "fix_tag": 278,
+          "field_name": "MDEntryID",
+          "weight": 0.4,
+          "required": true,
+          "description": "Unique identifier for each order book entry (required for L3)",
+          "fix_reference": "FIX 4.2+ tag 278 MDEntryID; https://fiximate.fixtrading.org/ — search tag 278; unique identifier per order book entry; presence indicates L3 order-level data"
+        },
+        {
+          "id": "T7_Y_000",
+          "message_type": "35=Y",
+          "message_name": "Market Data Request Reject",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.4,
+          "required": true,
+          "description": "Is 35=Y explicitly documented?"
+        },
+        {
+          "id": "T7_Y_281",
+          "message_type": "35=Y",
+          "message_name": "Market Data Request Reject",
+          "level": "tag",
+          "fix_tag": 281,
+          "field_name": "MDReqRejReason",
+          "weight": 0.35,
+          "required": true,
+          "description": "0=Unknown symbol, 1=Duplicate MDReqID, etc.",
+          "fix_reference": "FIX 4.2+ tag 281 MDReqRejReason; https://fiximate.fixtrading.org/ — search tag 281; 0=UnknownSymbol, 1=DuplicateMDReqID, 4=UnsupportedSubscriptionRequestType, 7=Other"
+        },
+        {
+          "id": "T7_x_000",
+          "message_type": "35=x",
+          "message_name": "Security List Request",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.5,
+          "required": true,
+          "description": "Is reference data request documented?"
+        },
+        {
+          "id": "T7_x_559",
+          "message_type": "35=x",
+          "message_name": "Security List Request",
+          "level": "tag",
+          "fix_tag": 559,
+          "field_name": "SecurityListRequestType",
+          "weight": 0.25,
+          "required": true,
+          "description": "0=Single, 1=SecurityType filter, 4=All",
+          "fix_reference": "FIX 4.4+ tag 559 SecurityListRequestType; https://fiximate.fixtrading.org/ — search tag 559; 0=SingleSecurity, 1=SecurityType, 4=AllSecurities"
+        },
+        {
+          "id": "T7_x_263",
+          "message_type": "35=x",
+          "message_name": "Security List Request",
+          "level": "tag",
+          "fix_tag": 263,
+          "field_name": "SubscriptionRequestType",
+          "weight": 0.25,
+          "required": true,
+          "description": "0=Snapshot, 1=Snapshot+Updates, 2=Disable",
+          "fix_reference": "FIX 4.2+ tag 263 SubscriptionRequestType; https://fiximate.fixtrading.org/ — search tag 263"
+        },
+        {
+          "id": "T7_h_000",
+          "message_type": "35=h",
+          "message_name": "Trading Session Status",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.5,
+          "required": true,
+          "description": "Documents trading halt, resume, auction mode"
+        },
+        {
+          "id": "T7_h_1682",
+          "message_type": "35=h",
+          "message_name": "Trading Session Status",
+          "level": "tag",
+          "fix_tag": 1682,
+          "field_name": "MDSecurityTradingStatus",
+          "weight": 0.25,
+          "required": true,
+          "description": "Trading status values (trading_disabled, full_trading, etc.)",
+          "fix_reference": "Coinbase custom tag 1682 MDSecurityTradingStatus; FIX standard equivalent: tag 340 TradSesStatus; https://fiximate.fixtrading.org/ — search tag 340"
+        }
+      ]
+    },
+    {
+      "tier": 8,
+      "id": "admin_session",
+      "label": "Admin & Session Management — FIX connectivity foundation",
+      "weight_total": 10,
+      "informational_only": false,
+      "separate_score": true,
+      "separate_score_label": "Session Reliability",
+      "scoring_guide": {
+        "8-10": "Production ready — full session lifecycle documented",
+        "5-7": "Partial — key admin messages missing or underdocumented",
+        "0-4": "Not ready — session management gaps are critical blockers"
+      },
+      "institutional_rationale": "Reliable FIX session management is the prerequisite for all other tiers. Institutions require documented, predictable behavior for authentication, heartbeat monitoring, message recovery, and disconnect handling. An undocumented or unreliable session layer makes the exchange unusable for production regardless of its order management capabilities.",
+      "fix_references": [
+        "FIX Trading Community FIXimate tag reference: https://fiximate.fixtrading.org/",
+        "Kraken FIX Admin: https://docs.kraken.com/api/docs/fix-api/session-fix",
+        "Kraken FIX Logon: https://docs.kraken.com/api/docs/fix-api/logon-fix",
+        "Coinbase Exchange Admin: https://docs.cdp.coinbase.com/exchange/fix-api/order-entry-messages/order-entry-messages5#administrative",
+        "FIX Session Protocol specification (all versions)"
+      ],
+      "checks": [
+        {
+          "id": "T8_HDR_000",
+          "message_type": "Standard Header",
+          "message_name": "Standard Header",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.75,
+          "required": true,
+          "description": "Is the standard header documented with all required tags and formats?",
+          "scoring_logic": {
+            "full_credit": "Standard header documented with all required tags (8, 49, 56, 52, etc.) and formats",
+            "partial_credit": "Header partially documented",
+            "no_credit": "No header documentation"
+          }
+        },
+        {
+          "id": "T8_HDR_008",
+          "message_type": "Standard Header",
+          "message_name": "Standard Header",
+          "level": "tag",
+          "fix_tag": 8,
+          "field_name": "BeginString",
+          "weight": 0.25,
+          "required": true,
+          "description": "FIX version identifier; must be first field",
+          "fix_reference": "FIX 4.0+ tag 8 BeginString; https://fiximate.fixtrading.org/ — search tag 8; first field in every FIX message; value identifies FIX version (e.g. FIX.4.4 or FIXT.1.1)"
+        },
+        {
+          "id": "T8_HDR_049",
+          "message_type": "Standard Header",
+          "message_name": "Standard Header",
+          "level": "tag",
+          "fix_tag": 49,
+          "field_name": "SenderCompID",
+          "weight": 0.25,
+          "required": true,
+          "description": "Identifies the party sending the message",
+          "fix_reference": "FIX 4.0+ tag 49 SenderCompID; https://fiximate.fixtrading.org/ — search tag 49; identifies the sending party"
+        },
+        {
+          "id": "T8_HDR_056",
+          "message_type": "Standard Header",
+          "message_name": "Standard Header",
+          "level": "tag",
+          "fix_tag": 56,
+          "field_name": "TargetCompID",
+          "weight": 0.25,
+          "required": true,
+          "description": "Identifies the party receiving the message",
+          "fix_reference": "FIX 4.0+ tag 56 TargetCompID; https://fiximate.fixtrading.org/ — search tag 56; identifies the receiving party"
+        },
+        {
+          "id": "T8_HDR_052",
+          "message_type": "Standard Header",
+          "message_name": "Standard Header",
+          "level": "tag",
+          "fix_tag": 52,
+          "field_name": "SendingTime",
+          "weight": 0.25,
+          "required": true,
+          "description": "UTC timestamp of message transmission (format/precision documented)",
+          "fix_reference": "FIX 4.0+ tag 52 SendingTime; https://fiximate.fixtrading.org/ — search tag 52; UTC timestamp format YYYYMMDD-HH:MM:SS.uuuuuu (microseconds) or .sss (milliseconds)"
+        },
+        {
+          "id": "T8_A_000",
+          "message_type": "35=A",
+          "message_name": "Logon",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 1.0,
+          "required": true,
+          "description": "Is Logon documented with auth mechanism and required tags?",
+          "scoring_logic": {
+            "full_credit": "Logon documented with auth mechanism, required tags, and success/failure behavior described",
+            "partial_credit": "Logon present but auth mechanism or failure handling unclear",
+            "no_credit": "Logon not documented"
+          }
+        },
+        {
+          "id": "T8_A_098",
+          "message_type": "35=A",
+          "message_name": "Logon",
+          "level": "tag",
+          "fix_tag": 98,
+          "field_name": "EncryptMethod",
+          "weight": 0.4,
+          "required": true,
+          "description": "Encryption method (usually 0=None)",
+          "fix_reference": "FIX 4.0+ tag 98 EncryptMethod; https://fiximate.fixtrading.org/ — search tag 98; 0=None (only value in current use)"
+        },
+        {
+          "id": "T8_A_108",
+          "message_type": "35=A",
+          "message_name": "Logon",
+          "level": "tag",
+          "fix_tag": 108,
+          "field_name": "HeartBtInt",
+          "weight": 0.4,
+          "required": true,
+          "description": "Heartbeat interval in seconds (range/default documented)",
+          "fix_reference": "FIX 4.0+ tag 108 HeartBtInt; https://fiximate.fixtrading.org/ — search tag 108; value in seconds; must match between Logon counterparties"
+        },
+        {
+          "id": "T8_A_141",
+          "message_type": "35=A",
+          "message_name": "Logon",
+          "level": "tag",
+          "fix_tag": 141,
+          "field_name": "ResetSeqNumFlag",
+          "weight": 0.4,
+          "required": true,
+          "description": "Reset sequence numbers flag behavior documented",
+          "fix_reference": "FIX 4.0+ tag 141 ResetSeqNumFlag; https://fiximate.fixtrading.org/ — search tag 141; Y=reset seq nums on logon; N=continue from last seq num"
+        },
+        {
+          "id": "T8_A_553",
+          "message_type": "35=A",
+          "message_name": "Logon",
+          "level": "tag",
+          "fix_tag": 553,
+          "field_name": "Username",
+          "weight": 0.4,
+          "required": true,
+          "description": "API key identifier for authentication",
+          "fix_reference": "FIX 4.4+ tag 553 Username; https://fiximate.fixtrading.org/ — search tag 553; used in session-level authentication"
+        },
+        {
+          "id": "T8_A_554",
+          "message_type": "35=A",
+          "message_name": "Logon",
+          "level": "tag",
+          "fix_tag": 554,
+          "field_name": "Password",
+          "weight": 0.4,
+          "required": true,
+          "description": "Auth credential (signature/passphrase methodology documented)",
+          "fix_reference": "FIX 4.4+ tag 554 Password; https://fiximate.fixtrading.org/ — search tag 554; plaintext or signed credential depending on exchange"
+        },
+        {
+          "id": "T8_HB_000",
+          "message_type": "35=0",
+          "message_name": "Heartbeat",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.5,
+          "required": true,
+          "description": "Is Heartbeat message explicitly documented?"
+        },
+        {
+          "id": "T8_HB_COD",
+          "message_type": "35=0",
+          "message_name": "Heartbeat",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": "Cancel-on-Disconnect (COD)",
+          "weight": 0.5,
+          "required": true,
+          "description": "Whether open orders are canceled if the session drops",
+          "fix_reference": "Cancel-on-Disconnect: Kraken custom tag 8674 CancelOrdersOnDisconnect; Coinbase: session-level config; no standard FIX tag — exchange-specific implementation; https://fiximate.fixtrading.org/ — search tag 35=0 for Heartbeat standard",
+          "scoring_logic": {
+            "full_credit": "COD behavior documented; configurable Y/N; scope stated",
+            "partial_credit": "COD mentioned but behavior on disconnect not explicit",
+            "no_credit": "No COD documentation"
+          }
+        },
+        {
+          "id": "T8_RR_000",
+          "message_type": "35=2",
+          "message_name": "ResendRequest / Gap Fill",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.75,
+          "required": true,
+          "description": "Is ResendRequest documented and behavior for recovery stated?",
+          "scoring_logic": {
+            "full_credit": "ResendRequest documented; gap-fill behavior described; recovery window duration stated",
+            "partial_credit": "ResendRequest present but behavior unclear",
+            "no_credit": "Message recovery not supported or documented"
+          },
+          "fix_reference": "FIX 4.0+ message 35=2 ResendRequest; https://fiximate.fixtrading.org/ — search ResendRequest; tags 7 (BeginSeqNo) and 16 (EndSeqNo) define the recovery range"
+        },
+        {
+          "id": "T8_RR_WIN",
+          "message_type": "35=2",
+          "message_name": "ResendRequest / Gap Fill",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": "Recovery Window",
+          "weight": 0.75,
+          "required": true,
+          "description": "Duration/Scope of message recovery (e.g., 24 hours)",
+          "fix_reference": "FIX Session Protocol recovery window; https://fiximate.fixtrading.org/ — ResendRequest; tag 7 BeginSeqNo, tag 16 EndSeqNo; best practice: minimum 24-hour recovery window for institutional use",
+          "scoring_logic": {
+            "full_credit": "Recovery window explicitly stated (e.g. 24 hours)",
+            "partial_credit": "Recovery supported but window not documented",
+            "no_credit": "Recovery not supported"
+          }
+        },
+        {
+          "id": "T8_LO_000",
+          "message_type": "35=5",
+          "message_name": "Logout",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.4,
+          "required": true,
+          "description": "Is Logout message documented with reason codes?",
+          "fix_reference": "FIX 4.0+ message 35=5; https://fiximate.fixtrading.org/ — search Logout"
+        },
+        {
+          "id": "T8_LO_058",
+          "message_type": "35=5",
+          "message_name": "Logout",
+          "level": "tag",
+          "fix_tag": 58,
+          "field_name": "Text",
+          "weight": 0.35,
+          "required": true,
+          "description": "Reason for logout provided in Text field",
+          "fix_reference": "FIX 4.0+ tag 58 Text; https://fiximate.fixtrading.org/ — search tag 58; free-format string field for reject/logout reason"
+        },
+        {
+          "id": "T8_REJ_3_000",
+          "message_type": "35=3",
+          "message_name": "Session Reject",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.5,
+          "required": true,
+          "description": "Session reject documented with RefSeqNum (45) and Text (58)",
+          "fix_reference": "FIX 4.0+ message 35=3 Reject (session-level); https://fiximate.fixtrading.org/ — search Reject; tag 45 RefSeqNum, tag 58 Text, tag 371 RefTagID, tag 372 RefMsgType"
+        },
+        {
+          "id": "T8_REJ_j_000",
+          "message_type": "35=j",
+          "message_name": "Business Message Reject",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.5,
+          "required": true,
+          "description": "Application-level reject documented with BusinessRejectReason (380)",
+          "fix_reference": "FIX 4.2+ message 35=j BusinessMessageReject; https://fiximate.fixtrading.org/ — search BusinessMessageReject; tag 380 BusinessRejectReason, tag 58 Text"
+        },
+        {
+          "id": "T8_REJ_TXT",
+          "message_type": "Rejects",
+          "message_name": "Reject Reason Quality",
+          "level": "message",
+          "fix_tag": 58,
+          "field_name": "Text",
+          "weight": 0.25,
+          "required": true,
+          "description": "Are reject reasons human-readable and machine-parseable?",
+          "fix_reference": "FIX 4.0+ tag 58 Text; https://fiximate.fixtrading.org/ — search tag 58; should carry structured reject reason code + human-readable description"
+        },
+        {
+          "id": "T8_SR_000",
+          "message_type": "35=4",
+          "message_name": "Sequence Reset",
+          "level": "message",
+          "fix_tag": null,
+          "field_name": null,
+          "weight": 0.5,
+          "required": true,
+          "description": "Is Sequence Reset message documented?",
+          "fix_reference": "FIX 4.0+ message 35=4 SequenceReset; https://fiximate.fixtrading.org/ — search SequenceReset"
+        },
+        {
+          "id": "T8_SR_123",
+          "message_type": "35=4",
+          "message_name": "Sequence Reset",
+          "level": "tag",
+          "fix_tag": 123,
+          "field_name": "GapFillFlag",
+          "weight": 0.5,
+          "required": true,
+          "description": "GapFillFlag behavior documented for Y and N cases",
+          "fix_reference": "FIX 4.0+ tag 123 GapFillFlag; https://fiximate.fixtrading.org/ — search tag 123; Y=gap fill (replace skipped messages); N=hard reset (use sparingly)"
+        }
+      ]
     }
   ],
   "roe_output_template": {
@@ -1253,7 +2079,14 @@
       "1. Executive Summary",
       "2. Scorecard Matrix",
       "3. Gap Analysis",
-      "4. Connectivity Specs"
+      "4. Connectivity Specs",
+      "5. Custom Tags",
+      "6. Order Types Matrix",
+      "7. UAT Checklist",
+      "8. DAWG Extensions",
+      "9. Drop Copy Analysis",
+      "10. Market Data Analysis",
+      "11. Admin & Session Analysis"
     ]
   }
 }

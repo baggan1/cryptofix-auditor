@@ -46,7 +46,6 @@ export async function POST(req: NextRequest) {
           const f = factors[st as keyof typeof factors] ?? 0;
           const pts = group.message.weight * f;
           tierEarned += pts;
-          total += pts;
           details.push({
             check_id: group.message.id,
             message_type: msgType,
@@ -58,7 +57,8 @@ export async function POST(req: NextRequest) {
             points_earned: pts,
             points_available: group.message.weight,
             evidence: r ? r.evidence : null,
-            asset_class_limitation: r ? r.asset_class_limitation : null
+            asset_class_limitation: r ? r.asset_class_limitation : null,
+            tier: tier.tier
           });
         }
 
@@ -69,7 +69,6 @@ export async function POST(req: NextRequest) {
           const f = factors[st as keyof typeof factors] ?? 0;
           const pts = check.weight * f;
           tierEarned += pts;
-          total += pts;
           details.push({
             check_id: check.id,
             message_type: msgType,
@@ -81,7 +80,8 @@ export async function POST(req: NextRequest) {
             points_earned: pts,
             points_available: check.weight,
             evidence: r ? r.evidence : null,
-            asset_class_limitation: r ? r.asset_class_limitation : null
+            asset_class_limitation: r ? r.asset_class_limitation : null,
+            tier: tier.tier
           });
         });
       });
@@ -91,8 +91,12 @@ export async function POST(req: NextRequest) {
         label: tier.label,
         earned: Math.round(tierEarned * 10) / 10,
         available: tier.weight_total,
-        pct: Math.round((tierEarned / tier.weight_total) * 100)
+        pct: tier.weight_total > 0 ? Math.round((tierEarned / tier.weight_total) * 100) : 0
       };
+
+      if (tier.tier <= 4) {
+        total += tierEarned;
+      }
     });
 
     const score = Math.round(total);
@@ -104,7 +108,7 @@ export async function POST(req: NextRequest) {
 
     const gaps = details.filter((c: any) => c.status !== 'full_credit').sort((a: any, b: any) => b.weight - a.weight);
 
-    const report = {
+    const report: any = {
       exchange_name,
       audit_date: extraction.extraction_date || new Date().toISOString(),
       total_score: score,
@@ -121,15 +125,37 @@ export async function POST(req: NextRequest) {
         points_lost: c.points_available - c.points_earned,
         evidence: c.evidence
       })),
-      full_detail: details
+      full_detail: details,
+      tier5_results: {
+        label: rubric.tiers.find((t: any) => t.tier === 5).label,
+        informational_only: true,
+        checks: details.filter((d: any) => d.tier === 5).map((d: any) => ({
+          check_id: d.check_id, title: d.field_name, status: d.status,
+          evidence: d.evidence, notes: "DAWG Extension"
+        })),
+        summary: `${details.filter((d: any) => d.tier === 5 && d.status !== 'no_credit').length} checks present`
+      },
+      tier6_results: {
+        label: rubric.tiers.find((t: any) => t.tier === 6).label,
+        score: tierScores.tier6.earned,
+        max_score: tierScores.tier6.available,
+        checks: details.filter((d: any) => d.tier === 6),
+        summary: `Score ${tierScores.tier6.earned}/${tierScores.tier6.available}`
+      },
+      tier7_results: {
+        label: rubric.tiers.find((t: any) => t.tier === 7).label,
+        score: tierScores.tier7.earned,
+        max_score: tierScores.tier7.available,
+        checks: details.filter((d: any) => d.tier === 7),
+        summary: `Score ${tierScores.tier7.earned}/${tierScores.tier7.available}`
+      }
     };
 
-    // Save to /tmp
-    const tmpDir = path.join(os.tmpdir(), exchange_slug);
-    fs.mkdirSync(tmpDir, { recursive: true });
-    
-    // Save report to tmp for local environments (ephemeral in Vercel)
-    fs.writeFileSync(path.join(tmpDir, 'scored_report.json'), JSON.stringify(report, null, 2));
+    // Save to /tmp or local project directory if not in production
+    const exchangeDir = path.join(process.cwd(), 'audits', exchange_slug);
+    if (fs.existsSync(exchangeDir)) {
+      fs.writeFileSync(path.join(exchangeDir, 'scored_report.json'), JSON.stringify(report, null, 2));
+    }
 
     return NextResponse.json({ success: true, slug: exchange_slug, report });
   } catch (error: any) {

@@ -44,5 +44,5 @@ Write `audits/SLUG/extraction_result.json` with this structure:
   ]
 }
 ```
-Include all 27 checks (T1_001–T4_004). Never skip a check_id.
+Include all checks (T1 through T8). Never skip a check_id.
 Use `no_credit` with `evidence: null` if nothing found.
