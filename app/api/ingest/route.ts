@@ -217,11 +217,11 @@ export async function POST(req: NextRequest) {
       const EXPECTED_CHECK_IDS = rubric.tiers.flatMap((t: any) => t.checks.map((c: any) => c.id));
 
       const returnedIds = new Set(extraction.checks?.map((c: any) => c.check_id) ?? []);
-      const missingIds = EXPECTED_CHECK_IDS.filter(id => !returnedIds.has(id));
+      const missingIds = EXPECTED_CHECK_IDS.filter((id: string) => !returnedIds.has(id));
 
       if (missingIds.length > 0) {
         console.warn(`Missing ${missingIds.length} checks from extraction:`, missingIds);
-        const missingChecks = missingIds.map(id => {
+        const missingChecks = missingIds.map((id: string) => {
           const rubricCheck = rubric.tiers.flatMap((t: any) => t.checks).find((c: any) => c.id === id);
           return {
             check_id: id,

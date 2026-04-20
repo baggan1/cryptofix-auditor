@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
     else if (score >= 50) grade = 'Partial';
     else if (score >= 30) grade = 'Basic';
 
-    const gaps = details.filter(c => c.status !== 'full_credit').sort((a, b) => b.weight - a.weight);
+    const gaps = details.filter((c: any) => c.status !== 'full_credit').sort((a: any, b: any) => b.weight - a.weight);
 
     const report = {
       exchange_name,
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
       grade,
       tier_scores: tierScores,
       gap_count: gaps.length,
-      gap_summary: gaps.map(c => ({
+      gap_summary: gaps.map((c: any) => ({
         check_id: c.check_id,
         fix_tag: c.fix_tag,
         field_name: c.field_name,
