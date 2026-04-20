@@ -16,7 +16,10 @@ export interface Rubric {
     weight_total: number;
     checks: {
       id: string;
-      fix_tag: string;
+      message_type: string;
+      message_name: string;
+      level: 'message' | 'tag';
+      fix_tag: number | null;
       field_name: string;
       weight: number;
       required: boolean;

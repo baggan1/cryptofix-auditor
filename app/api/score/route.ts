@@ -28,32 +28,70 @@ export async function POST(req: NextRequest) {
     const details: any[] = [];
 
     rubric.tiers.forEach((tier: any) => {
-      let earned = 0;
+      // Group checks by message_type
+      const byMessage: Record<string, { message: any, tags: any[] }> = {};
       tier.checks.forEach((check: any) => {
-        const r = extraction.checks.find((c: any) => c.check_id === check.id);
-        const st = r ? (r.status || r.determination || 'no_credit') : 'no_credit';
-        const f = factors[st as keyof typeof factors] ?? 0;
-        const pts = (check.weight ?? 0) * f;
-        earned += pts;
-        total += pts;
-        details.push({
-          check_id: check.id,
-          fix_tag: check.fix_tag,
-          field_name: check.field_name,
-          tier: tier.tier,
-          weight: check.weight,
-          status: st,
-          points_earned: pts,
-          points_available: check.weight,
-          evidence: r ? r.evidence : null,
-          asset_class_limitation: r ? r.asset_class_limitation : null
+        const mt = check.message_type;
+        if (!byMessage[mt]) byMessage[mt] = { message: null, tags: [] };
+        if (check.level === 'message') byMessage[mt].message = check;
+        else byMessage[mt].tags.push(check);
+      });
+
+      let tierEarned = 0;
+      Object.entries(byMessage).forEach(([msgType, group]) => {
+        // Score message-level check
+        if (group.message) {
+          const r = extraction.checks.find((c: any) => c.check_id === group.message.id);
+          const st = r ? (r.status || 'no_credit') : 'no_credit';
+          const f = factors[st as keyof typeof factors] ?? 0;
+          const pts = group.message.weight * f;
+          tierEarned += pts;
+          total += pts;
+          details.push({
+            check_id: group.message.id,
+            message_type: msgType,
+            message_name: group.message.message_name,
+            level: 'message',
+            fix_tag: null,
+            field_name: group.message.field_name || group.message.message_name,
+            status: st,
+            points_earned: pts,
+            points_available: group.message.weight,
+            evidence: r ? r.evidence : null,
+            asset_class_limitation: r ? r.asset_class_limitation : null
+          });
+        }
+
+        // Score tag-level checks
+        group.tags.forEach((check: any) => {
+          const r = extraction.checks.find((c: any) => c.check_id === check.id);
+          const st = r ? (r.status || 'no_credit') : 'no_credit';
+          const f = factors[st as keyof typeof factors] ?? 0;
+          const pts = check.weight * f;
+          tierEarned += pts;
+          total += pts;
+          details.push({
+            check_id: check.id,
+            message_type: msgType,
+            message_name: check.message_name,
+            level: 'tag',
+            fix_tag: check.fix_tag,
+            field_name: check.field_name,
+            status: st,
+            points_earned: pts,
+            points_available: check.weight,
+            evidence: r ? r.evidence : null,
+            asset_class_limitation: r ? r.asset_class_limitation : null
+          });
         });
       });
+
+      tierEarned = Math.min(tierEarned, tier.weight_total);
       tierScores[`tier${tier.tier}`] = {
         label: tier.label,
-        earned,
+        earned: Math.round(tierEarned * 10) / 10,
         available: tier.weight_total,
-        pct: Math.round((earned / tier.weight_total) * 100)
+        pct: Math.round((tierEarned / tier.weight_total) * 100)
       };
     });
 
@@ -80,7 +118,7 @@ export async function POST(req: NextRequest) {
         field_name: c.field_name,
         tier: c.tier,
         status: c.status,
-        points_lost: c.weight - c.points_earned,
+        points_lost: c.points_available - c.points_earned,
         evidence: c.evidence
       })),
       full_detail: details

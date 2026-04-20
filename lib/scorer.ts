@@ -50,8 +50,8 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
           message_type: msgType,
           message_name: group.message.message_name,
           level: 'message',
-          tag_number: null,
-          tag_name: group.message.tag_name || group.message.message_name,
+          fix_tag: null,
+          field_name: group.message.field_name || group.message.message_name,
           status: status,
           points_available: group.message.weight,
           evidence: result?.evidence || null,
@@ -74,8 +74,8 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
           message_type: msgType,
           message_name: check.message_name,
           level: 'tag',
-          tag_number: check.tag_number,
-          tag_name: check.tag_name,
+          fix_tag: check.fix_tag,
+          field_name: check.field_name,
           status: status,
           points_available: check.weight,
           evidence: result?.evidence || null,
@@ -87,8 +87,8 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
         if (status !== 'full_credit') {
           gaps.push({
             check_id: check.id,
-            fix_tag: `${check.tag_number || ''}`,
-            field_name: check.tag_name,
+            fix_tag: `${check.fix_tag || ''}`,
+            field_name: check.field_name,
             tier: tier.tier,
             status: status as 'partial_credit' | 'no_credit',
             points_lost: check.weight - pts,
@@ -119,7 +119,7 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
   let tier5Results: Tier5Results | undefined;
   
   if (tier5Rubric) {
-    const tier5Checks: Tier5CheckResult[] = tier5Rubric.checks.map(check => {
+    const tier5Checks: Tier5CheckResult[] = tier5Rubric.checks.map((check: any) => {
       const result = extraction.checks.find(c => c.check_id === check.id);
       return {
         check_id: check.id,

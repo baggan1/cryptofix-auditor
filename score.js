@@ -51,7 +51,7 @@ rubric.tiers.forEach(tier => {
       tierEarned += pts;
       details.push({
         check_id: group.message.id, message_type: msgType, message_name: group.message.message_name,
-        level: 'message', tag_number: null, tag_name: null,
+        level: 'message', fix_tag: null, field_name: null,
         tier: tier.tier, weight: group.message.weight, status: msgResult ? msgResult.status : 'no_credit',
         points_earned: pts, points_available: group.message.weight,
         evidence: msgResult ? msgResult.evidence : null
@@ -66,7 +66,7 @@ rubric.tiers.forEach(tier => {
       tierEarned += pts;
       details.push({
         check_id: check.id, message_type: msgType, message_name: check.message_name,
-        level: 'tag', tag_number: check.tag_number, tag_name: check.tag_name,
+        level: 'tag', fix_tag: check.fix_tag, field_name: check.field_name,
         tier: tier.tier, weight: check.weight, status: result ? result.status : 'no_credit',
         points_earned: pts, points_available: check.weight,
         evidence: result ? result.evidence : null

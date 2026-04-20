@@ -194,7 +194,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                       {report.gap_summary.slice(0, 3).map((item, index) => (
                         <tr key={item.check_id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                           <td className="p-3 font-mono text-xs text-slate-500">{item.check_id}</td>
-                          <td className="p-3 font-medium text-slate-800">{item.field_name}</td>
+                          <td className="p-3 font-medium text-slate-800">{item.tag_name}</td>
                           <td className="p-3 text-center text-red-600 font-bold">-{item.points_lost} pts</td>
                           <td className="p-3 text-slate-600 text-xs leading-relaxed">{getImpact(item)}</td>
                         </tr>
@@ -237,7 +237,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                           {checksByTier[tierNum]?.map((check, index) => (
                             <tr key={check.check_id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-3 font-mono text-xs text-slate-500">{check.check_id}</td>
-                              <td className="p-3 font-mono text-xs">{check.fix_tag}</td>
+                              <td className="p-3 font-mono text-xs">{check.fix_tag || (check.level === 'message' ? 'MSG' : '')}</td>
                               <td className="p-3 font-medium text-slate-800">{check.field_name}</td>
                               <td className="p-3 text-center">
                                 <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${

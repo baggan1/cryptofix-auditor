@@ -103,10 +103,10 @@ const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) =>
                               {tagChecks.map((check) => (
                                 <tr key={check.check_id} className="hover:bg-slate-50/50 transition-colors">
                                   <td className="px-4 py-3 pl-8 font-mono text-slate-600 text-xs">
-                                    {check.tag_number || '-'}
+                                    {check.fix_tag || '-'}
                                   </td>
                                   <td className="px-4 py-3 pl-8">
-                                    <div className="font-medium text-slate-800">{check.tag_name}</div>
+                                    <div className="font-medium text-slate-800">{check.field_name}</div>
                                     {check.asset_class_limitation && (
                                       <div className="text-[9px] text-amber-600 font-bold uppercase mt-0.5">{check.asset_class_limitation}</div>
                                     )}

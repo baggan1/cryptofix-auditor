@@ -212,29 +212,31 @@ export async function POST(req: NextRequest) {
         extraction.checks = [];
       }
       
-      // After parsing extraction JSON, ensure all 27 checks are present
-      const EXPECTED_CHECK_IDS = [
-        'T1_001','T1_002','T1_003','T1_004','T1_005','T1_006','T1_007','T1_008','T1_009',
-        'T2_001','T2_002','T2_003','T2_004','T2_005','T2_006','T2_007','T2_008',
-        'T3_001','T3_002','T3_003','T3_004','T3_005','T3_006',
-        'T4_001','T4_002','T4_003','T4_004'
-      ];
+      // After parsing extraction JSON, ensure all checks are present
+      const rubric = require('../../../cryptofix_master_rubric.json');
+      const EXPECTED_CHECK_IDS = rubric.tiers.flatMap((t: any) => t.checks.map((c: any) => c.id));
 
       const returnedIds = new Set(extraction.checks?.map((c: any) => c.check_id) ?? []);
       const missingIds = EXPECTED_CHECK_IDS.filter(id => !returnedIds.has(id));
 
       if (missingIds.length > 0) {
         console.warn(`Missing ${missingIds.length} checks from extraction:`, missingIds);
-        const missingChecks = missingIds.map(id => ({
-          check_id: id,
-          fix_tag: '',
-          field_name: id,
-          status: 'no_credit' as const,
-          points_available: 0,
-          evidence: null,
-          asset_class_limitation: null,
-          custom_tag_notes: 'Not returned by extraction — spec may not cover this field'
-        }));
+        const missingChecks = missingIds.map(id => {
+          const rubricCheck = rubric.tiers.flatMap((t: any) => t.checks).find((c: any) => c.id === id);
+          return {
+            check_id: id,
+            message_type: rubricCheck?.message_type || '',
+            message_name: rubricCheck?.message_name || '',
+            level: rubricCheck?.level || 'tag',
+            fix_tag: rubricCheck?.fix_tag || null,
+            field_name: rubricCheck?.field_name || id,
+            status: 'no_credit' as const,
+            points_available: rubricCheck?.weight || 0,
+            evidence: null,
+            asset_class_limitation: null,
+            custom_tag_notes: 'Not returned by extraction'
+          };
+        });
         extraction.checks = [...(extraction.checks ?? []), ...(missingChecks as any[])];
       }
       
@@ -264,7 +266,7 @@ export async function POST(req: NextRequest) {
     const withEvidence = extraction.checks.filter((c: any) => c.evidence !== null).length;
 
     console.log(`Extraction quality: ${fullCredit} full / ${partialCredit} partial / ${noCredit} missing`);
-    console.log(`Checks with evidence: ${withEvidence}/27`);
+    console.log(`Checks with evidence: ${withEvidence}/${extraction.checks.length}`);
 
     // Flag if too many are missing (likely a content quality issue)
     if (noCredit > 20) {
