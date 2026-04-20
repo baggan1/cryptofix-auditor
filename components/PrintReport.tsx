@@ -194,7 +194,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                       {report.gap_summary.slice(0, 3).map((item, index) => (
                         <tr key={item.check_id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                           <td className="p-3 font-mono text-xs text-slate-500">{item.check_id}</td>
-                          <td className="p-3 font-medium text-slate-800">{item.tag_name}</td>
+                          <td className="p-3 font-medium text-slate-800">{item.field_name}</td>
                           <td className="p-3 text-center text-red-600 font-bold">-{item.points_lost} pts</td>
                           <td className="p-3 text-slate-600 text-xs leading-relaxed">{getImpact(item)}</td>
                         </tr>
