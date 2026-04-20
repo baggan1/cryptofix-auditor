@@ -35,8 +35,12 @@ const GapTable: React.FC<GapTableProps> = ({ gaps }) => {
                   <span className="font-bold text-slate-900">T{gap.tier}</span>
                 </td>
                 <td className="px-4 py-4">
-                  <div className="font-bold text-slate-900">{gap.field_name}</div>
-                  <div className="font-mono text-[10px] text-slate-500 uppercase mt-0.5">Tag {gap.fix_tag}</div>
+                  <div className="font-medium text-slate-800">
+                    {gap.field_name || (gap as any).field || (gap as any).fieldName || '—'}
+                  </div>
+                  <div className="font-mono text-[10px] text-slate-500 uppercase mt-0.5">
+                    Tag {gap.fix_tag || (gap as any).tag || (gap as any).tagNum || '—'}
+                  </div>
                 </td>
                 <td className="px-4 py-4 text-right">
                   <span className="text-red-600 font-bold">-{gap.points_lost} pts</span>

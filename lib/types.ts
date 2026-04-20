@@ -3,7 +3,7 @@ export interface CheckResult {
   message_type: string;
   message_name: string;
   level: 'message' | 'tag';
-  fix_tag: number | null;
+  fix_tag: string | number | null;
   field_name: string;
   status: 'full_credit' | 'partial_credit' | 'no_credit';
   points_available: number;

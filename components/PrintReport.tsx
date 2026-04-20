@@ -225,7 +225,12 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                       {report.gap_summary.slice(0, 3).map((item, index) => (
                         <tr key={item.check_id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                           <td className="p-3 font-mono text-xs text-slate-500">{item.check_id}</td>
-                          <td className="p-3 font-medium text-slate-800">{item.field_name}</td>
+                          <td className="p-3 font-medium text-slate-800">
+                            {item.field_name || (item as any).field || '—'}
+                            <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                              Tag {item.fix_tag || (item as any).tag || '—'}
+                            </div>
+                          </td>
                           <td className="p-3 text-center text-red-600 font-bold">-{item.points_lost} pts</td>
                           <td className="p-3 text-slate-600 text-xs leading-relaxed">{getImpact(item)}</td>
                         </tr>
@@ -268,8 +273,8 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                           {checksByTier[tierNum]?.map((check, index) => (
                             <tr key={check.check_id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-3 font-mono text-xs text-slate-500">{check.check_id}</td>
-                              <td className="p-3 font-mono text-xs">{check.fix_tag || (check.level === 'message' ? 'MSG' : '')}</td>
-                              <td className="p-3 font-medium text-slate-800">{check.field_name}</td>
+                              <td className="p-3 font-mono text-xs">{check.fix_tag || (check.level === 'message' ? 'MSG' : '—')}</td>
+                              <td className="p-3 font-medium text-slate-800">{check.field_name || check.message_name || '—'}</td>
                               <td className="p-3 text-center">
                                 <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                                   check.status === 'full_credit' ? 'bg-green-100 text-green-800' : 
@@ -302,8 +307,8 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <span className="font-mono text-sm text-slate-500 mr-2">{gap.check_id}</span>
-                        <span className="font-semibold text-slate-800">{gap.field_name}</span>
-                        <span className="ml-2 text-sm font-mono text-slate-500">{gap.fix_tag}</span>
+                        <span className="font-semibold text-slate-800">{gap.field_name || (gap as any).field || '—'}</span>
+                        <span className="ml-2 text-sm font-mono text-slate-500">Tag {gap.fix_tag || (gap as any).tag || '—'}</span>
                       </div>
                       <span className="text-sm font-medium text-red-600 flex-shrink-0 ml-4">-{gap.points_lost} pts</span>
                     </div>

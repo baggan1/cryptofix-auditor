@@ -106,7 +106,7 @@ const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) =>
                                     {check.fix_tag || '-'}
                                   </td>
                                   <td className="px-4 py-3 pl-8">
-                                    <div className="font-medium text-slate-800">{check.field_name}</div>
+                                    <div className="font-medium text-slate-800">{check.field_name || check.message_name || '—'}</div>
                                     {check.asset_class_limitation && (
                                       <div className="text-[9px] text-amber-600 font-bold uppercase mt-0.5">{check.asset_class_limitation}</div>
                                     )}
