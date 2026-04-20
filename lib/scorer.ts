@@ -264,11 +264,13 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
     if (!tierResult) return;
 
     const rubricTier = rubric.tiers.find(t => t.tier === tierNum);
+    if (!rubricTier) return;
+
     const guide = rubricTier.scoring_guide;
     let grade = 'Not available';
-    if (tierResult.score >= 8) grade = guide["8-10"];
-    else if (tierResult.score >= 5) grade = guide["5-7"];
-    else grade = guide["0-4"];
+    if (tierResult.score >= 8) grade = guide ? (guide["8-10"] || grade) : grade;
+    else if (tierResult.score >= 5) grade = guide ? (guide["5-7"] || grade) : grade;
+    else grade = guide ? (guide["0-4"] || grade) : grade;
 
     separateTierScores[`tier${tierNum}`] = {
       label: rubricTier.separate_score_label || rubricTier.label,
