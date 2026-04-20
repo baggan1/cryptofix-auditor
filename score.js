@@ -79,7 +79,7 @@ rubric.tiers.forEach(tier => {
     label: tier.label,
     earned: Math.round(tierEarned * 10) / 10,
     available: tier.weight_total,
-    pct: Math.round((tierEarned / tier.weight_total) * 100)
+    pct: tier.weight_total > 0 ? Math.round((tierEarned / tier.weight_total) * 100) : 0
   };
   total += tierEarned;
 });
