@@ -57,7 +57,7 @@ Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
 T1_D_000 | null | NewOrderSingle | [P] Full | 3.0 | 3.0 | NOS fully documented.
 T1_D_011 | 11 | ClOrdID | [P] Full | 0.7 | 0.7 | Tag 11 is required.
 T1_D_055 | 55 | Symbol | [P] Full | 0.7 | 0.7 | Tag 55 used for instrument.
-T1_D_167 | 167 | SecurityType | [X] Missing | 0.0 | 0.7 | Tag 167 not documentation.
+T1_D_167 | 167 | SecurityType | [X] Missing | 0.0 | 0.7 | Tag 167 not documented.
 T1_G_000 | null | OrderCancelReplaceRequest | [P] Full | 2.0 | 2.0 | Supported on Spot.
 
 ### Tier 2: Execution Quality & TCA (Score: 10/25)

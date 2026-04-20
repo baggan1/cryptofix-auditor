@@ -189,7 +189,7 @@
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.7,
-      "evidence": "Tag 167 not documentation in common NOS message blocks."
+      "evidence": "Tag 167 not documented in common NOS message blocks."
     },
     {
       "check_id": "T3_AE_828",
@@ -2077,7 +2077,7 @@
       "message_type": "35=D",
       "message_name": "NewOrderSingle",
       "level": "tag",
-      "fix_tag": null,
+      "fix_tag": 55,
       "field_name": "Symbol + SecAltIDGrp",
       "tier": 5,
       "weight": 0,
