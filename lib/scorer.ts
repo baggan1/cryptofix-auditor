@@ -32,11 +32,12 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
       earned += pts;
       details.push({
         check_id: check.id,
-        fix_tag: check.fix_tag ?? check.tag_number?.toString() ?? '',
-        field_name: check.field_name ?? check.tag_name ?? '',
+        fix_tag: check.fix_tag 
+          ?? (check.tag_number !== null && check.tag_number !== undefined ? String(check.tag_number) : ''),
+        field_name: check.field_name ?? check.tag_name ?? check.message_name ?? '',
         message_type: check.message_type ?? '',
         message_name: check.message_name ?? '',
-        level: check.level,
+        level: check.level ?? 'tag',
         tier: tier.tier,
         status: (r?.status ?? 'no_credit') as any,
         points_available: check.weight,
