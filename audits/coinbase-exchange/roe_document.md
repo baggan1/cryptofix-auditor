@@ -1,146 +1,185 @@
 # Rules of Engagement — Coinbase Exchange FIX API
 ## Institutional readiness audit
 
-Audit date: 2026-04-20
+Audit date: 2026-04-21
 Auditor: Opound LLC — Navilla Bagga
-Spec source: multi-url: connectivity, order-entry-messages5, drop-copy, tpsl-orders, market-data
+Spec source: multi-url
 Asset classes: [spot]
 
-Overall score: 49 / 100 — Basic
+Overall score: 60 / 100 — Partial
 
-| Tier | Score | Available | % |
-| :--- | :--- | :--- | :--- |
-| **1 Order lifecycle** | 33.4 | 40 | 84% |
-| **2 Execution quality & TCA** | 11.5 | 25 | 46% |
-| **3 Post-trade & allocation** | 0.0 | 25 | 0% |
-| **4 AML & Travel Rule** | 4.0 | 10 | 40% |
+Tier | Score | Available | %
+-----|-------|-----------|---
+1 Order lifecycle | 36.1 | 55 | 66%
+2 Execution quality & TCA | 15.0 | 15 | 100%
+3 Post-trade & allocation | 0.0 | 15 | 0%
+4 AML & Travel Rule | 2.0 | 10 | 20%
 
-**Informational Tiers:**
-- **5 DAWG Extensions**: 0 checks present
-- **6 Drop Copy readiness**: 10.5 / 11 (Institutional ready)
-- **7 Market Data**: 10 / 10 (Institutional ready)
-- **8 Admin & Session**: 8.3 / 10 (High reliability)
+Informational Tiers:
+5 DAWG Extensions | 0 checks present
+6 Drop Copy readiness | 5.0 / 5
+7 Market Data | 5.0 / 5
+8 Admin & Session | 8.5 / 15
 
-### Recommendation
-Coinbase Exchange provides some of the most robust infrastructure endpoints in crypto (dedicated Drop Copy, L3 order-by-order Market Data) but suffers from high "TradFi Gaps" in execution transparency. The lack of standard fields like `LastCapacity (29)` and `LastMkt (30)` makes automated TCA and regulatory reporting more difficult. However, for HFT and market markers requiring raw book access and session stability, Coinbase is "Production Ready" at the infrastructure layer.
+Recommendation: Coinbase Exchange provides a high-performance FIX 5.0 interface suitable for low-latency execution and real-time market data, but lacks institutional post-trade (Tiers 3/4) and recovery (Tier 8) features. The primary blocker is the lack of ResendRequest support and native Trade Capture Reports, necessitating custom reconciliation logic via REST APIs.
 
-### Critical Gaps (Top 3)
-- **T2_8_029** | LastCapacity | 5.0 pts | Missing agent/principal transparency on fills.
-- **T2_8_030** | LastMkt | 4.0 pts | Missing execution venue MIC code (critical for multi-venue TCA).
-- **T2_8_528** | OrderCapacity | 4.0 pts | Missing regulatory capacity on order entry.
+Critical gaps (top 3 by points_lost):
+- T4_453 | Parties Group | 4.0 pts | No AML/Party identification (tag 448/452) documented in FIX application layer.
+- T3_AE_000 | TradeCaptureReport | 2.0 pts | Post-trade reconciliation messages (35=AE) missing; fills must be tracked via ExecutionReports.
+- T3_J_000 | AllocationInstruction | 2.0 pts | No native FIX support for trade allocation (35=J) or multi-account splitting.
 
 ---
 
 ## SECTION 2 — Session configuration
 
-FIX version: 5.0 SP2 (FIXT 1.1 session layer)
-Transport: TCP/TLS 1.2+
+FIX version: FIX 5.0 SP2 (FIXT 1.1 session layer)
+Transport: TCP/TLS 1.2 [Production requirement]
 
-**Connection parameters:**
-- **TargetCompID**: COINBASE (Example)
-- **SenderCompID**: [Client assigned]
-- **Host**: fix.exchange.coinbase.com (Trading) 
-- **Port**: 4198
-- **Drop Copy Host**: fix-dc.exchange.coinbase.com
-- **Drop Copy Port**: 6122
+Connection parameters:
+TargetCompID: COINBASE
+SenderCompID: [Client-assigned API Key]
+Host: fix.exchange.coinbase.com
+Port: 6121 (Order Entry), 6122 (Drop Copy)
+Sandbox: Y — fix-public.sandbox.exchange.coinbase.com
 
-**Authentication:** 
-- HMAC-SHA256 signature passed in tag 96 (RawData).
-- Logon tags: 553 (Username/API Key), 554 (Passphrase), 96 (Signature).
+Authentication: API key + Passphrase (signed via HMAC-SHA256 in tag 96)
+Logon tags: 553 (Username/API Key), 96 (RawData/Signature), 554 (Password/Passphrase)
+ResetOnLogon (141): Y — Mandatory. Every logon starts with SeqNum 1.
 
-**Session management:**
-- **Heartbeat interval (108)**: Required on logon.
-- **Fresh Session Model**: Sequence numbers always reset to 1 after disconnect. `ResendRequest (35=2)` is NOT supported.
-- **Maintenance**: Hard reset every Saturday at 1 PM ET.
+Session management:
+Heartbeat interval (108): 30 sec — Configurable (recommended range 15-60)
+Missed heartbeat threshold: 2 missed = disconnect
+Cancel-on-Disconnect: Y — Session-level configuration (default: True)
+Message recovery: Not supported — ResendRequest (35=2) is explicitly blocked. Gaps require a full session reset.
+Forced session reset: Weekly Saturday maintenance at 1:00 PM ET.
 
 ---
 
 ## SECTION 3 — Tier scorecard
 
-### Tier 1 (Order Lifecycle): 33.4 / 40 pts
-| Check ID | Tag | Field | Status | Pts | Max | Evidence |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| T1_D_000 | 35=D | NOS | [P] | 3.0 | 3.0 | Fully documented. Supports batch (U6). |
-| T1_8_000 | 35=8 | ER | [P] | 3.0 | 3.0 | Standard feedback loop. |
-| T1_F_000 | 35=F | Cancel | [P] | 2.5 | 2.5 | Supported. |
-| T1_G_000 | 35=G | Replace | [P] | 2.5 | 2.5 | Supported (Price/Qty). |
+### Tier 1 (Order Lifecycle): 36.1 / 55 pts [~]
+Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
+---------|---------|-------|--------|------------|---------------|---------
+T1_D_000 | | NOS | [P] | 3.0 | 3.0 | Supported as per FIX 5.0 spec.
+T1_D_011 | 11 | ClOrdID | [P] | 0.7 | 0.7 | Tag 11 documented in 35=D.
+T1_D_055 | 55 | Symbol | [P] | 0.7 | 0.7 | Tag 55 documented in 35=D.
+T1_8_000 | | ExecutionReport | [P] | 2.0 | 2.0 | Primary message for fill/state reporting.
+T1_Q_000 | | DontKnowTrade | [X] | 0.0 | 1.5 | Message 35=Q not found in spec.
 
-### Tier 7 (Market Data): 10 / 10 pts
-| Check ID | Tag | Field | Status | Pts | Max | Evidence |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| T7_V_000 | 35=V | Request | [P] | 0.75 | 0.75 | Subscribe/Unsubscribe documented. |
-| T7_X_000 | 35=X | Incremental | [P] | 1.0 | 1.0 | L3 order-by-order updates supported. |
-| T7_X_278 | 278 | MDEntryID | [P] | 0.4 | 0.4 | Required for order tracking. |
+### Tier 2 (Execution Quality): 15.0 / 15 pts [P]
+Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
+---------|---------|-------|--------|------------|---------------|---------
+T2_8_031 | 31 | LastPx | [P] | 3.0 | 3.0 | Fill price provided on executions.
+T2_8_032 | 32 | LastQty | [P] | 3.0 | 3.0 | Fill quantity provided on executions.
+T2_8_851 | 851 | LastLiquidityInd | [~] | 1.5 | 3.0 | Uses custom tag 1057 (AggressorIndicator) as functional equivalent.
+
+### Tier 3 (Post-trade/RFQ): 0.5 / 15 pts [X]
+Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
+---------|---------|-------|--------|------------|---------------|---------
+T3_AE_000 | | TradeCaptureReport | [X] | 0.0 | 2.0 | Not supported in FIX layer.
+T3_J_000 | | AllocationInstruction | [X] | 0.0 | 2.0 | Not supported in FIX layer.
+
+### Tier 4 (AML/Travel Rule): 2.0 / 10 pts [X]
+Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
+---------|---------|-------|--------|------------|---------------|---------
+T4_453 | 453 | Parties Group | [X] | 0.0 | 4.0 | No party identification documented.
+T4_017 | 17 | ExecID Uniqueness | [P] | 2.0 | 2.0 | UUID-based unique execution IDs.
+
+### Tier 6 (Drop Copy): 5.0 / 5 pts [P] / Separate Score: 10/10
+Check ID | FIX Tag | Field | Status | Pts Earned | Pts Available | Evidence
+---------|---------|-------|--------|------------|---------------|---------
+T6_DC_000 | | Logon (Drop Copy) | [P] | 1.5 | 1.5 | Dedicated port 6122 for DC session.
+T6_DC_9406| 9406| DropCopyFlag | [P] | 0.5 | 0.5 | Custom tag establishes DC session.
 
 ---
 
 ## SECTION 4 — Gap analysis & remediation
 
-### T2_8_851 — LastLiquidityInd (tag 851) — 1.5 pts lost
-**Status**: Partial (Proprietary Tag)
-**Evidence**: Coinbase uses `AggressorIndicator (1057)` instead of standard 851.
-**Institutional impact**: Break in standard TCA pipelines expecting 851.
-**Remediation**: Coinbase should map 1057 internal state back to FIX-standard Tag 851 for institutional parity.
+### T8_RR_000 — ResendRequest (35=2) — 0.8 pts lost
+Status: Missing
+Evidence: Resend Requests (35=2) not supported on Coinbase FIX 5.0.
+Institutional impact: High risk during message gaps. Institutions cannot recover dropped execution reports without a full session reset, leading to potential out-of-sync states between the exchange and the firm's OMS.
+TradFi reference: ResendRequest is a fundamental session recovery mechanism in the FIX protocol standard.
+Recommended remediation: Implement standard FIX 35=2 support with a minimum 24-hour recovery window.
+Workaround: Use REST `/fills` or `/orders` endpoints to reconcile state after a disconnect.
+Effort: L > 1 month
 
-### T8_RR_000 — ResendRequest (35=2) — 0.375 pts lost
-**Status**: Partial (Unsupported)
-**Evidence**: Fresh session model required.
-**Institutional impact**: High-speed clients must implement a local persistent buffer to recover missing state as the exchange will not replay sequences.
+### T4_453 — Parties Group (tag 453) — 4.0 pts lost
+Status: Missing
+Evidence: No AML/Party identification documented in FIX 5.0 spec.
+Institutional impact: Compliance blocker for regulated entities. Prevents passing required sub-account or beneficial owner information during the trade lifecycle.
+TradFi reference: Required for MiFID II and CFTC reporting.
+Recommended remediation: Support NoPartyIDs(453) repeating group in NOS and ER messages.
+Workaround: Map accounts at the API Key level in the Coinbase UI.
+Effort: M 1-4 weeks
 
 ---
 
 ## SECTION 5 — Custom tag dictionary
-| Tag # | Field Name | Data Type | Valid Values | Messages | Notes |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| 1057 | AggressorIndicator | Boolean | Y=Taker, N=Maker | 35=8 | Proprietary maker/taker flag. |
-| 9406 | DropCopyFlag | char | Y=Yes | 35=A | Required for DC logon. |
-| 3000 | SelfTradePrevention | char | C=Cancel oldest | 35=D | Risk management. |
+
+Tag # | Field Name | Data Type | Valid Values | Messages | Notes
+------|------------|-----------|--------------|----------|------
+1057 | AggressorIndicator | Boolean | Y, N | 35=8 | Y=Taker, N=Maker. Functional equivalent of tag 851.
+9406 | DropCopyFlag | Boolean | Y, N | 35=A | Used to signal a Drop Copy session in Logon.
+1682 | MDSecurityTradingStatus | String | trading_disabled, etc. | 35=h | Coinbase-specific status field.
 
 ---
 
 ## SECTION 6 — Order types matrix
-| Order Type | FIX OrdType | Spot | Notes |
-| :--- | :--- | :--- | :--- |
-| Market | 1 | [P] | |
-| Limit | 2 | [P] | |
-| Stop | 3 | [P] | |
-| Stop Limit | 4 | [P] | |
-| Batch | U6 | [P] | Institutional extension. |
-| TPSL | O | [P] | Complex trigger types. |
+
+Order Type | FIX OrdType | Spot | Futures | Notes
+-----------|-------------|------|---------|------
+Market | 1 | [P] | N/A | Supported.
+Limit | 2 | [P] | N/A | Supported.
+Stop | 3 | [P] | N/A | Supported via TPSL extensions.
+StopLimit | 4 | [P] | N/A | Supported via TPSL extensions.
+Iceberg | 1138 | [X] | N/A | Not documented.
+
+TIF table:
+- GTC (1): Supported [P]
+- IOC (3): Supported [P]
+- FOK (4): Supported [P]
+- GTD (6): Supported [P]
 
 ---
 
 ## SECTION 7 — UAT checklist
-**Phase 1 — Connectivity**: TLS 1.2 handshake, HMAC signature validation, DC logon.
-**Phase 2 — Order Batching**: Submit `NewOrderBatch (35=U6)`, reconcile multiple `ExecutionReports`.
-**Phase 3 — Drop Copy**: Place order via REST API, verify report delivery on FIX DC session.
-**Phase 4 — L3 Feed**: Build local order book from `35=W` snapshot and `35=X` updates using `MDEntryID`.
+
+UAT environment: fix-public.sandbox.exchange.coinbase.com:6121
+
+Phase 1 — Session: Logon with HMAC-SHA256, verify ResetSeqNumFlag(141)=Y behavior.
+Phase 2 — Order lifecycle: Verify basic NOS (35=D) and ER (35=8) flows for Limit orders.
+Phase 3 — Modify/cancel: Test OrderCancelReplaceRequest (35=G) for price/qty updates.
+Phase 4 — Execution quality: Validate AggressorIndicator(1057) fills for maker/taker logic.
+Phase 5 — Recovery: Test session forced disconnect; verify SeqNum reset to 1 on reconnect.
+
+Sign-off: Phases 1-3 required. Phase 5 requires custom OMS logic due to lack of ResendRequest.
 
 ---
 
-## SECTION 8 — DAWG Extensions (Informational)
-Coinbase FIX 5.0 SP2 provides a modern foundation but lacks DAWG-ratified digital asset extensions like Tag 167=DIGITAL or ISO 24165 DTIs. Asset identification is purely symbol-based (e.g., BTC-USD).
+## SECTION 9 — Drop Copy Infrastructure
 
----
-
-## SECTION 9 — Drop Copy Analysis
-**Score**: 10.5 / 11
-**Status**: Institutional Ready
-Coinbase provides a "Gold Standard" drop copy implementation for crypto, using a dedicated endpoint and session isolation. The feed includes all execution reports irrespective of the entry channel (FIX, REST, or Web).
+Drop Copy evaluation (0–5 scale):
+- Score: 5.0 / 5
+- Status: Production Ready
+- Dedicated session: Y (Port 6122)
+- Scope coverage: All Channels (FIX, REST, UI)
 
 ---
 
 ## SECTION 10 — Market Data Analysis
-**Score**: 10 / 10
-**Status**: Institutional Ready
-The Market Data feed is an institutional-grade L3 (order-by-order) stream. The use of unique `MDEntryIDs` allows for perfect book reconciliation, placing Coinbase at the top tier for crypto market data.
+
+- Score: 5.0 / 5
+- Status: Production Ready
+- Feed types: Order-by-order (L3) via 35=X, Book-build via 35=W.
 
 ---
 
 ## SECTION 11 — Admin & Session Analysis
-**Score**: 8.3 / 10
-**Status**: High Reliability
-The fresh-session model ensures high-speed connectivity with minimal overhead, though the lack of `ResendRequest` puts the burden of state recovery on the client's infrastructure.
+
+- Score: 8.5 / 15
+- Status: Medium Reliability
+- Key Gaps: Lack of ResendRequest (35=2) and hard mandatory reset on every logon.
 
 Prepared by: Opound LLC — navilla.bagga@gmail.com
-Version: 2.0.0 | Date: 2026-04-20
+Version: 2.0.0 | Date: 2026-04-21

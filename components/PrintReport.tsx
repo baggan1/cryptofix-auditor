@@ -141,12 +141,12 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
           </div>
 
           {/* PROBLEM 3: Overall Score Hero */}
-          <div className="flex items-center gap-8 p-6 mb-8 rounded-xl border border-slate-200 bg-white">
+          <div className="flex items-center gap-8 p-6 mb-8 rounded-xl border border-slate-200 bg-white shadow-sm">
             <div className="flex-shrink-0 w-24 h-24 rounded-full flex flex-col items-center justify-center border-4"
               style={{
                 borderColor: report.total_score >= 70 ? '#10B981' : report.total_score >= 50 ? '#F59E0B' : '#EF4444'
               }}>
-              <span className="text-3xl font-bold text-slate-800">{report.total_score}</span>
+              <span className="text-3xl font-bold text-slate-800">{report.total_score.toFixed(0)}</span>
               <span className="text-xs text-slate-500">/ 100</span>
             </div>
             <div className="flex-1">
@@ -156,59 +156,63 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                 }}>
                 {report.grade}
               </div>
-              <div className="space-y-2">
-                {Object.entries(report.tier_scores)
-                  .filter(([key]) => ['tier1', 'tier2', 'tier3', 'tier4'].includes(key))
-                  .map(([key, tier]) => (
-                    <div key={key} className="flex items-center gap-3 text-sm">
-                      <span className="text-slate-500 w-40 truncate">{tier.label}</span>
-                      <div className="flex-1 bg-slate-100 rounded-full h-2">
-                        <div className="h-2 rounded-full bg-[#10B981] transition-all"
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+                {Object.entries(report.tier_scores).map(([key, tier]) => (
+                  <div key={key} className="flex items-center gap-3 text-sm">
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-slate-500 text-[10px] uppercase font-bold truncate">{tier.label}</span>
+                        <span className="text-slate-900 font-bold text-[10px]">{tier.earned}/{tier.available}</span>
+                      </div>
+                      <div className="bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                        <div className="h-full rounded-full bg-navy-dark transition-all"
                           style={{width: `${tier.pct}%`}} />
                       </div>
-                      <span className="text-slate-600 w-12 text-right font-mono text-xs">
-                        {tier.earned}/{tier.available}
-                      </span>
                     </div>
+                  </div>
                 ))}
               </div>
 
-              {/* Informational / Separate Scores */}
-              <div className="mt-4 pt-4 border-t border-slate-100 flex gap-4">
+              {/* Sub-scores */}
+              <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap gap-4">
+                <div className="text-[10px] bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-100 flex flex-col gap-0.5">
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-3 h-3" />
+                    <span className="font-bold uppercase tracking-tight">{report.compliance_sub_score.label}</span>
+                    <span className="font-black ml-auto">{report.compliance_sub_score.total}/{report.compliance_sub_score.max}</span>
+                  </div>
+                  <div className="opacity-70 font-medium">{report.compliance_sub_score.grade}</div>
+                </div>
+
+                <div className="text-[10px] bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg border border-blue-100 flex flex-col gap-0.5">
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-3 h-3" />
+                    <span className="font-bold uppercase tracking-tight">{report.market_data_sub_score.label}</span>
+                    <span className="font-black ml-auto">{report.market_data_sub_score.total}/{report.market_data_sub_score.max}</span>
+                  </div>
+                  <div className="opacity-70 font-medium">{report.market_data_sub_score.grade}</div>
+                </div>
+
                 {report.tier5_results && (
-                  <div className="text-[10px] bg-purple-50 text-purple-700 px-2 py-1 rounded-md border border-purple-100">
-                    <span className="font-bold mr-1">Tier 5 (DAWG):</span> 
-                    {report.tier5_results.checks.filter(c => c.status !== 'no_credit').length} present
-                  </div>
-                )}
-                {report.tier7_results && (
-                  <div className="text-[10px] bg-blue-50 text-blue-700 px-2 py-1 rounded-md border border-blue-100 flex items-center gap-1">
-                    <BarChart3 className="w-3 h-3" />
-                    <span className="font-bold">Tier 7 (MD):</span> 
-                    {report.tier7_results.score}/10
-                  </div>
-                )}
-                {report.tier8_results && (
-                  <div className="text-[10px] bg-slate-50 text-slate-700 px-2 py-1 rounded-md border border-slate-200 flex items-center gap-1">
-                    <ShieldAlert className="w-3 h-3" />
-                    <span className="font-bold">Tier 8 (Admin):</span> 
-                    {report.tier8_results.score}/10
+                  <div className="text-[10px] bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg border border-slate-200 flex flex-col justify-center">
+                    <div className="font-bold uppercase tracking-tight">Tier 5 (DAWG)</div>
+                    <div>{report.tier5_results.checks.filter(c => c.status !== 'no_credit').length} Extensions</div>
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* PROBLEM 4 & 6 & 5 & 1: Structured Sections */}
+          {/* Structured Sections */}
           <div className="space-y-12">
-            {/* SECTION 1: EXEC SUMMARY (Header + Intro from mdSections[0]) */}
+            {/* SECTION 1: EXEC SUMMARY */}
             <section>
               <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 1 — Executive Summary</h2>
               <div className="prose prose-slate max-w-none text-slate-700">
                 <div dangerouslySetInnerHTML={{ __html: marked.parse(mdSections[0].split('\n\n').slice(5).join('\n\n')) }} />
               </div>
               
-              {/* PROBLEM 1: Critical Gaps Table */}
+              {/* Critical Gaps Table */}
               <div className="mt-8">
                 <h3 className="text-lg font-bold text-slate-800 mb-4">Critical Gaps</h3>
                 <div className="overflow-x-auto">
@@ -249,13 +253,17 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
               </div>
             </section>
 
-            {/* PROBLEM 6: SECTION 3 — TIER SCORECARD */}
+            {/* SECTION 3 — TIER SCORECARD */}
             <section>
               <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 3 — Tier scorecard</h2>
               <div className="space-y-8 mt-6">
-                {[1, 2, 3, 4].map(tierNum => (
+                {[1, 2, 3, 8, 4, 6, 7].map(tierNum => (
                   <div key={tierNum}>
-                    <h3 className="text-md font-bold text-slate-800 mb-3 ml-1">Tier {tierNum} Checks</h3>
+                    <div className="flex items-center gap-2 mb-3 ml-1">
+                      <h3 className="text-md font-bold text-slate-800">Tier {tierNum} Checks</h3>
+                      {[4, 6].includes(tierNum) && <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded uppercase">Compliance Sub-score</span>}
+                      {tierNum === 7 && <span className="text-[9px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded uppercase">Market Data Sub-score</span>}
+                    </div>
                     <div className="overflow-x-auto mb-8">
                       <table className="w-full text-sm border-collapse border border-slate-200">
                         <thead>
@@ -270,26 +278,29 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                          {checksByTier[tierNum]?.map((check, index) => (
-                            <tr key={check.check_id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                              <td className="p-3 font-mono text-xs text-slate-500">{check.check_id}</td>
-                              <td className="p-3 font-mono text-xs">{check.fix_tag || (check.level === 'message' ? 'MSG' : '—')}</td>
-                              <td className="p-3 font-medium text-slate-800">{check.field_name || check.message_name || '—'}</td>
-                              <td className="p-3 text-center">
-                                <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                                  check.status === 'full_credit' ? 'bg-green-100 text-green-800' : 
-                                  check.status === 'partial_credit' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
-                                }`}>
-                                  {check.status === 'full_credit' ? 'Present' : check.status === 'partial_credit' ? 'Partial' : 'Missing'}
-                                </span>
-                              </td>
-                              <td className="p-3 text-center font-mono text-sm">
-                                {check.status === 'full_credit' ? check.points_available : check.status === 'partial_credit' ? check.points_available * 0.5 : 0}
-                              </td>
-                              <td className="p-3 text-center font-mono text-sm text-slate-400">{check.points_available}</td>
-                              <td className="p-3 text-sm text-slate-600 leading-relaxed">{check.evidence ?? '—'}</td>
-                            </tr>
-                          ))}
+                          {checksByTier[tierNum]?.map((check, index) => {
+                            const earned = check.status === 'full_credit' ? check.points_available : check.status === 'partial_credit' ? check.points_available * 0.5 : 0;
+                            return (
+                              <tr key={check.check_id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                                <td className="p-3 font-mono text-xs text-slate-500">{check.check_id}</td>
+                                <td className="p-3 font-mono text-xs">{check.fix_tag || (check.level === 'message' ? 'MSG' : '—')}</td>
+                                <td className="p-3 font-medium text-slate-800">{check.field_name || check.message_name || '—'}</td>
+                                <td className="p-3 text-center">
+                                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                                    check.status === 'full_credit' ? 'bg-green-100 text-green-800' : 
+                                    check.status === 'partial_credit' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
+                                  }`}>
+                                    {check.status === 'full_credit' ? 'Present' : check.status === 'partial_credit' ? 'Partial' : 'Missing'}
+                                  </span>
+                                </td>
+                                <td className="p-3 text-center font-mono text-sm">
+                                  {earned % 1 === 0 ? earned : earned.toFixed(1)}
+                                </td>
+                                <td className="p-3 text-center font-mono text-sm text-slate-400">{check.points_available}</td>
+                                <td className="p-3 text-sm text-slate-600 leading-relaxed">{check.evidence ?? '—'}</td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
@@ -298,7 +309,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
               </div>
             </section>
 
-            {/* PROBLEM 5: SECTION 4 — GAP ANALYSIS */}
+            {/* SECTION 4 — GAP ANALYSIS */}
             <section>
               <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 4 — Gap analysis & remediation</h2>
               <div className="grid grid-cols-1 gap-4 mt-6">
@@ -336,7 +347,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
               </div>
             </section>
 
-            {/* PROBLEM A, B, C: SECTIONS 5-7 */}
+            {/* SECTIONS 5-7 */}
             {[5, 6, 7].map(num => (
                <section key={num}>
                   <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
@@ -359,67 +370,43 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                 </div>
                 <Tier5Panel results={report.tier5_results} />
                 
-                {/* Tiers 6-8: separate scored panels */}
+                {/* Sub-score detailed panels */}
                 <div className="mt-8 space-y-4">
-                  {[6, 7, 8].map(tierNum => {
-                    const tier = report.separate_tier_scores?.[`tier${tierNum}`];
-                    if (!tier) return null;
-                    return (
-                      <SeparateTierPanel
-                        key={tierNum}
-                        label={tier.label}
-                        score={tier.earned}
-                        maxScore={tier.available}
-                        grade={tier.grade}
-                        pct={tier.pct}
-                      />
-                    );
-                  })}
+                  <SeparateTierPanel
+                    label={report.compliance_sub_score.label}
+                    score={report.compliance_sub_score.total}
+                    maxScore={report.compliance_sub_score.max}
+                    grade={report.compliance_sub_score.grade}
+                    pct={(report.compliance_sub_score.total / report.compliance_sub_score.max) * 100}
+                  />
+                  <SeparateTierPanel
+                    label={report.market_data_sub_score.label}
+                    score={report.market_data_sub_score.total}
+                    maxScore={report.market_data_sub_score.max}
+                    grade={report.market_data_sub_score.grade}
+                    pct={(report.market_data_sub_score.total / report.market_data_sub_score.max) * 100}
+                  />
                 </div>
               </section>
             )}
 
-            {/* SECTION 9 (Drop Copy) */}
-            {report.tier6_results && (
-              <section>
-                <div className="flex items-center gap-3 mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
-                  <h2 className="text-xl font-semibold text-[#0A1628]">SECTION 9 — Drop Copy Infrastructure</h2>
-                  <span className="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Connectivity Audit</span>
-                </div>
-                <div className="report-content mb-6">
-                  <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(9))) }} />
-                </div>
-                <Tier6DropCopyPanel results={report.tier6_results} />
-              </section>
-            )}
-            {/* SECTION 10 (Market Data) */}
-            {report.tier7_results && (
-              <section>
-                <div className="flex items-center gap-3 mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
-                  <h2 className="text-xl font-semibold text-[#0A1628]">SECTION 10 — Market Data Analysis</h2>
-                  <span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Book Building & Discovery</span>
-                </div>
-                <div className="report-content mb-6">
-                  <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(10))) }} />
-                </div>
-                <Tier7MarketDataPanel results={report.tier7_results} />
-              </section>
-            )}
-
-            {/* SECTION 11 (Admin & Session) */}
-            {report.tier8_results && (
-              <section>
-                <div className="flex items-center gap-3 mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
-                  <h2 className="text-xl font-semibold text-[#0A1628]">SECTION 11 — Admin & Session Analysis</h2>
-                  <span className="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Connectivity Baseline</span>
-                </div>
-                <div className="report-content mb-6">
-                  <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(11))) }} />
-                </div>
-                {/* Detailed panel for Tier 8 can be added here if needed, 
-                    but using SeparateTierPanel for the overview per request */}
-              </section>
-            )}
+            {/* SECTION 9-11 (Generic Analysis from Text) */}
+            {[9, 10, 11].map(sectionNum => {
+              const content = stripHeading(getSectionByNum(sectionNum));
+              if (!content) return null;
+              return (
+                <section key={sectionNum}>
+                  <div className="flex items-center gap-3 mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
+                    <h2 className="text-xl font-semibold text-[#0A1628]">SECTION {sectionNum} — {
+                      sectionNum === 9 ? 'Drop Copy Analysis' : sectionNum === 10 ? 'Market Data Analysis' : 'Admin & Session Baseline'
+                    }</h2>
+                  </div>
+                  <div className="report-content mb-6">
+                    <div dangerouslySetInnerHTML={{ __html: marked.parse(content) }} />
+                  </div>
+                </section>
+              );
+            })}
           </div>
         </div>
 

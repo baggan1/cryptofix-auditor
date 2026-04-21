@@ -34,6 +34,7 @@ export interface TierScore {
   earned: number;
   available: number;
   pct: number;
+  is_informational?: boolean;
 }
 
 export interface GapSummaryItem {
@@ -87,6 +88,23 @@ export interface SeparateTierScore {
   grade: string;
 }
 
+export interface ComplianceSubScore {
+  total: number;
+  max: number;
+  grade: string;
+  tiers: Record<string, TierScore>;
+  label: string;
+  audience: string;
+}
+
+export interface MarketDataSubScore {
+  total: number;
+  max: number;
+  grade: string;
+  label: string;
+  audience: string;
+}
+
 export interface ScoredReport {
   exchange_name: string;
   audit_date: string;
@@ -96,12 +114,10 @@ export interface ScoredReport {
   max_score: number;
   grade: 'Institutional grade' | 'Near-institutional' | 'Partial' | 'Basic' | 'Pre-institutional';
   tier_scores: Record<string, TierScore>;
+  compliance_sub_score: ComplianceSubScore;
+  market_data_sub_score: MarketDataSubScore;
   gap_count: number;
   gap_summary: GapSummaryItem[];
   full_detail: CheckResult[];
   tier5_results?: Tier5Results;
-  tier6_results?: Tier6Results;
-  tier7_results?: Tier7Results;
-  tier8_results?: Tier8Results;
-  separate_tier_scores?: Record<string, SeparateTierScore>;
 }

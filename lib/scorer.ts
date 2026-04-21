@@ -19,282 +19,160 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
     partial_credit: 0.5, 
     no_credit: 0.0 
   };
-  
-  let totalScore = 0;
-  const tierScores: Record<string, TierScore> = {};
-  const fullDetail: CheckResult[] = [];
-  const gaps: GapSummaryItem[] = [];
 
-  // Tiers 1-4 are scored
-  rubric.tiers.forEach(tier => {
-    if (tier.tier > 4) return;
-
-    // Group checks by message_type
-    const byMessage: Record<string, { message: any, tags: any[] }> = {};
+  // Helper: score a single tier's checks
+  function scoreTier(tier: any, extractionChecks: any[]) {
+    let earned = 0;
+    const details: CheckResult[] = [];
     tier.checks.forEach((check: any) => {
-      const mt = check.message_type;
-      if (!byMessage[mt]) byMessage[mt] = { message: null, tags: [] };
-      if (check.level === 'message') byMessage[mt].message = check;
-      else byMessage[mt].tags.push(check);
-    });
-
-    let tierEarned = 0;
-    Object.entries(byMessage).forEach(([msgType, group]) => {
-      // Score message-level check
-      if (group.message) {
-        const result = extraction.checks.find(c => c.check_id === group.message.id);
-        const status = result?.status || 'no_credit';
-        const factor = factors[status] || 0;
-        const pts = group.message.weight * factor;
-        tierEarned += pts;
-        totalScore += pts;
-
-        fullDetail.push({
-          check_id: group.message.id,
-          message_type: msgType,
-          message_name: group.message.message_name,
-          level: 'message',
-          fix_tag: null,
-          field_name: group.message.field_name || group.message.message_name,
-          status: status,
-          points_available: group.message.weight,
-          evidence: result?.evidence || null,
-          asset_class_limitation: result?.asset_class_limitation || null,
-          custom_tag_notes: null
-        });
-      }
-
-      // Score tag-level checks
-      group.tags.forEach(check => {
-        const result = extraction.checks.find(c => c.check_id === check.id);
-        const status = result?.status || 'no_credit';
-        const factor = factors[status] || 0;
-        const pts = check.weight * factor;
-        tierEarned += pts;
-        totalScore += pts;
-
-        const detail: CheckResult = {
-          check_id: check.id,
-          message_type: msgType,
-          message_name: check.message_name,
-          level: 'tag',
-          fix_tag: check.fix_tag,
-          field_name: check.field_name,
-          status: status,
-          points_available: check.weight,
-          evidence: result?.evidence || null,
-          asset_class_limitation: result?.asset_class_limitation || null,
-          custom_tag_notes: null
-        };
-        fullDetail.push(detail);
-
-        if (status !== 'full_credit') {
-          gaps.push({
-            check_id: check.id,
-            fix_tag: `${check.fix_tag || ''}`,
-            field_name: check.field_name,
-            tier: tier.tier,
-            status: status as 'partial_credit' | 'no_credit',
-            points_lost: check.weight - pts,
-            evidence: detail.evidence
-          });
-        }
+      const r = extractionChecks.find(c => c.check_id === check.id);
+      const f = factors[r?.status ?? 'no_credit'] ?? 0;
+      const pts = check.weight * f;
+      earned += pts;
+      details.push({
+        check_id: check.id,
+        fix_tag: check.fix_tag ?? check.tag_number?.toString() ?? '',
+        field_name: check.field_name ?? check.tag_name ?? '',
+        message_type: check.message_type ?? '',
+        message_name: check.message_name ?? '',
+        level: check.level,
+        tier: tier.tier,
+        status: (r?.status ?? 'no_credit') as any,
+        points_available: check.weight,
+        evidence: r?.evidence ?? null,
+        asset_class_limitation: r?.asset_class_limitation ?? null,
+        custom_tag_notes: null
       });
     });
+    return { earned: Math.round(earned * 10) / 10, details };
+  }
 
-    tierEarned = Math.min(tierEarned, tier.weight_total);
+  // PART A — Main score (T1, T2, T3, T8)
+  const MAIN_TIERS = [1, 2, 3, 8];
+  let mainTotal = 0;
+  const tierScores: Record<string, TierScore> = {};
+  const allDetails: CheckResult[] = [];
+
+  MAIN_TIERS.forEach(tierNum => {
+    const tier = rubric.tiers.find(t => t.tier === tierNum);
+    if (!tier) return;
+    const { earned, details } = scoreTier(tier, extraction.checks);
+    const cap = (rubric.scoring.tier_weights as any)[`tier${tier.tier}_${tier.id}`] ?? tier.weight_total;
+    const capped = Math.min(earned, cap);
+    mainTotal += capped;
+    allDetails.push(...details);
     tierScores[`tier${tier.tier}`] = {
       label: tier.label,
-      earned: Math.round(tierEarned * 10) / 10,
-      available: tier.weight_total,
-      pct: Math.round((tierEarned / tier.weight_total) * 100)
+      earned: capped,
+      available: cap,
+      pct: Math.round((capped / cap) * 100)
     };
   });
 
-  const finalScore = Math.round(totalScore);
-  let grade: ScoredReport['grade'] = 'Pre-institutional';
-  if (finalScore >= 90) grade = 'Institutional grade';
-  else if (finalScore >= 70) grade = 'Near-institutional';
-  else if (finalScore >= 50) grade = 'Partial';
-  else if (finalScore >= 30) grade = 'Basic';
+  mainTotal = Math.min(Math.round(mainTotal * 10) / 10, 100);
+  const mainScore = mainTotal;
+  const grade = mainScore >= 90 ? 'Institutional grade'
+    : mainScore >= 70 ? 'Near-institutional'
+    : mainScore >= 50 ? 'Partial'
+    : mainScore >= 30 ? 'Basic'
+    : 'Pre-institutional';
 
-  // Tier 5 (DAWG)
+  // PART B — Compliance sub-score (T4 + T6)
+  const complianceCfg = rubric.scoring.compliance_sub_score as any;
+  let complianceTotal = 0;
+  const complianceDetails: Record<string, TierScore> = {};
+
+  [4, 6].forEach(tierNum => {
+    const tier = rubric.tiers.find(t => t.tier === tierNum);
+    if (!tier) return;
+    const cap = tierNum === 4 ? complianceCfg.tier4_weight : complianceCfg.tier6_weight;
+    const { earned, details } = scoreTier(tier, extraction.checks);
+    const capped = Math.min(earned, cap);
+    complianceTotal += capped;
+    allDetails.push(...details);
+    complianceDetails[`tier${tierNum}`] = {
+      label: tier.label,
+      earned: capped,
+      available: cap,
+      pct: Math.round((capped / cap) * 100)
+    };
+  });
+
+  complianceTotal = Math.min(Math.round(complianceTotal * 10) / 10, complianceCfg.max);
+  const complianceGrade = complianceTotal >= 12 ? 'Compliance ready'
+    : complianceTotal >= 7 ? 'Partial compliance coverage'
+    : 'Significant compliance gaps';
+
+  // PART C — Market data sub-score (T7)
+  const mdCfg = rubric.scoring.market_data_sub_score as any;
+  const tier7 = rubric.tiers.find(t => t.tier === 7);
+  let mdScore = 0;
+  if (tier7) {
+    const { earned, details } = scoreTier(tier7, extraction.checks);
+    mdScore = Math.min(Math.round(earned * 10) / 10, mdCfg.max);
+    allDetails.push(...details);
+  }
+  const mdGrade = mdScore >= 4 ? 'Full market data feed'
+    : mdScore >= 2 ? 'Partial' : 'Not available';
+
+  // Tier 5 Informational
   const tier5Rubric = rubric.tiers.find(t => t.tier === 5);
   let tier5Results: Tier5Results | undefined;
-  
   if (tier5Rubric) {
-    const tier5Checks: Tier5CheckResult[] = tier5Rubric.checks.map((check: any) => {
-      const result = extraction.checks.find(c => c.check_id === check.id);
-      return {
-        check_id: check.id,
-        title: check.field_name,
-        status: result?.status || 'no_credit',
-        evidence: result?.evidence || null,
-        notes: "Informational only — does not affect score"
-      };
-    });
-
-    const presentCount = tier5Checks.filter(c => c.status !== 'no_credit').length;
-
+    const { details } = scoreTier(tier5Rubric, extraction.checks);
     tier5Results = {
       label: tier5Rubric.label,
       informational_only: true,
       ep273_ratified_checks: ["T5_001", "T5_002", "T5_003"],
       tbd_checks: ["T5_004", "T5_005"],
-      checks: tier5Checks,
-      summary: `${presentCount} of ${tier5Checks.length} DAWG extension checks present or partially implemented`
+      checks: details.map(d => ({
+        check_id: d.check_id, title: d.field_name, status: d.status,
+        evidence: d.evidence, notes: "DAWG Extension"
+      })),
+      summary: `${details.filter(d => d.status !== 'no_credit').length} checks present`
     };
   }
 
-  // Tier 6 (Drop Copy)
-  const tier6Rubric = rubric.tiers.find(t => t.tier === 6);
-  let tier6Results: Tier6Results | undefined;
-
-  if (tier6Rubric) {
-    let tier6Earned = 0;
-    const tier6Checks: CheckResult[] = tier6Rubric.checks.map((check: any) => {
-      const result = extraction.checks.find(c => c.check_id === check.id);
-      const status = result?.status || 'no_credit';
-      const factor = factors[status] || 0;
-      const pts = check.weight * factor;
-      tier6Earned += pts;
-
-      return {
-        check_id: check.id,
-        message_type: check.message_type,
-        message_name: check.message_name,
-        level: check.level,
-        fix_tag: check.fix_tag,
-        field_name: check.field_name || check.message_name,
-        status: status,
-        points_available: check.weight,
-        evidence: result?.evidence || null,
-        asset_class_limitation: result?.asset_class_limitation || null,
-        custom_tag_notes: null
-      };
-    });
-
-    tier6Results = {
-      label: tier6Rubric.label,
-      score: Math.round(tier6Earned * 10) / 10,
-      max_score: tier6Rubric.weight_total,
-      checks: tier6Checks,
-      summary: `Exchange scored ${Math.round(tier6Earned * 10) / 10}/${tier6Rubric.weight_total} on Drop Copy infrastructure readiness.`
-    };
-  }
-
-  // Tier 7
-  const tier7Rubric = rubric.tiers.find(t => t.tier === 7);
-  let tier7Results: Tier7Results | undefined;
-
-  if (tier7Rubric) {
-    let tier7Earned = 0;
-    const tier7Checks: CheckResult[] = tier7Rubric.checks.map((check: any) => {
-      const result = extraction.checks.find(c => c.check_id === check.id);
-      const status = result?.status || 'no_credit';
-      const factor = factors[status] || 0;
-      const pts = check.weight * factor;
-      tier7Earned += pts;
-
-      return {
-        check_id: check.id,
-        message_type: check.message_type,
-        message_name: check.message_name,
-        level: check.level,
-        fix_tag: check.fix_tag,
-        field_name: check.field_name || check.message_name,
-        status: status,
-        points_available: check.weight,
-        evidence: result?.evidence || null,
-        asset_class_limitation: result?.asset_class_limitation || null,
-        custom_tag_notes: null
-      };
-    });
-
-    tier7Results = {
-      label: tier7Rubric.label,
-      score: Math.round(tier7Earned * 10) / 10,
-      max_score: tier7Rubric.weight_total,
-      checks: tier7Checks,
-      summary: `Exchange scored ${Math.round(tier7Earned * 10) / 10}/${tier7Rubric.weight_total} on Tier 7 readiness.`
-    };
-  }
-
-  // Tier 8
-  const tier8Rubric = rubric.tiers.find(t => t.tier === 8);
-  let tier8Results: Tier8Results | undefined;
-
-  if (tier8Rubric) {
-    let tier8Earned = 0;
-    const tier8Checks: CheckResult[] = tier8Rubric.checks.map((check: any) => {
-      const result = extraction.checks.find(c => c.check_id === check.id);
-      const status = result?.status || 'no_credit';
-      const factor = factors[status] || 0;
-      const pts = check.weight * factor;
-      tier8Earned += pts;
-
-      return {
-        check_id: check.id,
-        message_type: check.message_type,
-        message_name: check.message_name,
-        level: check.level,
-        fix_tag: check.fix_tag,
-        field_name: check.field_name || check.message_name,
-        status: status,
-        points_available: check.weight,
-        evidence: result?.evidence || null,
-        asset_class_limitation: result?.asset_class_limitation || null,
-        custom_tag_notes: null
-      };
-    });
-
-    tier8Results = {
-      label: tier8Rubric.label,
-      score: Math.round(tier8Earned * 10) / 10,
-      max_score: tier8Rubric.weight_total,
-      checks: tier8Checks,
-      summary: `Exchange scored ${Math.round(tier8Earned * 10) / 10}/${tier8Rubric.weight_total} on Admin Session reliability.`
-    };
-  }
-
-  // Separate scoring for Tiers 6, 7, 8
-  const separateTierScores: Record<string, SeparateTierScore> = {};
-  [6, 7, 8].forEach(tierNum => {
-    const tierResult = tierNum === 6 ? tier6Results : tierNum === 7 ? tier7Results : tier8Results;
-    if (!tierResult) return;
-
-    const rubricTier = rubric.tiers.find(t => t.tier === tierNum);
-    if (!rubricTier) return;
-
-    const guide = rubricTier.scoring_guide;
-    let grade = 'Not available';
-    if (tierResult.score >= 8) grade = guide ? (guide["8-10"] || grade) : grade;
-    else if (tierResult.score >= 5) grade = guide ? (guide["5-7"] || grade) : grade;
-    else grade = guide ? (guide["0-4"] || grade) : grade;
-
-    separateTierScores[`tier${tierNum}`] = {
-      label: rubricTier.separate_score_label || rubricTier.label,
-      earned: tierResult.score,
-      available: tierResult.max_score,
-      pct: Math.round((tierResult.score / tierResult.max_score) * 100),
-      grade
-    };
-  });
+  // Gaps
+  const gapItems = allDetails
+    .filter(c => c.status !== 'full_credit')
+    .map(c => ({
+      check_id: c.check_id,
+      fix_tag: String(c.fix_tag),
+      field_name: c.field_name,
+      tier: c.tier,
+      status: c.status as any,
+      points_lost: Math.round((c.points_available - (factors[c.status] * c.points_available)) * 10) / 10,
+      evidence: c.evidence
+    }))
+    .filter(c => c.points_lost > 0)
+    .sort((a, b) => b.points_lost - a.points_lost);
 
   return {
     exchange_name: extraction.exchange_name,
     audit_date: extraction.extraction_date,
-    total_score: finalScore,
+    total_score: mainScore,
     max_score: 100,
     grade,
     tier_scores: tierScores,
-    gap_count: gaps.length,
-    gap_summary: gaps.sort((a, b) => b.points_lost - a.points_lost).slice(0, 10),
-    full_detail: fullDetail,
-    tier5_results: tier5Results,
-    tier6_results: tier6Results,
-    tier7_results: tier7Results,
-    tier8_results: tier8Results,
-    separate_tier_scores: separateTierScores
+    compliance_sub_score: {
+      total: complianceTotal,
+      max: complianceCfg.max,
+      grade: complianceGrade,
+      tiers: complianceDetails,
+      label: complianceCfg.label,
+      audience: complianceCfg.audience
+    },
+    market_data_sub_score: {
+      total: mdScore,
+      max: mdCfg.max,
+      grade: mdGrade,
+      label: mdCfg.label,
+      audience: mdCfg.audience
+    },
+    gap_count: gapItems.length,
+    gap_summary: gapItems,
+    full_detail: allDetails,
+    tier5_results: tier5Results
   };
 }

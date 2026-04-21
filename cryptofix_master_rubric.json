@@ -18,15 +18,48 @@
     }
   },
   "scoring": {
+    "max_score": 100,
     "tier_weights": {
-      "tier1_order_lifecycle": 40,
-      "tier2_execution_quality_tca": 25,
-      "tier3_post_trade_allocation": 25,
-      "tier4_aml_travel_rule": 10,
+      "tier1_order_lifecycle": 55,
+      "tier2_execution_quality_tca": 15,
+      "tier3_post_trade_allocation": 15,
+      "tier4_aml_travel_rule": 0,
       "tier5_dawg_extensions": 0,
       "tier6_drop_copy": 0,
       "tier7_market_data": 0,
-      "tier8_admin_session": 0
+      "tier8_admin_session": 15
+    },
+    "compliance_sub_score": {
+      "tiers": [4, 6],
+      "max": 15,
+      "tier4_weight": 10,
+      "tier6_weight": 5,
+      "label": "Compliance & Drop Copy Readiness",
+      "audience": "Compliance service providers, AML platforms, prime brokers",
+      "scoring_guide": {
+        "12-15": "Compliance ready",
+        "7-11": "Partial compliance coverage",
+        "0-6": "Significant compliance gaps"
+      }
+    },
+    "market_data_sub_score": {
+      "tiers": [7],
+      "max": 5,
+      "label": "Market Data Readiness",
+      "audience": "Buy-side institutions, algo execution desks",
+      "scoring_guide": {
+        "4-5": "Full market data feed",
+        "2-3": "Partial — key fields missing",
+        "0-1": "Not available"
+      }
+    },
+    "scoring_model": "two-level: message-type presence + essential tag coverage",
+    "scoring_guide": {
+      "90-100": "Institutional grade",
+      "70-89": "Near-institutional",
+      "50-69": "Partial",
+      "30-49": "Basic",
+      "0-29": "Pre-institutional"
     }
   },
   "ai_extraction_prompt": {
@@ -38,7 +71,8 @@
       "tier": 1,
       "id": "order_lifecycle",
       "label": "Order Lifecycle",
-      "weight_total": 40,
+      "weight_total": 55,
+      "scoring_role": "main",
       "checks": [
         {
           "id": "T1_D_000",
@@ -531,7 +565,8 @@
       "tier": 2,
       "id": "execution_quality_tca",
       "label": "Execution Quality & TCA",
-      "weight_total": 25,
+      "weight_total": 15,
+      "scoring_role": "main",
       "checks": [
         {
           "id": "T2_8_000",
@@ -638,7 +673,8 @@
       "tier": 3,
       "id": "post_trade_allocation",
       "label": "Post-Trade & Allocation",
-      "weight_total": 25,
+      "weight_total": 15,
+      "scoring_role": "main",
       "checks": [
         {
           "id": "T3_AE_000",
@@ -1142,6 +1178,9 @@
       "id": "aml_travel_rule",
       "label": "AML & Travel Rule",
       "weight_total": 10,
+      "scoring_role": "compliance_sub",
+      "separate_score": true,
+      "sub_score_group": "compliance",
       "checks": [
         {
           "id": "T4_453",
@@ -1194,6 +1233,7 @@
       "id": "dawg_extensions",
       "label": "DAWG FIX Extensions",
       "weight_total": 0,
+      "scoring_role": "informational",
       "checks": [
         {
           "id": "T5_001",
@@ -1257,9 +1297,11 @@
       "id": "drop_copy",
       "label": "Drop Copy — consolidated execution feed",
       "description": "Dedicated FIX session delivering real-time execution reports for all orders regardless of entry channel. Essential for compliance providers, risk systems, and prime brokers.",
-      "weight_total": 11,
+      "weight_total": 5,
+      "scoring_role": "compliance_sub",
       "informational_only": false,
       "separate_score": true,
+      "sub_score_group": "compliance",
       "separate_score_label": "Drop Copy Readiness",
       "scoring_guide": {
         "8-10": "Production ready — full DC feed with all channels covered",
@@ -1449,9 +1491,11 @@
       "tier": 7,
       "id": "market_data",
       "label": "Market Data — buy-side price discovery & book building",
-      "weight_total": 10,
+      "weight_total": 5,
+      "scoring_role": "market_data_sub",
       "informational_only": false,
       "separate_score": true,
+      "sub_score_group": "market_data",
       "separate_score_label": "Market Data Readiness",
       "scoring_guide": {
         "8-10": "Full L3/L2 feed — institutional ready",
@@ -1766,7 +1810,8 @@
       "tier": 8,
       "id": "admin_session",
       "label": "Admin & Session Management — FIX connectivity foundation",
-      "weight_total": 10,
+      "weight_total": 15,
+      "scoring_role": "main",
       "informational_only": false,
       "separate_score": true,
       "separate_score_label": "Session Reliability",

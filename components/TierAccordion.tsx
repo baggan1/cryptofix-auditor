@@ -48,13 +48,21 @@ const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) =>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex flex-col items-end">
-                  <span className="text-sm font-medium text-slate-500">{score.earned}/{score.available} pts</span>
-                  <div className="w-24 h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
-                    <div 
-                      className="h-full bg-navy-dark rounded-full transition-all duration-500"
-                      style={{ width: `${score.pct}%` }}
-                    />
-                  </div>
+                  {score.is_informational ? (
+                    <span className="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded uppercase tracking-wider">
+                      Informational
+                    </span>
+                  ) : (
+                    <>
+                      <span className="text-sm font-medium text-slate-500">{score.earned}/{score.available} pts</span>
+                      <div className="w-24 h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div 
+                          className="h-full bg-navy-dark rounded-full transition-all duration-500"
+                          style={{ width: `${score.pct}%` }}
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
                 {isOpen ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
               </div>

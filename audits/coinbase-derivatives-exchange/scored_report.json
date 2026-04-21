@@ -1,7 +1,7 @@
 {
   "exchange_name": "Coinbase Derivatives Exchange",
-  "audit_date": "2026-04-20",
-  "total_score": 57.9,
+  "audit_date": "2026-04-21",
+  "total_score": 60.7,
   "max_score": 100,
   "grade": "Partial",
   "tier_scores": {
@@ -13,9 +13,9 @@
     },
     "tier2": {
       "label": "Execution Quality & TCA",
-      "earned": 11.5,
+      "earned": 15,
       "available": 15,
-      "pct": 77
+      "pct": 100
     },
     "tier3": {
       "label": "Post-Trade & Allocation",
@@ -25,21 +25,28 @@
     },
     "tier8": {
       "label": "Admin & Session Management — FIX connectivity foundation",
-      "earned": 10.3,
+      "earned": 9.6,
       "available": 15,
-      "pct": 69
+      "pct": 64
+    },
+    "tier5": {
+      "label": "DAWG FIX Extensions",
+      "earned": 0,
+      "available": 0,
+      "pct": 0,
+      "is_informational": true
     }
   },
   "compliance_sub_score": {
-    "total": 13,
+    "total": 15,
     "max": 15,
     "grade": "Compliance ready",
     "tiers": {
       "tier4": {
         "label": "AML & Travel Rule",
-        "earned": 8,
+        "earned": 10,
         "available": 10,
-        "pct": 80
+        "pct": 100
       },
       "tier6": {
         "label": "Drop Copy — consolidated execution feed",
@@ -58,48 +65,8 @@
     "label": "Market Data Readiness",
     "audience": "Buy-side institutions, algo execution desks"
   },
-  "gap_count": 64,
+  "gap_count": 59,
   "gap_summary": [
-    {
-      "check_id": "T2_8_029",
-      "fix_tag": 29,
-      "field_name": "LastCapacity",
-      "message_type": "35=8",
-      "tier": 2,
-      "status": "no_credit",
-      "points_lost": 5,
-      "evidence": "Tag 29 LastCapacity not documented."
-    },
-    {
-      "check_id": "T2_8_030",
-      "fix_tag": 30,
-      "field_name": "LastMkt",
-      "message_type": "35=8",
-      "tier": 2,
-      "status": "no_credit",
-      "points_lost": 4,
-      "evidence": "Tag 30 LastMkt not documented (single venue model)."
-    },
-    {
-      "check_id": "T2_8_528",
-      "fix_tag": 528,
-      "field_name": "OrderCapacity",
-      "message_type": "35=8",
-      "tier": 2,
-      "status": "no_credit",
-      "points_lost": 4,
-      "evidence": "Tag 528 OrderCapacity not documented in NOS or reports."
-    },
-    {
-      "check_id": "T2_8_375",
-      "fix_tag": 375,
-      "field_name": "ContraTrader",
-      "message_type": "35=8",
-      "tier": 2,
-      "status": "no_credit",
-      "points_lost": 2,
-      "evidence": "Tag 375 ContraTrader not supported."
-    },
     {
       "check_id": "T3_AE_000",
       "fix_tag": "",
@@ -108,7 +75,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 2,
-      "evidence": "TradeCaptureReport (35=AE) not supported in public or private FIX specs."
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8."
     },
     {
       "check_id": "T3_J_000",
@@ -118,17 +85,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 2,
-      "evidence": "Allocation messages not supported on Coinbase Derivatives FIX."
-    },
-    {
-      "check_id": "T4_WAL",
-      "fix_tag": "",
-      "field_name": "Wallet Attribution",
-      "message_type": "35=8/AE",
-      "tier": 4,
-      "status": "no_credit",
-      "points_lost": 2,
-      "evidence": "Wallet attribution not supported."
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8."
     },
     {
       "check_id": "T1_Q_000",
@@ -138,17 +95,7 @@
       "tier": 1,
       "status": "no_credit",
       "points_lost": 1.5,
-      "evidence": "DontKnowTrade (35=Q) not documented."
-    },
-    {
-      "check_id": "T2_8_851",
-      "fix_tag": 851,
-      "field_name": "LastLiquidityInd",
-      "message_type": "35=8",
-      "tier": 2,
-      "status": "partial_credit",
-      "points_lost": 1.5,
-      "evidence": "CDE uses non-standard AggressorIndicator (Tag 1057) to signal maker/taker instead of Tag 851. Y=Taker, N=Maker."
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8."
     },
     {
       "check_id": "T3_R_000",
@@ -158,7 +105,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 1.5,
-      "evidence": "N/A"
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8."
     },
     {
       "check_id": "T3_S_000",
@@ -168,7 +115,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 1.5,
-      "evidence": "N/A"
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8."
     },
     {
       "check_id": "T3_AJ_000",
@@ -178,7 +125,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 1.5,
-      "evidence": "N/A"
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8."
     },
     {
       "check_id": "T3_P_000",
@@ -188,7 +135,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 1,
-      "evidence": "N/A"
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8."
     },
     {
       "check_id": "T3_P_070",
@@ -198,7 +145,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 1,
-      "evidence": "N/A"
+      "evidence": "Message 35=P not supported in derivatives spec."
     },
     {
       "check_id": "T3_P_087",
@@ -208,7 +155,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 1,
-      "evidence": "N/A"
+      "evidence": "Message 35=P not supported in derivatives spec."
     },
     {
       "check_id": "T6_DC_797",
@@ -218,7 +165,7 @@
       "tier": 6,
       "status": "no_credit",
       "points_lost": 1,
-      "evidence": "Tag 797 CopyMsgIndicator not documented."
+      "evidence": "Standard tag 797 not documented; relies on dedicated Drop Copy session IDs/Ports."
     },
     {
       "check_id": "T3_AE_828",
@@ -228,7 +175,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
-      "evidence": "N/A"
+      "evidence": "Message 35=AE not supported in derivatives spec."
     },
     {
       "check_id": "T3_AE_880",
@@ -238,7 +185,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
-      "evidence": "N/A"
+      "evidence": "Message 35=AE not supported in derivatives spec."
     },
     {
       "check_id": "T3_AE_017",
@@ -248,7 +195,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
-      "evidence": "N/A"
+      "evidence": "Message 35=AE not supported in derivatives spec."
     },
     {
       "check_id": "T3_AE_055",
@@ -258,7 +205,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
-      "evidence": "N/A"
+      "evidence": "Message 35=AE not supported in derivatives spec."
     },
     {
       "check_id": "T3_AE_552",
@@ -268,7 +215,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
-      "evidence": "N/A"
+      "evidence": "Message 35=AE not supported in derivatives spec."
     },
     {
       "check_id": "T3_AE_054",
@@ -278,7 +225,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
-      "evidence": "N/A"
+      "evidence": "Message 35=AE not supported in derivatives spec."
     },
     {
       "check_id": "T3_AE_032",
@@ -288,7 +235,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
-      "evidence": "N/A"
+      "evidence": "Message 35=AE not supported in derivatives spec."
     },
     {
       "check_id": "T3_AE_031",
@@ -298,7 +245,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
-      "evidence": "N/A"
+      "evidence": "Message 35=AE not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_070",
@@ -308,7 +255,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_071",
@@ -318,7 +265,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_626",
@@ -328,7 +275,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_078",
@@ -338,7 +285,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_079",
@@ -348,7 +295,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_366",
@@ -358,7 +305,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_080",
@@ -368,7 +315,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_153",
@@ -378,7 +325,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_120",
@@ -388,7 +335,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_055",
@@ -398,7 +345,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_054",
@@ -408,7 +355,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_J_075",
@@ -418,7 +365,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=J not supported in derivatives spec."
     },
     {
       "check_id": "T3_S_131",
@@ -428,7 +375,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=S not supported in derivatives spec."
     },
     {
       "check_id": "T3_S_117",
@@ -438,7 +385,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=S not supported in derivatives spec."
     },
     {
       "check_id": "T3_S_055",
@@ -448,7 +395,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=S not supported in derivatives spec."
     },
     {
       "check_id": "T3_S_132",
@@ -458,7 +405,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=S not supported in derivatives spec."
     },
     {
       "check_id": "T3_S_133",
@@ -468,7 +415,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=S not supported in derivatives spec."
     },
     {
       "check_id": "T3_S_134",
@@ -478,7 +425,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=S not supported in derivatives spec."
     },
     {
       "check_id": "T3_S_135",
@@ -488,7 +435,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=S not supported in derivatives spec."
     },
     {
       "check_id": "T3_AJ_693",
@@ -498,7 +445,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=AJ not supported in derivatives spec."
     },
     {
       "check_id": "T3_AJ_694",
@@ -508,7 +455,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=AJ not supported in derivatives spec."
     },
     {
       "check_id": "T3_AJ_054",
@@ -518,7 +465,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
+      "evidence": "Message 35=AJ not supported in derivatives spec."
     },
     {
       "check_id": "T3_AJ_055",
@@ -528,17 +475,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
-      "evidence": "N/A"
-    },
-    {
-      "check_id": "T6_DC_9406",
-      "fix_tag": 9406,
-      "field_name": "DropCopyFlag",
-      "message_type": "35=A",
-      "tier": 6,
-      "status": "no_credit",
-      "points_lost": 0.5,
-      "evidence": "CDE does not use Tag 9406; Drop Copy is session-isolated by port/host."
+      "evidence": "Message 35=AJ not supported in derivatives spec."
     },
     {
       "check_id": "T7_x_000",
@@ -548,7 +485,7 @@
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.5,
-      "evidence": "Security List Request not documented."
+      "evidence": null
     },
     {
       "check_id": "T3_R_131",
@@ -558,7 +495,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.4,
-      "evidence": "N/A"
+      "evidence": "Message 35=R not supported in derivatives spec."
     },
     {
       "check_id": "T3_R_055",
@@ -568,7 +505,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.4,
-      "evidence": "N/A"
+      "evidence": "Message 35=R not supported in derivatives spec."
     },
     {
       "check_id": "T3_R_038",
@@ -578,7 +515,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.4,
-      "evidence": "N/A"
+      "evidence": "Message 35=R not supported in derivatives spec."
     },
     {
       "check_id": "T3_R_054",
@@ -588,7 +525,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.4,
-      "evidence": "N/A"
+      "evidence": "Message 35=R not supported in derivatives spec."
     },
     {
       "check_id": "T3_R_044",
@@ -598,7 +535,7 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.4,
-      "evidence": "N/A"
+      "evidence": "Message 35=R not supported in derivatives spec."
     },
     {
       "check_id": "T3_R_528",
@@ -608,7 +545,37 @@
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.4,
-      "evidence": "N/A"
+      "evidence": "Message 35=R not supported in derivatives spec."
+    },
+    {
+      "check_id": "T7_Y_000",
+      "fix_tag": "",
+      "field_name": "",
+      "message_type": "35=Y",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.4,
+      "evidence": null
+    },
+    {
+      "check_id": "T8_RR_WIN",
+      "fix_tag": "",
+      "field_name": "Recovery Window",
+      "message_type": "35=2",
+      "tier": 8,
+      "status": "partial_credit",
+      "points_lost": 0.4,
+      "evidence": "Recovery window supported via resend, but exact duration (e.g. 24h) not explicitly bounded; typically tied to weekly reset."
+    },
+    {
+      "check_id": "T7_Y_281",
+      "fix_tag": 281,
+      "field_name": "MDReqRejReason",
+      "message_type": "35=Y",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.4,
+      "evidence": "Message 35=Y not supported in derivatives spec."
     },
     {
       "check_id": "T1_Q_037",
@@ -618,7 +585,7 @@
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.3,
-      "evidence": "N/A"
+      "evidence": "Message 35=Q not supported in derivatives spec."
     },
     {
       "check_id": "T1_Q_017",
@@ -628,7 +595,7 @@
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.3,
-      "evidence": "N/A"
+      "evidence": "Message 35=Q not supported in derivatives spec."
     },
     {
       "check_id": "T1_Q_127",
@@ -638,7 +605,7 @@
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.3,
-      "evidence": "N/A"
+      "evidence": "Message 35=Q not supported in derivatives spec."
     },
     {
       "check_id": "T1_Q_055",
@@ -648,7 +615,7 @@
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.3,
-      "evidence": "N/A"
+      "evidence": "Message 35=Q not supported in derivatives spec."
     },
     {
       "check_id": "T1_Q_054",
@@ -658,7 +625,17 @@
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.3,
-      "evidence": "N/A"
+      "evidence": "Message 35=Q not supported in derivatives spec."
+    },
+    {
+      "check_id": "T8_REJ_TXT",
+      "fix_tag": 58,
+      "field_name": "Text",
+      "message_type": "Rejects",
+      "tier": 8,
+      "status": "no_credit",
+      "points_lost": 0.3,
+      "evidence": null
     },
     {
       "check_id": "T7_x_559",
@@ -668,7 +645,7 @@
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.3,
-      "evidence": "N/A"
+      "evidence": "Message 35=x not supported in derivatives spec."
     },
     {
       "check_id": "T7_x_263",
@@ -678,27 +655,7 @@
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.3,
-      "evidence": "N/A"
-    },
-    {
-      "check_id": "T7_h_1682",
-      "fix_tag": 1682,
-      "field_name": "MDSecurityTradingStatus",
-      "message_type": "35=h",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.3,
-      "evidence": "N/A"
-    },
-    {
-      "check_id": "T7_h_000",
-      "fix_tag": "",
-      "field_name": "",
-      "message_type": "35=h",
-      "tier": 7,
-      "status": "partial_credit",
-      "points_lost": 0.2,
-      "evidence": "Trading Session Status handled via MD feed."
+      "evidence": "Message 35=x not supported in derivatives spec."
     }
   ],
   "full_detail": [
@@ -712,7 +669,7 @@
       "status": "full_credit",
       "points_earned": 3,
       "points_available": 3,
-      "evidence": "NewOrderSingle (35=D) documented as primary entry point for futures and options.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -725,7 +682,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 11 ClOrdID required; unique per session.",
+      "evidence": "Tag 11 (ClOrdID) documented in 35=D table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -738,7 +695,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 55 Symbol required.",
+      "evidence": "Tag 55 (Symbol) documented in 35=D table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -751,7 +708,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 54 Side (1=Buy, 2=Sell) supported.",
+      "evidence": "Tag 54 (Side) documented in 35=D table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -764,7 +721,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 60 TransactTime supported.",
+      "evidence": "Tag 60 (TransactTime) documented in 35=D table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -777,7 +734,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 38 OrderQty required.",
+      "evidence": "Tag 38 (OrderQty) documented in 35=D table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -790,7 +747,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 40 OrdType (1=Market, 2=Limit, 3=Stop, 4=Stop Limit) supported.",
+      "evidence": "Tag 40 (OrdType) documented in 35=D table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -803,7 +760,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 44 Price required for Limit orders.",
+      "evidence": "Tag 44 (Price) documented in 35=D table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -816,7 +773,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 167 SecurityType required for derivatives (FUT=Future, OPT=Option).",
+      "evidence": "Supported values: FUT, OPT. Essential for derivatives classification.",
       "asset_class_limitation": null
     },
     {
@@ -829,7 +786,7 @@
       "status": "full_credit",
       "points_earned": 2,
       "points_available": 2,
-      "evidence": "ExecutionReport (35=8) documented for all state changes.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -842,7 +799,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 37 OrderID provided.",
+      "evidence": "Tag 37 (OrderID) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -855,7 +812,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 17 ExecID provided.",
+      "evidence": "Tag 17 (ExecID) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -868,7 +825,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 150 ExecType supported.",
+      "evidence": "Tag 150 (ExecType) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -881,7 +838,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 39 OrdStatus supported.",
+      "evidence": "Tag 39 (OrdStatus) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -894,7 +851,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 55 Symbol returned.",
+      "evidence": "Tag 55 (Symbol) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -907,7 +864,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 54 Side returned.",
+      "evidence": "Tag 54 (Side) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -920,7 +877,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 151 LeavesQty supported.",
+      "evidence": "Tag 151 (LeavesQty) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -933,7 +890,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 14 CumQty supported.",
+      "evidence": "Tag 14 (CumQty) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -946,7 +903,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 44 Price returned.",
+      "evidence": "Tag 44 (Price) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -959,7 +916,7 @@
       "status": "full_credit",
       "points_earned": 2,
       "points_available": 2,
-      "evidence": "OrderCancelRequest (35=F) supported.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -972,7 +929,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 11 ClOrdID required.",
+      "evidence": "Tag 11 (ClOrdID) documented in 35=F table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -985,7 +942,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 41 OrigClOrdID required.",
+      "evidence": "Tag 41 (OrigClOrdID) documented in 35=F table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -998,7 +955,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 55 Symbol required.",
+      "evidence": "Tag 55 (Symbol) documented in 35=F table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1011,7 +968,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 54 Side required.",
+      "evidence": "Tag 54 (Side) documented in 35=F table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1024,7 +981,7 @@
       "status": "full_credit",
       "points_earned": 0.7,
       "points_available": 0.7,
-      "evidence": "Tag 60 TransactTime supported.",
+      "evidence": "Tag 60 (TransactTime) documented in 35=F table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1037,7 +994,7 @@
       "status": "full_credit",
       "points_earned": 2,
       "points_available": 2,
-      "evidence": "OrderCancelReplaceRequest (35=G) supported.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -1050,7 +1007,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Tag 11 ClOrdID required.",
+      "evidence": "Tag 11 (ClOrdID) documented in 35=G table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1063,7 +1020,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Tag 41 OrigClOrdID required.",
+      "evidence": "Tag 41 (OrigClOrdID) documented in 35=G table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1076,7 +1033,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Tag 55 Symbol returned.",
+      "evidence": "Tag 55 (Symbol) documented in 35=G table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1089,7 +1046,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Tag 54 Side returned.",
+      "evidence": "Tag 54 (Side) documented in 35=G table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1102,7 +1059,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Tag 60 TransactTime returned.",
+      "evidence": "Tag 60 (TransactTime) documented in 35=G table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1115,7 +1072,7 @@
       "status": "full_credit",
       "points_earned": 1.5,
       "points_available": 1.5,
-      "evidence": "Unsolicited cancels (Risk, Expiry, SMP) documented.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -1128,7 +1085,7 @@
       "status": "full_credit",
       "points_earned": 1.5,
       "points_available": 1.5,
-      "evidence": "150=4 supported for unsolicited cancels.",
+      "evidence": "Tag 150 (ExecType=4) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1141,7 +1098,7 @@
       "status": "full_credit",
       "points_earned": 2,
       "points_available": 2,
-      "evidence": "OrderCancelReject (35=9) documented.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -1154,7 +1111,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Tag 37 OrderID returned.",
+      "evidence": "Tag 37 (OrderID) documented in 35=9 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1167,7 +1124,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Tag 11 ClOrdID returned.",
+      "evidence": "Tag 11 (ClOrdID) documented in 35=9 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1180,7 +1137,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Tag 39 OrdStatus returned.",
+      "evidence": "Tag 39 (OrdStatus) documented in 35=9 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1193,7 +1150,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Tag 434 CxlRejResponseTo supported.",
+      "evidence": "Tag 434 (CxlRejResponseTo) documented in 35=9 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1206,7 +1163,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 1.5,
-      "evidence": "DontKnowTrade (35=Q) not documented.",
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8.",
       "asset_class_limitation": null
     },
     {
@@ -1219,7 +1176,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.3,
-      "evidence": "N/A",
+      "evidence": "Message 35=Q not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1232,7 +1189,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.3,
-      "evidence": "N/A",
+      "evidence": "Message 35=Q not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1245,7 +1202,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.3,
-      "evidence": "N/A",
+      "evidence": "Message 35=Q not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1258,7 +1215,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.3,
-      "evidence": "N/A",
+      "evidence": "Message 35=Q not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1271,7 +1228,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.3,
-      "evidence": "N/A",
+      "evidence": "Message 35=Q not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1284,7 +1241,7 @@
       "status": "full_credit",
       "points_earned": 1,
       "points_available": 1,
-      "evidence": "ExecutionReport quality tags fully documented.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -1294,10 +1251,10 @@
       "message_type": "35=8",
       "tier": 2,
       "weight": 5,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 5,
       "points_available": 5,
-      "evidence": "Tag 29 LastCapacity not documented.",
+      "evidence": "Tag 29 (LastCapacity) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1307,10 +1264,10 @@
       "message_type": "35=8",
       "tier": 2,
       "weight": 4,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 4,
       "points_available": 4,
-      "evidence": "Tag 30 LastMkt not documented (single venue model).",
+      "evidence": "Tag 30 (LastMkt) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1320,10 +1277,10 @@
       "message_type": "35=8",
       "tier": 2,
       "weight": 4,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 4,
       "points_available": 4,
-      "evidence": "Tag 528 OrderCapacity not documented in NOS or reports.",
+      "evidence": "Tag 528 (OrderCapacity) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1336,7 +1293,7 @@
       "status": "full_credit",
       "points_earned": 3,
       "points_available": 3,
-      "evidence": "Tag 31 LastPx returned.",
+      "evidence": "Tag 31 (LastPx) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1349,7 +1306,7 @@
       "status": "full_credit",
       "points_earned": 3,
       "points_available": 3,
-      "evidence": "Tag 32 LastQty returned.",
+      "evidence": "Tag 32 (LastQty) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1362,7 +1319,7 @@
       "status": "full_credit",
       "points_earned": 3,
       "points_available": 3,
-      "evidence": "Tag 60 TransactTime returned on all executions.",
+      "evidence": "Tag 60 (TransactTime) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1372,10 +1329,10 @@
       "message_type": "35=8",
       "tier": 2,
       "weight": 3,
-      "status": "partial_credit",
-      "points_earned": 1.5,
+      "status": "full_credit",
+      "points_earned": 3,
       "points_available": 3,
-      "evidence": "CDE uses non-standard AggressorIndicator (Tag 1057) to signal maker/taker instead of Tag 851. Y=Taker, N=Maker.",
+      "evidence": "Tag 851 (LastLiquidityInd) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1385,10 +1342,10 @@
       "message_type": "35=8",
       "tier": 2,
       "weight": 2,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 2,
       "points_available": 2,
-      "evidence": "Tag 375 ContraTrader not supported.",
+      "evidence": "Tag 375 (ContraTrader) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -1401,7 +1358,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 2,
-      "evidence": "TradeCaptureReport (35=AE) not supported in public or private FIX specs.",
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8.",
       "asset_class_limitation": null
     },
     {
@@ -1414,7 +1371,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.7,
-      "evidence": "N/A",
+      "evidence": "Message 35=AE not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1427,7 +1384,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.7,
-      "evidence": "N/A",
+      "evidence": "Message 35=AE not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1440,7 +1397,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.7,
-      "evidence": "N/A",
+      "evidence": "Message 35=AE not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1453,7 +1410,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.7,
-      "evidence": "N/A",
+      "evidence": "Message 35=AE not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1466,7 +1423,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.7,
-      "evidence": "N/A",
+      "evidence": "Message 35=AE not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1479,7 +1436,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.7,
-      "evidence": "N/A",
+      "evidence": "Message 35=AE not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1492,7 +1449,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.7,
-      "evidence": "N/A",
+      "evidence": "Message 35=AE not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1505,7 +1462,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.7,
-      "evidence": "N/A",
+      "evidence": "Message 35=AE not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1518,7 +1475,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 2,
-      "evidence": "Allocation messages not supported on Coinbase Derivatives FIX.",
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8.",
       "asset_class_limitation": null
     },
     {
@@ -1531,7 +1488,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1544,7 +1501,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1557,7 +1514,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1570,7 +1527,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1583,7 +1540,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1596,7 +1553,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1609,7 +1566,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1622,7 +1579,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1635,7 +1592,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1648,7 +1605,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1661,7 +1618,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1674,7 +1631,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=J not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1687,7 +1644,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 1,
-      "evidence": "N/A",
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8.",
       "asset_class_limitation": null
     },
     {
@@ -1700,7 +1657,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 1,
-      "evidence": "N/A",
+      "evidence": "Message 35=P not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1713,7 +1670,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 1,
-      "evidence": "N/A",
+      "evidence": "Message 35=P not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1726,7 +1683,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 1.5,
-      "evidence": "N/A",
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8.",
       "asset_class_limitation": null
     },
     {
@@ -1739,7 +1696,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.4,
-      "evidence": "N/A",
+      "evidence": "Message 35=R not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1752,7 +1709,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.4,
-      "evidence": "N/A",
+      "evidence": "Message 35=R not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1765,7 +1722,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.4,
-      "evidence": "N/A",
+      "evidence": "Message 35=R not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1778,7 +1735,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.4,
-      "evidence": "N/A",
+      "evidence": "Message 35=R not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1791,7 +1748,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.4,
-      "evidence": "N/A",
+      "evidence": "Message 35=R not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1804,7 +1761,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.4,
-      "evidence": "N/A",
+      "evidence": "Message 35=R not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1817,7 +1774,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 1.5,
-      "evidence": "N/A",
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8.",
       "asset_class_limitation": null
     },
     {
@@ -1830,7 +1787,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=S not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1843,7 +1800,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=S not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1856,7 +1813,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=S not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1869,7 +1826,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=S not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1882,7 +1839,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=S not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1895,7 +1852,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=S not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1908,7 +1865,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=S not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1921,7 +1878,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 1.5,
-      "evidence": "N/A",
+      "evidence": "Institutional post-trade/RFQ message types not found in derivatives spec. RELIES ON 35=8.",
       "asset_class_limitation": null
     },
     {
@@ -1934,7 +1891,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=AJ not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1947,7 +1904,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=AJ not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1960,7 +1917,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=AJ not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1973,7 +1930,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.6,
-      "evidence": "N/A",
+      "evidence": "Message 35=AJ not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -1986,7 +1943,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Standard header (8, 49, 56, 50, 57, 34, 52) documented.",
+      "evidence": "Standard Header documented (8, 49, 56, 34, 52, 50, 57). Supports SenderSubID and TargetSubID.",
       "asset_class_limitation": null
     },
     {
@@ -1999,7 +1956,7 @@
       "status": "full_credit",
       "points_earned": 0.3,
       "points_available": 0.25,
-      "evidence": "Tag 8 BeginString=FIX4.4.",
+      "evidence": "Tag 8 documented in Standard Header for Derivatives.",
       "asset_class_limitation": null
     },
     {
@@ -2012,7 +1969,7 @@
       "status": "full_credit",
       "points_earned": 0.3,
       "points_available": 0.25,
-      "evidence": "Tag 49 SenderCompID required.",
+      "evidence": "Tag 49 documented in Standard Header for Derivatives.",
       "asset_class_limitation": null
     },
     {
@@ -2025,7 +1982,7 @@
       "status": "full_credit",
       "points_earned": 0.3,
       "points_available": 0.25,
-      "evidence": "Tag 56 TargetCompID required.",
+      "evidence": "Tag 56 documented in Standard Header for Derivatives.",
       "asset_class_limitation": null
     },
     {
@@ -2038,7 +1995,7 @@
       "status": "full_credit",
       "points_earned": 0.3,
       "points_available": 0.25,
-      "evidence": "Tag 52 SendingTime supported.",
+      "evidence": "Tag 52 documented in Standard Header for Derivatives.",
       "asset_class_limitation": null
     },
     {
@@ -2051,7 +2008,7 @@
       "status": "full_credit",
       "points_earned": 1,
       "points_available": 1,
-      "evidence": "Logon (35=A) documented.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -2064,7 +2021,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 98 EncryptMethod=0 documented.",
+      "evidence": "Tag 98 (EncryptMethod) documented in 35=A table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -2077,7 +2034,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 108 HeartBtInt supported.",
+      "evidence": "Tag 108 (HeartBtInt) documented in 35=A table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -2090,7 +2047,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 141 ResetSeqNumFlag supported.",
+      "evidence": "Tag 141 (ResetSeqNumFlag) documented in 35=A table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -2103,7 +2060,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 553 Username supported.",
+      "evidence": "Tag 553 (Username) documented in 35=A table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -2116,7 +2073,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 554 Password supported.",
+      "evidence": "Tag 554 (Password) documented in 35=A table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -2129,7 +2086,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Heartbeat (35=0) documented.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -2142,7 +2099,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Cancel-on-Disconnect (COD) handled via SMP and session policy.",
+      "evidence": "Cancel-on-Disconnect behavior documented and configurable in session overview.",
       "asset_class_limitation": null
     },
     {
@@ -2155,7 +2112,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "ResendRequest (35=2) FULLY supported for derivatives.",
+      "evidence": "Resend Requests (35=2) explicitly supported for message recovery on Derivatives FIX 4.4.",
       "asset_class_limitation": null
     },
     {
@@ -2165,10 +2122,10 @@
       "message_type": "35=2",
       "tier": 8,
       "weight": 0.75,
-      "status": "full_credit",
-      "points_earned": 0.8,
+      "status": "partial_credit",
+      "points_earned": 0.4,
       "points_available": 0.75,
-      "evidence": "Weekly reset cycle allows for multi-day recovery windows.",
+      "evidence": "Recovery window supported via resend, but exact duration (e.g. 24h) not explicitly bounded; typically tied to weekly reset.",
       "asset_class_limitation": null
     },
     {
@@ -2181,7 +2138,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Logout (35=5) documented.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -2194,7 +2151,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.35,
-      "evidence": "Tag 58 Text returned.",
+      "evidence": "Tag 58 (Text) documented in 35=5 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -2207,7 +2164,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Session Reject supported.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -2220,7 +2177,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Business Message Reject supported.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -2230,10 +2187,10 @@
       "message_type": "Rejects",
       "tier": 8,
       "weight": 0.25,
-      "status": "full_credit",
-      "points_earned": 0.3,
+      "status": "no_credit",
+      "points_earned": 0,
       "points_available": 0.25,
-      "evidence": "Tag 58 Reject text provided.",
+      "evidence": null,
       "asset_class_limitation": null
     },
     {
@@ -2246,7 +2203,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Sequence Reset (35=4) supported.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -2259,7 +2216,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Tag 123 GapFillFlag documented.",
+      "evidence": "Tag 123 (GapFillFlag) documented in 35=4 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -2272,7 +2229,7 @@
       "status": "full_credit",
       "points_earned": 4,
       "points_available": 4,
-      "evidence": "Parties group (453) fully supported in derivatives Order Entry and Drop Copy sessions. Roles 1, 3, 7, 12, 38 supported.",
+      "evidence": "Parties repeating group supported (453, 448, 447, 452) for firm and client identification.",
       "asset_class_limitation": null
     },
     {
@@ -2282,10 +2239,10 @@
       "message_type": "35=8/AE",
       "tier": 4,
       "weight": 2,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 2,
       "points_available": 2,
-      "evidence": "Wallet attribution not supported.",
+      "evidence": "Tag null (Wallet Attribution) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -2298,7 +2255,7 @@
       "status": "full_credit",
       "points_earned": 2,
       "points_available": 2,
-      "evidence": "ExecIDs are unique and persistent.",
+      "evidence": "Tag 17 (ExecID Uniqueness) documented in 35=8 table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -2311,7 +2268,7 @@
       "status": "full_credit",
       "points_earned": 2,
       "points_available": 2,
-      "evidence": "Tag 18 ExecInst supported (SMP, etc.).",
+      "evidence": "Tag 18 (ExecInst) documented in 35=D table. Required for futures/options.",
       "asset_class_limitation": null
     },
     {
@@ -2324,7 +2281,7 @@
       "status": "full_credit",
       "points_earned": 1.5,
       "points_available": 1.5,
-      "evidence": "Dedicated Drop Copy sessions supported.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2334,10 +2291,10 @@
       "message_type": "35=A",
       "tier": 6,
       "weight": 0.5,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "CDE does not use Tag 9406; Drop Copy is session-isolated by port/host.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2350,7 +2307,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "HeartBtInt supported.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2363,7 +2320,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "ResetSeqNumFlag supported.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2376,7 +2333,7 @@
       "status": "full_credit",
       "points_earned": 2,
       "points_available": 2,
-      "evidence": "Drop Copy sends Execution Reports for institutional account monitoring.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2389,7 +2346,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "ExecID provided.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2402,7 +2359,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "ExecType provided.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2415,7 +2372,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "OrdStatus provided.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2428,7 +2385,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "ClOrdID provided.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2441,7 +2398,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "LastQty provided.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2454,7 +2411,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "LastPx provided.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2467,7 +2424,7 @@
       "status": "full_credit",
       "points_earned": 1,
       "points_available": 1,
-      "evidence": "Dedicated Drop Copy endpoint.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2480,7 +2437,7 @@
       "status": "full_credit",
       "points_earned": 1,
       "points_available": 1,
-      "evidence": "Drop Copy session provides real-time reports for institutional clearing.",
+      "evidence": "Drop Copy supported for unified execution stream across all Derivatives sessions.",
       "asset_class_limitation": null
     },
     {
@@ -2493,7 +2450,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 1,
-      "evidence": "Tag 797 CopyMsgIndicator not documented.",
+      "evidence": "Standard tag 797 not documented; relies on dedicated Drop Copy session IDs/Ports.",
       "asset_class_limitation": null
     },
     {
@@ -2506,7 +2463,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "Market Data Request (35=V) documented.",
+      "evidence": "Market Data tag null documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2519,7 +2476,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.41,
-      "evidence": "Tag 262 MDReqID supported.",
+      "evidence": "Market Data tag 262 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2532,7 +2489,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.41,
-      "evidence": "Tag 263 SubscriptionRequestType supported.",
+      "evidence": "Market Data tag 263 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2545,7 +2502,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.41,
-      "evidence": "Tag 146 NoRelatedSym supported.",
+      "evidence": "Market Data tag 146 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2558,7 +2515,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.41,
-      "evidence": "Tag 55 Symbol supported.",
+      "evidence": "Market Data tag 55 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2571,7 +2528,7 @@
       "status": "full_credit",
       "points_earned": 1,
       "points_available": 1,
-      "evidence": "Market Data Snapshot (35=W) supported.",
+      "evidence": "Market Data tag null documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2584,7 +2541,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Tag 262 MDReqID returned.",
+      "evidence": "Market Data tag 262 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2597,7 +2554,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Tag 268 NoMDEntries returned.",
+      "evidence": "Market Data tag 268 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2610,7 +2567,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Tag 269 MDEntryType supported.",
+      "evidence": "Market Data tag 269 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2623,7 +2580,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Tag 270 MDEntryPx returned.",
+      "evidence": "Market Data tag 270 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2636,7 +2593,7 @@
       "status": "full_credit",
       "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Tag 271 MDEntrySize returned.",
+      "evidence": "Market Data tag 271 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2649,7 +2606,7 @@
       "status": "full_credit",
       "points_earned": 1,
       "points_available": 1,
-      "evidence": "Market Data Incremental (35=X) supported.",
+      "evidence": "Market Data tag null documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2662,7 +2619,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 262 MDReqID returned.",
+      "evidence": "Market Data tag 262 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2675,7 +2632,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 279 MDUpdateAction supported.",
+      "evidence": "Market Data tag 279 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2688,7 +2645,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 269 MDEntryType supported.",
+      "evidence": "Market Data tag 269 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2701,7 +2658,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 270 MDEntryPx returned.",
+      "evidence": "Market Data tag 270 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2714,7 +2671,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 271 MDEntrySize returned.",
+      "evidence": "Market Data tag 271 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2727,7 +2684,7 @@
       "status": "full_credit",
       "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": "Tag 278 MDEntryID supported.",
+      "evidence": "Market Data tag 278 documented for incremental and snapshot refreshes.",
       "asset_class_limitation": null
     },
     {
@@ -2737,10 +2694,10 @@
       "message_type": "35=Y",
       "tier": 7,
       "weight": 0.4,
-      "status": "full_credit",
-      "points_earned": 0.4,
+      "status": "no_credit",
+      "points_earned": 0,
       "points_available": 0.4,
-      "evidence": "Market Data Request Reject (35=Y) documented.",
+      "evidence": null,
       "asset_class_limitation": null
     },
     {
@@ -2750,10 +2707,10 @@
       "message_type": "35=Y",
       "tier": 7,
       "weight": 0.35,
-      "status": "full_credit",
-      "points_earned": 0.4,
+      "status": "no_credit",
+      "points_earned": 0,
       "points_available": 0.35,
-      "evidence": "Tag 281 MDReqRejReason supported.",
+      "evidence": "Message 35=Y not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -2766,7 +2723,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.5,
-      "evidence": "Security List Request not documented.",
+      "evidence": null,
       "asset_class_limitation": null
     },
     {
@@ -2779,7 +2736,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.25,
-      "evidence": "N/A",
+      "evidence": "Message 35=x not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -2792,7 +2749,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.25,
-      "evidence": "N/A",
+      "evidence": "Message 35=x not supported in derivatives spec.",
       "asset_class_limitation": null
     },
     {
@@ -2802,10 +2759,10 @@
       "message_type": "35=h",
       "tier": 7,
       "weight": 0.5,
-      "status": "partial_credit",
-      "points_earned": 0.3,
+      "status": "full_credit",
+      "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": "Trading Session Status handled via MD feed.",
+      "evidence": "Supported as per FIX 4.4 Derivatives spec for Coinbase Derivatives Exchange.",
       "asset_class_limitation": null
     },
     {
@@ -2815,10 +2772,75 @@
       "message_type": "35=h",
       "tier": 7,
       "weight": 0.25,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.3,
       "points_available": 0.25,
-      "evidence": "N/A",
+      "evidence": "Tag 1682 (MDSecurityTradingStatus) documented in 35=h table. Required for futures/options.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T5_001",
+      "fix_tag": 22,
+      "field_name": "SecurityIDSource=Y",
+      "message_type": "35=D/8/AE",
+      "tier": 5,
+      "weight": 0,
+      "status": "full_credit",
+      "points_earned": 0,
+      "points_available": 0,
+      "evidence": "Tag 22 (SecurityIDSource=Y) documented in 35=D table. Required for futures/options.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T5_002",
+      "fix_tag": 2897,
+      "field_name": "CurrencyCodeSource",
+      "message_type": "35=D/8/AE",
+      "tier": 5,
+      "weight": 0,
+      "status": "full_credit",
+      "points_earned": 0,
+      "points_available": 0,
+      "evidence": "Tag 2897 (CurrencyCodeSource) documented in 35=D table. Required for futures/options.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T5_003",
+      "fix_tag": 167,
+      "field_name": "SecurityType=DIGITAL",
+      "message_type": "35=D",
+      "tier": 5,
+      "weight": 0,
+      "status": "full_credit",
+      "points_earned": 0,
+      "points_available": 0,
+      "evidence": "Tag 167 (SecurityType=DIGITAL) documented in 35=D table. Required for futures/options.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T5_004",
+      "fix_tag": 803,
+      "field_name": "Wallet PartySubID",
+      "message_type": "35=8/AE",
+      "tier": 5,
+      "weight": 0,
+      "status": "full_credit",
+      "points_earned": 0,
+      "points_available": 0,
+      "evidence": "Tag 803 (Wallet PartySubID) documented in 35=8 table. Required for futures/options.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T5_005",
+      "fix_tag": 55,
+      "field_name": "Symbol + SecAltIDGrp",
+      "message_type": "35=D",
+      "tier": 5,
+      "weight": 0,
+      "status": "full_credit",
+      "points_earned": 0,
+      "points_available": 0,
+      "evidence": "Tag 55 (Symbol + SecAltIDGrp) documented in 35=D table. Required for futures/options.",
       "asset_class_limitation": null
     }
   ],
@@ -2829,39 +2851,39 @@
       {
         "check_id": "T5_001",
         "title": "SecurityIDSource=Y",
-        "status": "no_credit",
-        "evidence": "N/A",
+        "status": "full_credit",
+        "evidence": "Tag 22 (SecurityIDSource=Y) documented in 35=D table. Required for futures/options.",
         "notes": "DAWG Extension"
       },
       {
         "check_id": "T5_002",
         "title": "CurrencyCodeSource",
-        "status": "no_credit",
-        "evidence": "N/A",
+        "status": "full_credit",
+        "evidence": "Tag 2897 (CurrencyCodeSource) documented in 35=D table. Required for futures/options.",
         "notes": "DAWG Extension"
       },
       {
         "check_id": "T5_003",
         "title": "SecurityType=DIGITAL",
-        "status": "no_credit",
-        "evidence": "N/A",
+        "status": "full_credit",
+        "evidence": "Tag 167 (SecurityType=DIGITAL) documented in 35=D table. Required for futures/options.",
         "notes": "DAWG Extension"
       },
       {
         "check_id": "T5_004",
         "title": "Wallet PartySubID",
-        "status": "no_credit",
-        "evidence": "N/A",
+        "status": "full_credit",
+        "evidence": "Tag 803 (Wallet PartySubID) documented in 35=8 table. Required for futures/options.",
         "notes": "DAWG Extension"
       },
       {
         "check_id": "T5_005",
         "title": "Symbol + SecAltIDGrp",
-        "status": "no_credit",
-        "evidence": "N/A",
+        "status": "full_credit",
+        "evidence": "Tag 55 (Symbol + SecAltIDGrp) documented in 35=D table. Required for futures/options.",
         "notes": "DAWG Extension"
       }
     ],
-    "summary": "0 checks present"
+    "summary": "5 checks present"
   }
 }
