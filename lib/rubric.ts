@@ -4,9 +4,22 @@ export interface Rubric {
   meta: any;
   scoring: {
     max_score: number;
-    tier5_max_informational: number;
     tier_weights: Record<string, number>;
-    scoring_logic: Record<string, number>;
+    compliance_sub_score: {
+      tiers: number[];
+      max: number;
+      tier4_weight: number;
+      tier6_weight: number;
+      label: string;
+      audience: string;
+    };
+    market_data_sub_score: {
+      tiers: number[];
+      max: number;
+      label: string;
+      audience: string;
+    };
+    scoring_guide: Record<string, string>;
   };
   tiers: {
     tier: number;
