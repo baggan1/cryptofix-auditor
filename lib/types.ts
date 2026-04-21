@@ -12,6 +12,10 @@ export interface CheckResult {
   custom_tag_notes: string | null;
 }
 
+export interface ScoredCheckResult extends CheckResult {
+  tier: number;
+}
+
 export interface Tier5CheckResult {
   check_id: string;
   title: string;
@@ -118,6 +122,6 @@ export interface ScoredReport {
   market_data_sub_score: MarketDataSubScore;
   gap_count: number;
   gap_summary: GapSummaryItem[];
-  full_detail: CheckResult[];
+  full_detail: ScoredCheckResult[];
   tier5_results?: Tier5Results;
 }

@@ -23,7 +23,7 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
   // Helper: score a single tier's checks
   function scoreTier(tier: any, extractionChecks: any[]) {
     let earned = 0;
-    const details: CheckResult[] = [];
+    const details: ScoredCheckResult[] = [];
     tier.checks.forEach((check: any) => {
       const r = extractionChecks.find(c => c.check_id === check.id);
       const f = factors[r?.status ?? 'no_credit'] ?? 0;
@@ -51,7 +51,7 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
   const MAIN_TIERS = [1, 2, 3, 8];
   let mainTotal = 0;
   const tierScores: Record<string, TierScore> = {};
-  const allDetails: CheckResult[] = [];
+  const allDetails: ScoredCheckResult[] = [];
 
   MAIN_TIERS.forEach(tierNum => {
     const tier = rubric.tiers.find(t => t.tier === tierNum);

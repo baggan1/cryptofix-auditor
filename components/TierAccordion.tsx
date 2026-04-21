@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CheckResult, TierScore } from '@/lib/types';
+import { CheckResult, ScoredCheckResult, TierScore } from '@/lib/types';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface TierAccordionProps {
   tierScores: Record<string, TierScore>;
-  details: CheckResult[];
+  details: ScoredCheckResult[];
 }
 
 const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) => {
@@ -83,7 +83,7 @@ const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) =>
                     <tbody className="divide-y divide-slate-100">
                       {(() => {
                         // Grouping by message_type
-                        const msgGroups: Record<string, CheckResult[]> = {};
+                        const msgGroups: Record<string, ScoredCheckResult[]> = {};
                         tierDetails.forEach(d => {
                           if (!msgGroups[d.message_type]) msgGroups[d.message_type] = [];
                           msgGroups[d.message_type].push(d);
