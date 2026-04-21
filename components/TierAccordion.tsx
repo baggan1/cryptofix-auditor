@@ -1,17 +1,36 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CheckResult, ScoredCheckResult, TierScore } from '@/lib/types';
+import { ScoredCheckResult, TierScore } from '@/lib/types';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
-interface TierAccordionProps {
-  tierScores: Record<string, TierScore>;
+interface SingleTier {
+  tier: number;
+  label: string;
+  score: number;
+  available: number;
   details: ScoredCheckResult[];
+  is_informational?: boolean;
 }
 
-const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) => {
-  const [openTiers, setOpenTiers] = useState<Record<string, boolean>>({
-    tier1: true,
+interface TierAccordionProps {
+  tierScores?: Record<string, TierScore>;
+  details?: ScoredCheckResult[];
+  tier?: SingleTier;
+  headerStyle?: 'compliance' | 'market';
+  note?: string;
+}
+
+const TierAccordion: React.FC<TierAccordionProps> = ({ 
+  tierScores, 
+  details, 
+  tier,
+  headerStyle,
+  note
+}) => {
+  const [openTiers, setOpenTiers] = useState<Record<string, boolean>>(() => {
+    if (tierScores) return { tier1: true };
+    return {}; // Single tiers closed by default as requested
   });
 
   const toggleTier = (id: string) => {
@@ -29,36 +48,69 @@ const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) =>
     }
   };
 
+  const items = tierScores 
+    ? Object.entries(tierScores).map(([id, score]) => ({
+        id,
+        tierNum: parseInt(id.replace('tier', '')),
+        label: score.label,
+        score: score.earned,
+        available: score.available,
+        pct: score.pct,
+        is_informational: score.is_informational,
+        details: details?.filter(d => d.check_id.startsWith(`T${parseInt(id.replace('tier', ''))}_`)) ?? []
+      }))
+    : tier 
+    ? [{
+        id: `tier${tier.tier}`,
+        tierNum: tier.tier,
+        label: tier.label,
+        score: tier.score,
+        available: tier.available,
+        pct: (tier.score / (tier.available || 1)) * 100,
+        is_informational: tier.is_informational,
+        details: tier.details
+      }]
+    : [];
+
+  const getHeaderClass = () => {
+    switch (headerStyle) {
+      case 'compliance':
+        return 'bg-slate-100 border-l-4 border-l-amber-400';
+      case 'market':
+        return 'bg-slate-100 border-l-4 border-l-blue-400';
+      default:
+        return 'bg-white';
+    }
+  };
+
   return (
     <div className="space-y-4">
-      {Object.entries(tierScores).map(([id, score]) => {
-        const isOpen = openTiers[id];
-        const tierNum = parseInt(id.replace('tier', ''));
-        const tierDetails = details.filter(d => d.check_id.startsWith(`T${tierNum}_`));
-
+      {items.map((item) => {
+        const isOpen = openTiers[item.id];
+        
         return (
-          <div key={id} className="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+          <div key={item.id} className="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
             <button
-              onClick={() => toggleTier(id)}
-              className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
+              onClick={() => toggleTier(item.id)}
+              className={`w-full flex items-center justify-between p-4 text-left hover:bg-opacity-80 transition-colors ${getHeaderClass()}`}
             >
               <div className="flex flex-col">
-                <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Tier {tierNum}</span>
-                <span className="text-lg font-bold text-slate-900">{score.label}</span>
+                <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Tier {item.tierNum}</span>
+                <span className="text-lg font-bold text-slate-900">{item.label}</span>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex flex-col items-end">
-                  {score.is_informational ? (
+                  {item.is_informational ? (
                     <span className="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded uppercase tracking-wider">
                       Informational
                     </span>
                   ) : (
                     <>
-                      <span className="text-sm font-medium text-slate-500">{score.earned}/{score.available} pts</span>
-                      <div className="w-24 h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                      <span className="text-sm font-medium text-slate-500">{item.score.toFixed(1)}/{item.available} pts</span>
+                      <div className="w-24 h-1.5 bg-slate-200 rounded-full mt-1 overflow-hidden">
                         <div 
                           className="h-full bg-navy-dark rounded-full transition-all duration-500"
-                          style={{ width: `${score.pct}%` }}
+                          style={{ width: `${item.pct}%` }}
                         />
                       </div>
                     </>
@@ -70,6 +122,9 @@ const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) =>
             
             {isOpen && (
               <div className="border-t border-slate-100">
+                {note && (
+                  <p className="text-xs text-slate-500 italic px-4 pb-2 pt-2">{note}</p>
+                )}
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left border-collapse">
                     <thead className="bg-[#f8fafc] text-slate-500 uppercase text-[10px] tracking-widest font-bold border-b border-slate-100">
@@ -83,7 +138,7 @@ const TierAccordion: React.FC<TierAccordionProps> = ({ tierScores, details }) =>
                     <tbody className="divide-y divide-slate-100">
                       {(() => {
                         // Group checks by message_type
-                        const grouped = tierDetails.reduce((acc, check) => {
+                        const grouped = item.details.reduce((acc, check) => {
                           const key = check.message_type || 'other';
                           if (!acc[key]) acc[key] = { message: null, tags: [] };
                           if (check.level === 'message') {

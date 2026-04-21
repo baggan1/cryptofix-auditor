@@ -189,6 +189,48 @@ export default async function AuditPage({ params }: { params: { slug: string } }
         </div>
         <div className="lg:col-span-7 space-y-12">
           <TierAccordion tierScores={report.tier_scores} details={report.full_detail} />
+          
+          {/* Compliance & Drop Copy detail */}
+          <div className="mt-4">
+            <TierAccordion
+              tier={{
+                tier: 4,
+                label: "AML & Travel Rule",
+                score: report.compliance_sub_score?.tiers?.tier4?.earned ?? 0,
+                available: report.compliance_sub_score?.tiers?.tier4?.available ?? 10,
+                details: report.full_detail?.filter(c => c.tier === 4) ?? []
+              }}
+              headerStyle="compliance"
+              note="Part of Compliance sub-score. Tags evaluated in 35=8, 35=AE, or 35=AR context."
+            />
+            <div className="h-4" />
+            <TierAccordion
+              tier={{
+                tier: 6,
+                label: "Drop Copy — Consolidated Execution Feed",
+                score: report.compliance_sub_score?.tiers?.tier6?.earned ?? 0,
+                available: report.compliance_sub_score?.tiers?.tier6?.available ?? 5,
+                details: report.full_detail?.filter(c => c.tier === 6) ?? []
+              }}
+              headerStyle="compliance"
+              note="Part of Compliance sub-score. FIX-placed orders only."
+            />
+          </div>
+
+          {/* Market Data detail */}
+          <div className="mt-4">
+            <TierAccordion
+              tier={{
+                tier: 7,
+                label: "Market Data & RFQ",
+                score: report.market_data_sub_score?.total ?? 0,
+                available: report.market_data_sub_score?.max ?? 5,
+                details: report.full_detail?.filter(c => c.tier === 7) ?? []
+              }}
+              headerStyle="market"
+              note="Market Data sub-score. Includes price discovery, book building, and RFQ workflow messages."
+            />
+          </div>
         </div>
       </div>
     </div>
