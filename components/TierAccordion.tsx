@@ -28,10 +28,9 @@ const TierAccordion: React.FC<TierAccordionProps> = ({
   headerStyle,
   note
 }) => {
-  const [openTiers, setOpenTiers] = useState<Record<string, boolean>>(() => {
-    if (tierScores) return { tier1: true };
-    return {}; // Single tiers closed by default as requested
-  });
+  const [openTiers, setOpenTiers] = useState<Record<string, boolean>>(
+    tierScores ? { tier1: true } : {}
+  );
 
   const toggleTier = (id: string) => {
     setOpenTiers((prev) => ({ ...prev, [id]: !prev[id] }));
