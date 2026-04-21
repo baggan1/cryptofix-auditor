@@ -5,6 +5,7 @@ import {
   TierScore, 
   GapSummaryItem, 
   CheckResult,
+  ScoredCheckResult,
   Tier5Results,
   Tier5CheckResult,
   Tier6Results,
