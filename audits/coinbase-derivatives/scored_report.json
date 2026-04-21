@@ -656,6 +656,56 @@
       "status": "no_credit",
       "points_lost": 0.3,
       "evidence": "Message 35=x not supported."
+    },
+    {
+      "check_id": "T5_001",
+      "fix_tag": 22,
+      "field_name": "SecurityIDSource=Y",
+      "message_type": "35=D/8/AE",
+      "tier": 5,
+      "status": "no_credit",
+      "points_lost": 0,
+      "evidence": "SecurityIDSource=Y (DTI) not documented in Coinbase Derivatives spec"
+    },
+    {
+      "check_id": "T5_002",
+      "fix_tag": 2897,
+      "field_name": "CurrencyCodeSource",
+      "message_type": "35=D/8/AE",
+      "tier": 5,
+      "status": "no_credit",
+      "points_lost": 0,
+      "evidence": "Tags 2897/2899 CurrencyCodeSource not documented"
+    },
+    {
+      "check_id": "T5_003",
+      "fix_tag": 167,
+      "field_name": "SecurityType=DIGITAL",
+      "message_type": "35=D",
+      "tier": 5,
+      "status": "no_credit",
+      "points_lost": 0,
+      "evidence": "SecurityType=DIGITAL not documented; spec uses SecurityType for product classification (FUT/OPT) not ISO 24165 DIGITAL value"
+    },
+    {
+      "check_id": "T5_004",
+      "fix_tag": 803,
+      "field_name": "Wallet PartySubID",
+      "message_type": "35=8/AE",
+      "tier": 5,
+      "status": "no_credit",
+      "points_lost": 0,
+      "evidence": "PartySubIDType tag 803 wallet value not documented"
+    },
+    {
+      "check_id": "T5_005",
+      "fix_tag": 55,
+      "field_name": "Symbol + SecAltIDGrp",
+      "message_type": "35=D",
+      "tier": 5,
+      "status": "no_credit",
+      "points_lost": 0,
+      "evidence": "SecAltIDGrp DTI pair pattern not documented; tag 55 Symbol present in NOS but without DAWG DTI identification pattern"
     }
   ],
   "full_detail": [
@@ -3113,10 +3163,10 @@
       "level": "tag",
       "tier": 5,
       "weight": 0,
-      "status": "full_credit",
+      "status": "no_credit",
       "points_earned": 0,
       "points_available": 0,
-      "evidence": "Tag 22 (SecurityIDSource=Y) documented in 35=D table.",
+      "evidence": "SecurityIDSource=Y (DTI) not documented in Coinbase Derivatives spec",
       "asset_class_limitation": null
     },
     {
@@ -3128,10 +3178,10 @@
       "level": "tag",
       "tier": 5,
       "weight": 0,
-      "status": "full_credit",
+      "status": "no_credit",
       "points_earned": 0,
       "points_available": 0,
-      "evidence": "Tag 2897 (CurrencyCodeSource) documented in 35=D table.",
+      "evidence": "Tags 2897/2899 CurrencyCodeSource not documented",
       "asset_class_limitation": null
     },
     {
@@ -3143,10 +3193,10 @@
       "level": "tag",
       "tier": 5,
       "weight": 0,
-      "status": "full_credit",
+      "status": "no_credit",
       "points_earned": 0,
       "points_available": 0,
-      "evidence": "Tag 167 (SecurityType=DIGITAL) documented in 35=D table.",
+      "evidence": "SecurityType=DIGITAL not documented; spec uses SecurityType for product classification (FUT/OPT) not ISO 24165 DIGITAL value",
       "asset_class_limitation": null
     },
     {
@@ -3158,10 +3208,10 @@
       "level": "tag",
       "tier": 5,
       "weight": 0,
-      "status": "full_credit",
+      "status": "no_credit",
       "points_earned": 0,
       "points_available": 0,
-      "evidence": "Tag 803 (Wallet PartySubID) documented in 35=8 table.",
+      "evidence": "PartySubIDType tag 803 wallet value not documented",
       "asset_class_limitation": null
     },
     {
@@ -3173,10 +3223,10 @@
       "level": "tag",
       "tier": 5,
       "weight": 0,
-      "status": "full_credit",
+      "status": "no_credit",
       "points_earned": 0,
       "points_available": 0,
-      "evidence": "Tag 55 (Symbol + SecAltIDGrp) documented in 35=D table.",
+      "evidence": "SecAltIDGrp DTI pair pattern not documented; tag 55 Symbol present in NOS but without DAWG DTI identification pattern",
       "asset_class_limitation": null
     }
   ],

@@ -21,6 +21,42 @@ export function getExtractionPrompt(exchangeName: string, specContent: string, a
     4. Evidence must be a DIRECT quote or close paraphrase of text that
        mentions the specific tag number or field name being scored.
     
+    5. TIER 5 CRITICAL DISAMBIGUATION RULES:
+       T5_003 (SecurityType=DIGITAL, tag 167):
+         - full_credit ONLY if the spec explicitly documents SecurityType(167)
+           with the value "DIGITAL" as defined by ISO 24165
+         - Do NOT score full_credit just because tag 167 appears in the spec
+           with values like FUT, OPT, CS, SPOT, or any non-DIGITAL value
+         - Example of correct full_credit: "SecurityType(167) = DIGITAL supported"
+         - Example of INCORRECT full_credit: "SecurityType(167) = FUT (Futures)"
+           This is standard FIX — NOT the DAWG DIGITAL extension
+         - If tag 167 is present but only with FUT/OPT/CS/SPOT values: no_credit
+
+       T5_005 (Symbol + SecAltIDGrp DTI pairs, tags 55 + 454/455/456):
+         - full_credit ONLY if the spec documents the SecAltIDGrp repeating group
+           (NoSecurityAltID tag 454, SecurityAltID tag 455, SecurityAltIDSource 456)
+           being used WITH ISO 24165 DTI values alongside Symbol(55)
+         - Do NOT score full_credit just because tag 55 Symbol appears in NOS
+         - Do NOT score full_credit just because SecAltIDGrp appears anywhere
+           without DTI-specific usage documented
+         - Example of correct full_credit: "SecAltIDGrp used to carry DTI values
+           (SecurityAltIDSource=Y) for each currency in the Symbol pair"
+         - Example of INCORRECT full_credit: "Tag 55 Symbol required in NOS"
+           This is standard FIX — NOT the DAWG DTI pair extension
+         - If tag 55 is present without SecAltIDGrp DTI documentation: no_credit
+
+       T5_001 (SecurityIDSource=Y, tags 22/456):
+         - full_credit ONLY if SecurityIDSource value Y (or a new DTI-specific
+           value) is explicitly documented for ISO 24165 identification
+         - Do NOT score full_credit if SecurityIDSource appears with standard
+           values like 1=CUSIP, 4=ISIN, 8=Exchange Symbol only
+
+       T5_002 (CurrencyCodeSource, tags 2897/2899):
+         - full_credit ONLY if tags 2897 (CurrencyCodeSource) or 2899
+           (SettlCurrencyCodeSource) are explicitly documented
+         - These are EP273 ratified tags — they have specific tag numbers
+         - Do NOT score full_credit for generic currency field documentation
+
     Respond with a JSON object using EXACTLY these field names:
     {
       "exchange_name": "string",
