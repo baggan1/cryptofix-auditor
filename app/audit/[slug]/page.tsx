@@ -185,7 +185,7 @@ export default async function AuditPage({ params }: { params: { slug: string } }
               </div>
             </div>
           </div>
-          <GapTable gaps={report.gap_summary} />
+          <GapTable gaps={report.gap_summary.filter(gap => [1, 2, 3, 8].includes(gap.tier))} />
         </div>
         <div className="lg:col-span-7 space-y-12">
           <TierAccordion tierScores={report.tier_scores} details={report.full_detail} />

@@ -88,20 +88,103 @@ export default function LiveAuditPreview() {
             <h3 className="text-center text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Overall Score</h3>
             <ScoreGauge score={report.total_score} grade={report.grade} />
             <div className="mt-8 space-y-6">
-              {Object.entries(report.tier_scores).map(([key, tier], index) => (
+              {Object.entries(report.tier_scores).map(([key, tier]) => (
                 <div key={key}>
                   <div className="flex justify-between items-end mb-2">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tier {index + 1}: {tier.label}</span>
-                    <span className="text-sm font-bold text-slate-900">{tier.earned}/{tier.available}</span>
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{tier.label}</span>
+                    <span className="text-sm font-bold text-slate-900">{tier.earned.toFixed(1)}/{tier.available}</span>
                   </div>
                   <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-navy-dark rounded-full transition-all" style={{ width: `${tier.pct}%` }} />
+                    <div className="h-full bg-navy-dark rounded-full transition-all duration-1000" style={{ width: `${tier.pct}%` }} />
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* Sub-scores */}
+            <div className="mt-12 pt-8 border-t border-slate-100 space-y-6">
+              {/* Compliance & Drop Copy Panel */}
+              <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                <div className="flex items-center justify-between px-5 py-4 bg-slate-50 border-b border-slate-200">
+                  <div>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      Compliance & Drop Copy
+                    </span>
+                    <div className="text-sm font-bold text-slate-700 mt-0.5">
+                      {report.compliance_sub_score?.label}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-black text-slate-800">
+                      {report.compliance_sub_score?.total.toFixed(1)}
+                      <span className="text-xs font-bold text-slate-400 ml-1">
+                        /{report.compliance_sub_score?.max}
+                      </span>
+                    </span>
+                    <div className="text-[11px] font-bold mt-0.5"
+                      style={{
+                        color: (report.compliance_sub_score?.total ?? 0) >= 12
+                          ? '#10B981' : (report.compliance_sub_score?.total ?? 0) >= 7
+                          ? '#F59E0B' : '#EF4444'
+                      }}>
+                      {report.compliance_sub_score?.grade}
+                    </div>
+                  </div>
+                </div>
+                {/* Sub-tier rows */}
+                {Object.entries(report.compliance_sub_score?.tiers ?? {}).map(([key, t]) => (
+                  <div key={key} className="flex items-center justify-between px-5 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50/50">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-tight">{t.label}</span>
+                    <span className="text-sm font-mono font-bold text-slate-700">
+                      {t.earned.toFixed(1)}/{t.available}
+                      <span className="text-slate-400 ml-1 text-xs">({t.pct}%)</span>
+                    </span>
+                  </div>
+                ))}
+                <div className="px-5 py-3 bg-slate-50/50">
+                  <p className="text-[10px] text-slate-500 italic">
+                    {report.compliance_sub_score?.audience}
+                  </p>
+                </div>
+              </div>
+
+              {/* Market Data Panel */}
+              <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                <div className="flex items-center justify-between px-5 py-4 bg-slate-50 border-b border-slate-200">
+                  <div>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      Market Data
+                    </span>
+                    <div className="text-sm font-bold text-slate-700 mt-0.5">
+                      {report.market_data_sub_score?.label}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-black text-slate-800">
+                      {report.market_data_sub_score?.total.toFixed(1)}
+                      <span className="text-xs font-bold text-slate-400 ml-1">
+                        /{report.market_data_sub_score?.max}
+                      </span>
+                    </span>
+                    <div className="text-[11px] font-bold mt-0.5"
+                      style={{
+                        color: (report.market_data_sub_score?.total ?? 0) >= 4
+                          ? '#10B981' : (report.market_data_sub_score?.total ?? 0) >= 2
+                          ? '#F59E0B' : '#EF4444'
+                      }}>
+                      {report.market_data_sub_score?.grade}
+                    </div>
+                  </div>
+                </div>
+                <div className="px-5 py-3 bg-slate-50/50">
+                  <p className="text-[10px] text-slate-500 italic">
+                    {report.market_data_sub_score?.audience}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-          <GapTable gaps={report.gap_summary} />
+          <GapTable gaps={report.gap_summary.filter(gap => [1, 2, 3, 8].includes(gap.tier))} />
         </div>
         <div className="lg:col-span-7 space-y-12">
           <TierAccordion tierScores={report.tier_scores} details={report.full_detail} />
