@@ -173,6 +173,11 @@ const report = {
 const tier5 = rubric.tiers.find(t => t.tier === 5);
 if (tier5) {
   const { details } = scoreTier(tier5, extraction.checks);
+  details.forEach(d => {
+    d.weight = 0;
+    d.points_earned = 0;
+    d.points_available = 0;
+  });
   tierScores[`tier5`] = {
     label: tier5.label,
     earned: 0,

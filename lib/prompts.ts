@@ -63,6 +63,13 @@ export function getExtractionPrompt(exchangeName: string, specContent: string, a
           - Do NOT require a dedicated "Standard Header" page to exist.
           - If the spec has a Header/Trailer page OR if these tags appear in any message table, score full_credit.
 
+        RFQ & MARKET DATA (TIER 7):
+          - Every check ID listed in the rubric for Tier 7 MUST be returned in the results.
+          - If the message type (35=R, 35=S, 35=AJ) is present, score the message-level check (000) full_credit and then evaluate the specific tag-level checks.
+          - If the message type is absent, you MUST still return all its child tag checks as no_credit.
+          - DO NOT summarize multiple tag checks into a single response.
+
+
     Respond with a JSON object using EXACTLY these field names:
     {
       "exchange_name": "string",

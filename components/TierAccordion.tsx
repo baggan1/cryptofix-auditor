@@ -56,7 +56,7 @@ const TierAccordion: React.FC<TierAccordionProps> = ({
         available: score.available,
         pct: score.pct,
         is_informational: score.is_informational,
-        details: details?.filter(d => d.check_id.startsWith(`T${parseInt(id.replace('tier', ''))}_`)) ?? []
+        details: details?.filter(d => d.tier === parseInt(id.replace('tier', ''))) ?? []
       }))
     : tier 
     ? [{

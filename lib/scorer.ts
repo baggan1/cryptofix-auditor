@@ -122,6 +122,14 @@ export function scoreExtraction(extraction: ExtractionResult): ScoredReport {
   let tier5Results: Tier5Results | undefined;
   if (tier5Rubric) {
     const { details } = scoreTier(tier5Rubric, extraction.checks);
+    // Add Tier 5 checks to full_detail (informational, 0 pts)
+    details.forEach(d => {
+      d.weight = 0;
+      d.points_earned = 0;
+      d.points_available = 0;
+    });
+    allDetails.push(...details);
+
     tier5Results = {
       label: tier5Rubric.label,
       informational_only: true,

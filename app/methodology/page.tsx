@@ -35,7 +35,7 @@ export default function MethodologyPage() {
               <li><strong>Essential tag coverage</strong> — are the required tags present within that message?</li>
             </ol>
             <p className="text-slate-600 leading-relaxed">
-              This mirrors how institutional OMS teams and connectivity engineers actually evaluate an exchange's FIX spec: 
+              This mirrors how institutional OMS teams and connectivity engineers actually evaluate an exchange's FIX spec:
               first confirm the message exists, then verify the specific fields needed for their workflow.
             </p>
           </div>
@@ -48,7 +48,7 @@ export default function MethodologyPage() {
             Main readiness score (0–100)
           </h2>
           <p className="text-slate-600 mb-8 leading-relaxed">
-            Four tiers contribute to the institutional readiness score. Tier 1 carries the most weight because 
+            Four tiers contribute to the institutional readiness score. Tier 1 carries the most weight because
             order lifecycle capability is the primary determinant of whether an exchange can support direct institutional connectivity.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -117,7 +117,7 @@ export default function MethodologyPage() {
             Audience-specific sub-scores
           </h2>
           <p className="text-slate-500 mb-8">Two supplementary scored panels provide audience-specific assessments that do not affect the main 100-point score.</p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
@@ -131,7 +131,7 @@ export default function MethodologyPage() {
                   <div>
                     <h5 className="font-bold text-sm text-slate-800 mb-1">Tier 4 — AML & Travel Rule (10 pts)</h5>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      Tags in 35=8, 35=AE, or 35=AR context: Parties (453/448/452) for VASP ID, 
+                      Tags in 35=8, 35=AE, or 35=AR context: Parties (453/448/452) for VASP ID,
                       wallet attribution, ExecID audit trail (17), ExecInst flags (18).
                     </p>
                   </div>
@@ -181,7 +181,7 @@ export default function MethodologyPage() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100/50 rounded-bl-full -mr-8 -mt-8"></div>
             <div className="relative z-10">
               <p className="text-slate-700 leading-relaxed mb-8">
-                Tier 5 evaluates support for FIX Trading Community Digital Assets Working Group (DAWG) extensions. 
+                Tier 5 evaluates support for FIX Trading Community Digital Assets Working Group (DAWG) extensions.
                 These checks are informational only and do not affect any score.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -220,13 +220,13 @@ export default function MethodologyPage() {
           </h2>
           <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
             <p className="text-slate-700 font-bold mb-6">Built from 15+ years of FIX protocol implementation:</p>
-            
+
             <div className="space-y-8">
               <div>
                 <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-2">Wellington Management (9 years, 20+ certifications)</h4>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  ATDL algo strategy construction, dark pool ATS connectivity (Liquidnet, Luminex, Instinet), 
-                  MiFID II trade reporting, TWAP/VWAP/IS/POV execution algorithms, CME Self-Match Prevention, 
+                  ATDL algo strategy construction, dark pool ATS connectivity (Liquidnet, Luminex, Instinet),
+                  MiFID II trade reporting, TWAP/VWAP/IS/POV execution algorithms, CME Self-Match Prevention,
                   TBA/MBS netting via DTCC/FICC.
                 </p>
               </div>
@@ -234,7 +234,7 @@ export default function MethodologyPage() {
               <div>
                 <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-2">Solidus Labs (Lead TPM, 25+ onboardings)</h4>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Digital asset FIX standard design, AML/surveillance platform delivery, first FIX-native 
+                  Digital asset FIX standard design, AML/surveillance platform delivery, first FIX-native
                   implementation of digital asset trade compliance for institutional crypto exchanges.
                 </p>
               </div>
@@ -260,15 +260,15 @@ export default function MethodologyPage() {
           <div className="p-8 bg-slate-50 rounded-2xl border border-slate-200">
             <h2 className="text-xl font-bold text-slate-900 mb-4">Disclaimer</h2>
             <p className="text-sm text-slate-500 italic leading-relaxed mb-8">
-              Scores are indicative assessments based on publicly available FIX API documentation. 
-              Exchanges may support undocumented functionality. Independent verification against exchange 
+              Scores are indicative assessments based on publicly available FIX API documentation.
+              Exchanges may support undocumented functionality. Independent verification against exchange
               RoE documentation and UAT testing is recommended before production connectivity decisions.
             </p>
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-6 px-10 bg-navy-dark rounded-xl text-white">
               <div className="text-center md:text-left">
                 <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Auditor Provider</div>
                 <div className="font-bold">Opound LLC</div>
-                <div className="text-xs text-slate-300">navilla.bagga@gmail.com</div>
+                <div className="text-xs text-slate-300">[navilla@opound.com]</div>
               </div>
               <div className="text-center md:text-right border-t md:border-t-0 md:border-l border-slate-700 pt-6 md:pt-0 md:pl-10">
                 <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Platform Version</div>

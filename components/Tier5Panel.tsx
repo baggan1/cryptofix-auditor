@@ -24,21 +24,40 @@ const Tier5Panel: React.FC<Tier5PanelProps> = ({ results }) => {
         <p className="text-sm text-slate-600 mb-4 font-medium italic">
           {results.summary}. These checks evaluate support for emerging Digital Asset standards and do not affect the readiness score.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {results.checks.map((check) => (
-            <div key={check.check_id} className="flex items-start gap-3 p-3 bg-white border border-tier5-border rounded-md">
-              <div className={`mt-1 h-2 w-2 rounded-full shrink-0 ${
-                check.status === 'full_credit' ? 'bg-[#10B981]' : 
-                check.status === 'partial_credit' ? 'bg-amber-500' : 'bg-red-300'
-              }`} />
-              <div>
-                <div className="font-bold text-slate-900 text-sm">{check.check_id}</div>
-                <div className="text-xs text-slate-500 leading-relaxed mt-1">
+        <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
+          <div className="grid grid-cols-[80px_1fr_100px_1fr] gap-4 px-4 py-2 bg-slate-50 border-b border-slate-200 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            <div>Check ID</div>
+            <div>Field / Context</div>
+            <div>Status</div>
+            <div>Evidence</div>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {results.checks.map((check) => (
+              <div key={check.check_id} className="grid grid-cols-[80px_1fr_100px_1fr] gap-4 px-4 py-3 text-sm items-start hover:bg-slate-50/50 transition-colors">
+                <span className="font-mono text-slate-500 text-xs">
+                  {check.check_id}
+                </span>
+                <span className="font-medium text-slate-800">
+                  {check.title || check.check_id}
+                </span>
+                <span>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
+                    ${check.status === 'full_credit'
+                      ? 'bg-green-100 text-green-800'
+                      : check.status === 'partial_credit'
+                      ? 'bg-amber-100 text-amber-800'
+                      : 'bg-red-100 text-red-800'}`}>
+                    {check.status === 'full_credit' ? 'Present'
+                      : check.status === 'partial_credit' ? 'Partial'
+                      : 'Missing'}
+                  </span>
+                </span>
+                <span className="text-slate-500 text-xs italic leading-relaxed">
                   {check.evidence || 'No mention found in documentation.'}
-                </div>
+                </span>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
