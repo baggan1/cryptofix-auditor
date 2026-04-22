@@ -54,10 +54,6 @@ export default async function AuditPage({ params }: { params: { slug: string } }
               exchangeName={report.exchange_name} 
               auditSlug={params.slug} 
             />
-            <button className="px-6 h-12 bg-navy-dark text-white rounded-xl font-bold flex items-center gap-2 hover:bg-slate-800 transition-all shadow-lg shadow-navy-dark/10">
-              <Mail className="w-4 h-4" />
-              Email Report
-            </button>
           </div>
         </div>
       </div>
