@@ -6,8 +6,11 @@ import { X, ArrowRight, Loader2 } from 'lucide-react';
 interface EmailCaptureModalProps {
   isOpen: boolean;
   onClose: () => void;
-  exchangeName: string;
-  auditSlug: string;
+  exchangeName?: string;
+  auditSlug?: string;
+  title?: string;
+  description?: string;
+  onSuccess?: (info: { name: string; email: string }) => void;
 }
 
 const roles = [
@@ -18,7 +21,15 @@ const roles = [
   'Other'
 ];
 
-export default function EmailCaptureModal({ isOpen, onClose, exchangeName, auditSlug }: EmailCaptureModalProps) {
+export default function EmailCaptureModal({ 
+  isOpen, 
+  onClose, 
+  exchangeName, 
+  auditSlug,
+  title = "Get the full RoE report",
+  description = "Free — takes 10 seconds",
+  onSuccess
+}: EmailCaptureModalProps) {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [company, setCompany] = useState('');
@@ -55,14 +66,21 @@ export default function EmailCaptureModal({ isOpen, onClose, exchangeName, audit
         throw new Error(result.error || 'Something went wrong. Please try again.');
       }
 
-      // Save to localStorage for pre-filling Calendly
+      // Save to localStorage for pre-filling Calendly (and gating)
       localStorage.setItem('cryptofix_user_info', JSON.stringify({
         email,
         name: fullName
       }));
 
-      // Success! Open the report in a new tab
-      window.open(`/audit/${auditSlug}/report`, '_blank');
+      if (onSuccess) {
+        onSuccess({ name: fullName, email });
+      }
+
+      // Only open report if auditSlug is present
+      if (auditSlug) {
+        window.open(`/audit/${auditSlug}/report`, '_blank');
+      }
+      
       onClose();
     } catch (err: any) {
       setError(err.message);
@@ -91,9 +109,9 @@ export default function EmailCaptureModal({ isOpen, onClose, exchangeName, audit
         <div className="p-8">
           <div className="mb-6">
             <h2 className="text-2xl font-black text-[#0F172A] tracking-tight mb-1">
-              Get the full RoE report
+              {title}
             </h2>
-            <p className="text-slate-500 text-sm font-medium">Free — takes 10 seconds</p>
+            <p className="text-slate-500 text-sm font-medium">{description}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

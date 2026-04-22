@@ -1,22 +1,31 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Mail, Calendar, ArrowRight } from 'lucide-react';
+import { Mail, Calendar, ArrowRight, Lock } from 'lucide-react';
 import { PopupModal } from 'react-calendly';
+import EmailCaptureModal from '@/components/EmailCaptureModal';
 
 export default function ContactPage() {
   const [userInfo, setUserInfo] = useState<{name?: string, email?: string}>({});
   const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
+  const [isCaptureModalOpen, setIsCaptureModalOpen] = useState(false);
+  const [hasSubmittedLead, setHasSubmittedLead] = useState(false);
   const [rootElement, setRootElement] = useState<HTMLElement | null>(null);
+
+  const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL || '';
 
   useEffect(() => {
     // Set root element for Calendly portal
-    setRootElement(document.body);
+    if (typeof window !== 'undefined') {
+      setRootElement(document.body);
+    }
 
     const saved = localStorage.getItem('cryptofix_user_info');
     if (saved) {
       try {
-        setUserInfo(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        setUserInfo(parsed);
+        setHasSubmittedLead(true);
       } catch (e) {
         console.error('Failed to parse user info', e);
       }
@@ -24,7 +33,20 @@ export default function ContactPage() {
   }, []);
 
   const handleSchedule = () => {
-    setIsCalendlyOpen(true);
+    if (hasSubmittedLead) {
+      setIsCalendlyOpen(true);
+    } else {
+      setIsCaptureModalOpen(true);
+    }
+  };
+
+  const handleLeadCaptureSuccess = (info: { name: string, email: string }) => {
+    setUserInfo(info);
+    setHasSubmittedLead(true);
+    // Optionally open the calendar immediately
+    setTimeout(() => {
+      setIsCalendlyOpen(true);
+    }, 500);
   };
 
   return (
@@ -59,12 +81,27 @@ export default function ContactPage() {
           className="group block p-8 bg-white border border-slate-200 rounded-3xl shadow-sm hover:border-brand-accent/30 hover:shadow-md transition-all text-center"
         >
           <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Calendar className="w-6 h-6 text-navy-dark" />
+            {hasSubmittedLead ? (
+              <Calendar className="w-6 h-6 text-brand-accent" />
+            ) : (
+              <Lock className="w-6 h-6 text-slate-400" />
+            )}
           </div>
-          <h3 className="text-xl font-bold text-slate-900 mb-2">Schedule a Call</h3>
-          <p className="text-slate-500 text-sm mb-6">Book a 30-minute discovery session for your project</p>
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-brand-accent text-white rounded-xl font-bold text-sm hover:bg-brand-accent-hover transition-colors shadow-lg shadow-brand-accent/20">
-            Schedule Consultation
+          <h3 className="text-xl font-bold text-slate-900 mb-2">
+            {hasSubmittedLead ? 'Schedule a Call' : 'Book Consultation'}
+          </h3>
+          <p className="text-slate-500 text-sm mb-6">
+            {hasSubmittedLead 
+              ? 'Book a 30-minute discovery session for your project'
+              : 'Unlock the calendar by verifying your professional email'
+            }
+          </p>
+          <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-lg ${
+            hasSubmittedLead 
+              ? 'bg-brand-accent text-white hover:bg-brand-accent-hover shadow-brand-accent/20' 
+              : 'bg-slate-900 text-white hover:bg-slate-800 shadow-slate-900/10'
+          }`}>
+            {hasSubmittedLead ? 'Schedule Consultation' : 'Verify Email to Book'}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </div>
         </button>
@@ -76,9 +113,17 @@ export default function ContactPage() {
         </p>
       </div>
 
-      {rootElement && (
+      <EmailCaptureModal 
+        isOpen={isCaptureModalOpen}
+        onClose={() => setIsCaptureModalOpen(false)}
+        title="Verify Email to Book"
+        description="Submit your details to unlock scheduling for custom audits and strategy calls."
+        onSuccess={handleLeadCaptureSuccess}
+      />
+
+      {rootElement && hasSubmittedLead && CALENDLY_URL && (
         <PopupModal
-          url="https://calendly.com/navilla-bagga/30min"
+          url={CALENDLY_URL}
           onModalClose={() => setIsCalendlyOpen(false)}
           open={isCalendlyOpen}
           rootElement={rootElement}
