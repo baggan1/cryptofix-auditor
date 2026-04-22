@@ -14,7 +14,12 @@ const GapTable: React.FC<GapTableProps> = ({ gaps }) => {
       <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
         <h3 className="font-bold text-slate-900 flex items-center gap-2">
           <TriangleAlert className="w-4 h-4 text-amber-500" />
-          Top Priority Institutional Gaps
+          <div className="flex flex-col">
+            <span>Top Priority Institutional Gaps</span>
+            <span className="text-[10px] font-medium text-slate-400 normal-case mt-0.5 tracking-normal">
+              Tiers 1, 2, 3 & 8 — order lifecycle, execution, post-trade, and session management
+            </span>
+          </div>
         </h3>
         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{gaps.length} Gaps</span>
       </div>

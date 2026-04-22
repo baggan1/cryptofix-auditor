@@ -268,7 +268,7 @@ export default function MethodologyPage() {
               <div className="text-center md:text-left">
                 <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Auditor Provider</div>
                 <div className="font-bold">Opound LLC</div>
-                <div className="text-xs text-slate-300">[navilla@opound.com]</div>
+                <div className="text-xs text-slate-300">navilla@opound.com</div>
               </div>
               <div className="text-center md:text-right border-t md:border-t-0 md:border-l border-slate-700 pt-6 md:pt-0 md:pl-10">
                 <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Platform Version</div>

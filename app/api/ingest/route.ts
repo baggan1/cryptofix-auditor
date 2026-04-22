@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { extractionModel } from '@/lib/gemini';
+import { extractionModel, extractionModelLarge } from '@/lib/gemini';
 import { getExtractionPrompt } from '@/lib/prompts';
 import { ExtractionResult } from '@/lib/types';
 
@@ -32,6 +32,33 @@ function extractTextFromHTML(html: string): string {
     // Clean up whitespace
     .replace(/\s{3,}/g, '\n\n')
     .trim();
+}
+
+function prepareSpecContent(raw: string, isPasted: boolean): string {
+  // For pasted content, try to keep message type sections
+  // and remove repeated boilerplate
+  let content = raw;
+
+  // Remove HTML artifacts if any slipped through
+  content = content.replace(/<[^>]+>/g, ' ').replace(/\s{3,}/g, '\n').trim();
+
+  // Cap at 50K for pasted content (leaves more room for output)
+  const CAP = isPasted ? 50000 : 70000;
+
+  if (content.length <= CAP) return content;
+
+  // Try to cut at a natural section boundary
+  const truncated = content.slice(0, CAP);
+  const lastSection = Math.max(
+    truncated.lastIndexOf('\n## '),
+    truncated.lastIndexOf('\n# '),
+    truncated.lastIndexOf('\n35='),
+    truncated.lastIndexOf('\nMsgType'),
+  );
+
+  return lastSection > CAP * 0.8
+    ? truncated.slice(0, lastSection)
+    : truncated;
 }
 
 function addStructureMarkers(text: string, specUrl: string): string {
@@ -74,7 +101,7 @@ export async function POST(req: NextRequest) {
     // Step 1 — fetch spec content if URL provided
     let specContent = '';
     if (is_pasted) {
-      specContent = spec_source.slice(0, 60000);
+      specContent = prepareSpecContent(spec_source, true);
     } else if (spec_source.startsWith('http')) {
       try {
         const fetchPage = async (url: string) => {
@@ -125,16 +152,12 @@ export async function POST(req: NextRequest) {
           }
         }
 
-        // Trim to 60k chars but try to end at a natural boundary
-        let trimmed = specContent.slice(0, 60000);
-        const lastNewline = trimmed.lastIndexOf('\n');
-        if (lastNewline > 50000) trimmed = trimmed.slice(0, lastNewline);
-        specContent = trimmed;
+        specContent = prepareSpecContent(specContent, false);
 
         console.log('Spec content length after fetch:', specContent.length);
         console.log('Spec content preview:', specContent.slice(0, 300));
         
-        if (specContent.length < 2000) {
+        if (specContent.length < 1500) {
           return NextResponse.json({
             error: 'Spec content too short after extraction',
             details: `Only ${specContent.length} chars extracted. This page may require JavaScript rendering. Try pasting the spec content directly instead of a URL, or use a different URL that serves static HTML.`,
@@ -145,7 +168,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: `URL fetch failed: ${fetchErr.message}` }, { status: 400 });
       }
     } else {
-      specContent = spec_source.slice(0, 60000);
+      specContent = prepareSpecContent(spec_source, false);
     }
 
     // Apply structure markers to help Gemini understand the context
@@ -157,7 +180,11 @@ export async function POST(req: NextRequest) {
 
     let rawText = '';
     try {
-      const result = await extractionModel.generateContent([
+      const model = specContent.length > 30000
+        ? extractionModelLarge
+        : extractionModel;
+
+      const result = await model.generateContent([
         { text: systemPrompt + '\n\n' + userPrompt }
       ]);
       rawText = result.response.text();
@@ -241,15 +268,36 @@ export async function POST(req: NextRequest) {
       }
       
     } catch (parseError) {
-      console.error('JSON parse failed. Raw response:', rawText.slice(0, 2000));
-      return NextResponse.json(
-        { 
-          error: 'JSON parse failed', 
-          rawPreview: rawText.slice(0, 1000),
+      console.error('JSON parse failed, attempting recovery...');
+      try {
+        const checksStart = rawText.indexOf('"checks"');
+        if (checksStart > 0) {
+          let lastComplete = rawText.lastIndexOf('},\n    {');
+          if (lastComplete === -1) lastComplete = rawText.lastIndexOf('},\n  {');
+          if (lastComplete === -1) lastComplete = rawText.lastIndexOf('}');
+
+          if (lastComplete > checksStart) {
+            const partial = rawText.slice(0, lastComplete + 1) + '\n  ]\n}';
+            try {
+              extraction = JSON.parse(partial.replace(/```json\n?|```\n?/g, '').trim());
+              console.warn(`Recovered partial extraction with ${extraction.checks?.length ?? 0} checks`);
+            } catch {
+              throw parseError;
+            }
+          } else {
+            throw parseError;
+          }
+        } else {
+          throw parseError;
+        }
+      } catch {
+        return NextResponse.json({
+          error: 'JSON parse failed',
+          rawPreview: rawText.slice(0, 500),
+          hint: 'Try pasting a smaller section of the spec (under 50,000 characters). Focus on the order entry messages section.',
           details: String(parseError)
-        },
-        { status: 500 }
-      );
+        }, { status: 500 });
+      }
     }
 
     // Ensure we have the basic required fields

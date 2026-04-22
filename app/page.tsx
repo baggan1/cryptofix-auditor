@@ -178,11 +178,14 @@ export default function Home() {
                 
                 {pastedSpec.trim().length > 100 && (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 mt-2 text-sm text-emerald-600">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                      </svg>
-                      <span>{pastedSpec.trim().length.toLocaleString()} characters ready — click Analyze Pasted Spec to analyze</span>
+                    <div className={`flex items-center gap-2 mt-2 text-sm
+                      ${pastedSpec.length > 50000 ? 'text-amber-600' : 'text-emerald-600'}`}>
+                      {pastedSpec.length > 50000 ? '⚠' : '✓'}{' '}
+                      {pastedSpec.trim().length.toLocaleString()} characters
+                      {pastedSpec.length > 50000
+                        ? ' — large spec, consider pasting key sections only (<50K chars)'
+                        : ' ready — click Analyze Pasted Spec to analyze'
+                      }
                     </div>
 
                     <input
@@ -201,6 +204,15 @@ export default function Home() {
             {errorText && (
               <div className="mt-8 text-center text-red-600 bg-red-50 border border-red-200 p-4 rounded-xl font-medium max-w-lg mx-auto">
                 {errorText}
+                {errorText.includes('JSON parse failed') && pastedSpec.length > 50000 && (
+                  <div className="mt-2 text-xs text-amber-700 bg-amber-50
+                    border border-amber-200 rounded p-2 text-left font-normal">
+                    <strong>Tip:</strong> Your pasted content is{' '}
+                    {(pastedSpec.length / 1000).toFixed(0)}K characters — try pasting
+                    a smaller section. Focus on the order entry messages (35=D, 35=8,
+                    35=F) and session configuration sections only.
+                  </div>
+                )}
               </div>
             )}
 

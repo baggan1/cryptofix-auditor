@@ -175,10 +175,15 @@ export default function LiveAuditPreview() {
               </div>
             </div>
           </div>
-          <GapTable gaps={report.gap_summary.filter(gap => [1, 2, 3, 4, 5, 6, 7, 8].includes(gap.tier))} />
+          <GapTable gaps={report.gap_summary.filter(gap => [1, 2, 3, 8].includes(gap.tier))} />
         </div>
         <div className="lg:col-span-7 space-y-12">
-          <TierAccordion tierScores={report.tier_scores} details={report.full_detail} />
+          <TierAccordion 
+            tierScores={Object.fromEntries(
+              Object.entries(report.tier_scores).filter(([id]) => id !== 'tier5')
+            )} 
+            details={report.full_detail} 
+          />
           {report.tier5_results && <Tier5Panel results={report.tier5_results} />}
 
           {/* Compliance & Drop Copy detail */}

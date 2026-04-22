@@ -20,3 +20,13 @@ export const narrativeModel = genAI.getGenerativeModel({
     maxOutputTokens: 4096,
   },
 });
+
+// Large model for pasted specs with many checks
+export const extractionModelLarge = genAI.getGenerativeModel({
+  model: 'gemini-2.5-pro',
+  generationConfig: {
+    responseMimeType: 'application/json',
+    temperature: 0.1,
+    maxOutputTokens: 32768,  // double the current limit
+  },
+});
