@@ -58,15 +58,6 @@ export default function LiveAuditPreview() {
           
           <div className="flex items-center gap-3">
             <button 
-              onClick={() => {
-                const w = window.open('', '_blank');
-                w?.document.write(`<pre>${JSON.stringify(report, null, 2)}</pre>`);
-              }}
-              className="text-xs text-slate-300 hover:text-slate-500 mr-2"
-            >
-              [Debug Raw]
-            </button>
-            <button 
               disabled
               className="px-6 h-12 bg-white border border-slate-200 text-slate-400 rounded-xl font-bold flex items-center gap-2 shadow-sm cursor-not-allowed opacity-60"
               title="RoE download only available on static certified audits"

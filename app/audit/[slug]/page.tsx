@@ -189,6 +189,7 @@ export default async function AuditPage({ params }: { params: { slug: string } }
         </div>
         <div className="lg:col-span-7 space-y-12">
           <TierAccordion tierScores={report.tier_scores} details={report.full_detail} />
+          {report.tier5_results && <Tier5Panel results={report.tier5_results} />}
           
           {/* Compliance & Drop Copy detail */}
           <div className="mt-4">

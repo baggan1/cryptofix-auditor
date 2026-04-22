@@ -1,7 +1,7 @@
 {
   "exchange_name": "Coinbase Derivatives Exchange",
   "audit_date": "2026-04-21",
-  "total_score": 60.4,
+  "total_score": 61.2,
   "max_score": 100,
   "grade": "Partial",
   "tier_scores": {
@@ -25,9 +25,9 @@
     },
     "tier8": {
       "label": "Admin & Session Management — FIX connectivity foundation",
-      "earned": 9.3,
+      "earned": 10.1,
       "available": 15,
-      "pct": 62
+      "pct": 67
     },
     "tier5": {
       "label": "DAWG FIX Extensions",
@@ -183,16 +183,6 @@
       "field_name": "TrdRptStatus",
       "message_type": "35=AR",
       "tier": 3,
-      "status": "no_credit",
-      "points_lost": 0.8,
-      "evidence": null
-    },
-    {
-      "check_id": "T8_HDR_000",
-      "fix_tag": "",
-      "field_name": "Standard Header",
-      "message_type": "Standard Header",
-      "tier": 8,
       "status": "no_credit",
       "points_lost": 0.8,
       "evidence": null
@@ -690,7 +680,7 @@
     {
       "check_id": "T8_REJ_TXT",
       "fix_tag": 58,
-      "field_name": "Text",
+      "field_name": "Reject reason quality — tag 58 (Text) on rejects",
       "message_type": "Rejects",
       "tier": 8,
       "status": "no_credit",
@@ -1978,10 +1968,10 @@
       "level": "message",
       "tier": 8,
       "weight": 0.75,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.75,
       "points_available": 0.75,
-      "evidence": null,
+      "evidence": "Standard Header tags (8, 49, 56, 52) all documented in spec. Header component present in all FIX messages. Standard Header documented at derivatives/fix/header-trailer. Tags 8, 9, 35, 34, 49, 50, 52, 56, 57 all present with Y/N indicators.",
       "asset_class_limitation": null
     },
     {
@@ -2257,7 +2247,7 @@
     {
       "check_id": "T8_REJ_TXT",
       "fix_tag": 58,
-      "field_name": "Text",
+      "field_name": "Reject reason quality — tag 58 (Text) on rejects",
       "message_type": "Rejects",
       "message_name": "Reject Reason Quality",
       "level": "message",
@@ -2316,8 +2306,8 @@
     },
     {
       "check_id": "T4_WAL",
-      "fix_tag": "",
-      "field_name": "Wallet Attribution",
+      "fix_tag": "803 / custom",
+      "field_name": "Wallet address attribution — tag 803 (PartySubIDType)",
       "message_type": "35=8/AE/AR",
       "message_name": "ExecReport, TCR, or TCR Ack",
       "level": "tag",

@@ -57,6 +57,12 @@ export function getExtractionPrompt(exchangeName: string, specContent: string, a
          - These are EP273 ratified tags — they have specific tag numbers
          - Do NOT score full_credit for generic currency field documentation
 
+        T8_HDR_000 (Standard Header — message documentation):
+          - This is NOT a standalone FIX message. It is a component documented as part of every message's header section.
+          - Score full_credit if tags 8, 49, 56, 52 are documented ANYWHERE in the spec.
+          - Do NOT require a dedicated "Standard Header" page to exist.
+          - If the spec has a Header/Trailer page OR if these tags appear in any message table, score full_credit.
+
     Respond with a JSON object using EXACTLY these field names:
     {
       "exchange_name": "string",

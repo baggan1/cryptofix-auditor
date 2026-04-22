@@ -89,8 +89,8 @@
     },
     {
       "check_id": "T4_WAL",
-      "fix_tag": "",
-      "field_name": "Wallet Attribution",
+      "fix_tag": "803 / custom",
+      "field_name": "Wallet address attribution — tag 803 (PartySubIDType)",
       "message_type": "35=8/AE/AR",
       "tier": 4,
       "status": "no_credit",
@@ -2477,7 +2477,7 @@
     {
       "check_id": "T8_REJ_TXT",
       "fix_tag": 58,
-      "field_name": "Text",
+      "field_name": "Reject reason quality — tag 58 (Text) on rejects",
       "message_type": "Rejects",
       "message_name": "Reject Reason Quality",
       "level": "message",
@@ -2536,8 +2536,8 @@
     },
     {
       "check_id": "T4_WAL",
-      "fix_tag": "",
-      "field_name": "Wallet Attribution",
+      "fix_tag": "803 / custom",
+      "field_name": "Wallet address attribution — tag 803 (PartySubIDType)",
       "message_type": "35=8/AE/AR",
       "message_name": "ExecReport, TCR, or TCR Ack",
       "level": "tag",

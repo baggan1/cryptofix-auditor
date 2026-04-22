@@ -1033,11 +1033,17 @@
           "message_type": "35=8/AE/AR",
           "message_name": "ExecReport, TCR, or TCR Ack",
           "level": "tag",
-          "fix_tag": null,
-          "field_name": "Wallet Attribution",
+          "fix_tag": "803 / custom",
+          "field_name": "Wallet address attribution — tag 803 (PartySubIDType)",
           "weight": 2.0,
           "required": true,
-          "description": "Custom tag or 803 carrying wallet address"
+          "description": "Mechanism to associate on-chain wallet addresses with FIX order or trade records. The FIX-standard approach (DAWG draft) is a new PartySubIDType(803) enumeration value carrying the wallet address in the PtysSubGrp component of 35=8 or 35=AE. Alternative: custom tag or ExecID cross-reference to blockchain TxHash documented via REST. full_credit: wallet address linkage documented in FIX stream via tag 803 or documented custom tag in Parties group partial_credit: ExecID→TxHash mapping available via REST with documentation; not in FIX stream no_credit: no mechanism documented for wallet-to-trade linkage",
+          "institutional_gap_if_missing": "Without wallet address attribution in the FIX stream, on-chain AML screening (Chainalysis, Elliptic, TRM Labs) cannot be triggered automatically from FIX trade data. Compliance teams must manually reconcile FIX ExecIDs against blockchain transaction hashes. Tag 803 (PartySubIDType) with a wallet-specific value is the FIX Trading Community DAWG recommended approach.",
+          "scoring_logic": {
+            "full_credit": "Wallet address linkage in FIX via 803 or custom tag",
+            "partial_credit": "Linkage via REST TxHash mapping only",
+            "no_credit": "No wallet linkage documented"
+          }
         },
         {
           "id": "T4_017",
@@ -1060,6 +1066,46 @@
           "weight": 2.0,
           "required": true,
           "description": "E=Reduce Only, P=Post Only"
+        },
+        {
+          "id": "T4_SMP_000",
+          "message_type": "35=D",
+          "message_name": "SelfMatchPrevention — message context",
+          "level": "message",
+          "tag_number": null,
+          "tag_name": "SelfMatchPrevention (SMP) — order entry context",
+          "weight": 1.5,
+          "required": false,
+          "description": "Self-Match Prevention controls prevent wash trading by canceling one or both sides of an order that would match against the same firm's resting order. SMP is evaluated on 35=D (NewOrderSingle) and 35=G (OrderCancelReplaceRequest). Required for regulatory compliance with CME Rule 534, CFTC guidance, and institutional prime broker agreements.",
+          "fix_reference": "Coinbase Derivatives: SelfMatchPreventionID (7928) + SelfMatchPreventionStrategy (8000); https://docs.cdp.coinbase.com/derivatives/fix/overview#self-match-prevention; CME Rule 534; FIX tag 7928 custom",
+          "institutional_gap_if_missing": "Without SMP controls, institutional clients face regulatory wash-trade exposure under CFTC and exchange rules. Prime brokers will not connect to exchanges lacking documented SMP mechanisms.",
+          "scoring_logic": {
+            "full_credit": "SMP documented in spec with at minimum one SMP mechanism (tag 7928 or equivalent); cancel behavior documented",
+            "partial_credit": "SMP mentioned but tag or cancel strategy behavior undocumented",
+            "no_credit": "No SMP mechanism documented"
+          }
+        },
+        {
+          "id": "T4_SMP_7928",
+          "message_type": "35=D",
+          "message_name": "SelfMatchPrevention — message context",
+          "level": "tag",
+          "tag_number": 7928,
+          "tag_name": "SelfMatchPreventionID",
+          "weight": 1.0,
+          "required": false,
+          "description": "Identifier used to group orders for self-match prevention. Orders from the same executing firm with the same SelfMatchPreventionID will not match. Paired with SelfMatchPreventionStrategy (8000) which defines the cancel behavior.",
+          "valid_values": {
+            "tag_7928": "SelfMatchPreventionID — 8-digit numeric ID (Coinbase Derivatives)",
+            "tag_8000": "SelfMatchPreventionStrategy — cancel-aggressor, cancel-resting, cancel-both"
+          },
+          "fix_reference": "Custom tag 7928 SelfMatchPreventionID; custom tag 8000 SelfMatchPreventionStrategy; Coinbase Derivatives: https://docs.cdp.coinbase.com/derivatives/fix/overview#self-match-prevention; Kraken: tag 7928 with cancel-both/newest/oldest modes",
+          "institutional_gap_if_missing": "Without SelfMatchPreventionID (7928), firms cannot set order-level SMP controls. Account-level SMP only is insufficient for multi-strategy trading where different strategies within the same account may legitimately trade against each other.",
+          "scoring_logic": {
+            "full_credit": "Tag 7928 (SelfMatchPreventionID) documented in 35=D with cancel strategy behavior described; at least two cancel modes available (e.g. cancel-aggressor and cancel-resting)",
+            "partial_credit": "SMP present but only one cancel mode, or SMP is account-level only without order-level tag support",
+            "no_credit": "Tag 7928 absent; no order-level SMP mechanism"
+          }
         }
       ]
     },
@@ -1932,6 +1978,106 @@
           "required": true,
           "description": "Status of the quote: 0=Accepted, 5=Rejected, 7=Expired, 9=Pass, 10=ActiveBidOrder, 11=ActiveOfferOrder",
           "fix_reference": "FIX 4.2+ tag 297 QuoteStatus; https://fiximate.fixtrading.org/ — search tag 297; key values: 0=Accepted, 5=Rejected, 7=Expired"
+        },
+        {
+          "id": "T7_6_000",
+          "message_type": "35=6",
+          "message_name": "IndicationOfInterest (IOI)",
+          "level": "message",
+          "tag_number": null,
+          "tag_name": "IOI — message documentation",
+          "weight": 0.5,
+          "required": false,
+          "description": "IOI messages (35=6) are used by broker-dealers and venues to advertise buying or selling interest to institutional clients. Enables institutional buy-side firms to identify natural liquidity for large block trades without revealing full order size to the market. Supports NEW (23=N), CANCEL (23=U), and REPLACE (23=R) transaction types.",
+          "fix_reference": "FIX 4.0+ message 35=6 IOI; https://fiximate.fixtrading.org/ — search IOI; FIX Trading Community: Indication of Interest",
+          "institutional_gap_if_missing": "Without IOI support, buy-side institutions cannot receive advertised liquidity from the exchange or its connected broker network. Large block orders must rely on public market data only, increasing market impact costs.",
+          "scoring_logic": {
+            "full_credit": "35=6 IOI documented with IOITransType (23) and essential tags",
+            "partial_credit": "IOI mentioned but documentation incomplete",
+            "no_credit": "35=6 IOI absent"
+          }
+        },
+        {
+          "id": "T7_6_023",
+          "message_type": "35=6",
+          "message_name": "IndicationOfInterest (IOI)",
+          "level": "tag",
+          "tag_number": 23,
+          "tag_name": "IOITransType",
+          "weight": 0.25,
+          "required": true,
+          "description": "Transaction type for the IOI: N=New, C=Cancel, R=Replace. All three values required for complete IOI lifecycle management.",
+          "valid_values": {
+            "N": "New",
+            "C": "Cancel",
+            "R": "Replace"
+          },
+          "fix_reference": "FIX 4.0+ tag 23 IOITransType; https://fiximate.fixtrading.org/ — search tag 23"
+        },
+        {
+          "id": "T7_6_130",
+          "message_type": "35=6",
+          "message_name": "IndicationOfInterest (IOI)",
+          "level": "tag",
+          "tag_number": 130,
+          "tag_name": "IOIQualifier",
+          "weight": 0.25,
+          "required": false,
+          "description": "Qualifies the IOI: A=AllOrNone, B=MarketOnClose, C=AtTheClose, D=VWAP, etc. Provides context for how the indicated interest should be interpreted.",
+          "fix_reference": "FIX 4.0+ tag 130 IOIQualifier; https://fiximate.fixtrading.org/ — search tag 130"
+        },
+        {
+          "id": "T7_6_055",
+          "message_type": "35=6",
+          "message_name": "IndicationOfInterest (IOI)",
+          "level": "tag",
+          "tag_number": 55,
+          "tag_name": "Symbol",
+          "weight": 0.2,
+          "required": true,
+          "description": "Instrument identifier for the IOI",
+          "fix_reference": "FIX 4.0+ tag 55; https://fiximate.fixtrading.org/ — search tag 55"
+        },
+        {
+          "id": "T7_6_054",
+          "message_type": "35=6",
+          "message_name": "IndicationOfInterest (IOI)",
+          "level": "tag",
+          "tag_number": 54,
+          "tag_name": "Side",
+          "weight": 0.2,
+          "required": true,
+          "description": "Buy (1) or Sell (2) side of the indication",
+          "fix_reference": "FIX 4.0+ tag 54; https://fiximate.fixtrading.org/ — search tag 54"
+        },
+        {
+          "id": "T7_6_027",
+          "message_type": "35=6",
+          "message_name": "IndicationOfInterest (IOI)",
+          "level": "tag",
+          "tag_number": 27,
+          "tag_name": "IOIShares",
+          "weight": 0.2,
+          "required": false,
+          "description": "Quantity of the indication: S=Small, M=Medium, L=Large, or explicit quantity. Provides buy-side with size context without revealing exact block size.",
+          "valid_values": {
+            "S": "Small",
+            "M": "Medium",
+            "L": "Large"
+          },
+          "fix_reference": "FIX 4.0+ tag 27 IOIShares; https://fiximate.fixtrading.org/ — search tag 27"
+        },
+        {
+          "id": "T7_6_062",
+          "message_type": "35=6",
+          "message_name": "IndicationOfInterest (IOI)",
+          "level": "tag",
+          "tag_number": 62,
+          "tag_name": "ValidUntilTime",
+          "weight": 0.15,
+          "required": false,
+          "description": "UTC timestamp when the IOI expires. Time-bound IOIs are standard institutional practice to avoid stale liquidity signals.",
+          "fix_reference": "FIX 4.0+ tag 62 ValidUntilTime; https://fiximate.fixtrading.org/ — search tag 62"
         }
       ]
     },
@@ -2214,10 +2360,16 @@
           "message_name": "Reject Reason Quality",
           "level": "message",
           "fix_tag": 58,
-          "field_name": "Text",
+          "field_name": "Reject reason quality — tag 58 (Text) on rejects",
           "weight": 0.25,
           "required": true,
-          "description": "Are reject reasons human-readable and machine-parseable?",
+          "description": "Tag 58 (Text) should be populated on ALL reject messages (35=3 Session Reject, 35=j Business Reject, 35=9 OrderCancelReject) with structured reject reason codes and human-readable descriptions. full_credit: tag 58 present on all reject types with machine-parseable error codes documented in spec. partial_credit: tag 58 present but generic messages only (e.g. 'rejected') no_credit: tag 58 absent from reject messages or undocumented.",
+          "scoring_logic": {
+            "full_credit": "Tag 58 present on all reject types; machine-parseable codes documented",
+            "partial_credit": "Tag 58 present but generic messages",
+            "no_credit": "Tag 58 absent or undocumented"
+          },
+          "institutional_gap_if_missing": "Without tag 58 (Text) populated on rejects, operations teams cannot determine why orders were rejected without manual exchange support escalation. In 24/7 crypto markets, this creates significant operational risk. Structured error codes in tag 58 enable automated retry logic and alerting.",
           "fix_reference": "FIX 4.0+ tag 58 Text; https://fiximate.fixtrading.org/ — search tag 58; should carry structured reject reason code + human-readable description"
         },
         {
