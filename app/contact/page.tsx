@@ -4,11 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { Mail, Calendar, ArrowRight, Lock } from 'lucide-react';
 import { PopupModal } from 'react-calendly';
 import EmailCaptureModal from '@/components/EmailCaptureModal';
+import ContactFormModal from '@/components/ContactFormModal';
 
 export default function ContactPage() {
   const [userInfo, setUserInfo] = useState<{name?: string, email?: string}>({});
   const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
   const [isCaptureModalOpen, setIsCaptureModalOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [hasSubmittedLead, setHasSubmittedLead] = useState(false);
   const [rootElement, setRootElement] = useState<HTMLElement | null>(null);
 
@@ -61,8 +63,8 @@ export default function ContactPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-        <a 
-          href="mailto:navilla@opound.com"
+        <button 
+          onClick={() => setIsContactModalOpen(true)}
           className="group block p-8 bg-navy-dark text-white rounded-3xl shadow-xl shadow-navy-dark/20 hover:scale-[1.02] transition-transform text-center"
         >
           <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -74,7 +76,7 @@ export default function ContactPage() {
             navilla@opound.com
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </div>
-        </a>
+        </button>
 
         <button 
           onClick={handleSchedule}
@@ -119,6 +121,11 @@ export default function ContactPage() {
         title="Verify Email to Book"
         description="Submit your details to unlock scheduling for custom audits and strategy calls."
         onSuccess={handleLeadCaptureSuccess}
+      />
+
+      <ContactFormModal 
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
       />
 
       {rootElement && hasSubmittedLead && CALENDLY_URL && (

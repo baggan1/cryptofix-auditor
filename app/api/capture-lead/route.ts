@@ -7,7 +7,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, full_name, company, role, exchange_name, audit_slug, opt_in } = await req.json();
+    const { email, full_name, company, role, exchange_name, audit_slug, opt_in, message } = await req.json();
 
     if (!email) {
       return NextResponse.json({ error: 'Missing required email field' }, { status: 400 });
@@ -22,9 +22,10 @@ export async function POST(req: NextRequest) {
           full_name,
           company, 
           role, 
-          exchange_name: exchange_name || 'General Inquiry', 
+          exchange_name: exchange_name || (message ? 'Contact Form' : 'General Inquiry'), 
           audit_slug: audit_slug || 'contact-page', 
-          opt_in 
+          opt_in,
+          message: message || null
         }
       ]);
 
@@ -44,39 +45,62 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: 'CryptoFIX Auditor <system@send.opound.com>',
       to: 'navilla.bagga@gmail.com',
-      subject: `New CryptoFIX audit lead — ${exchange}`,
+      subject: message ? `New Opound Inquiry — ${full_name}` : `New CryptoFIX audit lead — ${exchange}`,
       text: `
+${message ? '--- MESSAGE START ---' : ''}
+${message || 'No message provided.'}
+${message ? '--- MESSAGE END ---' : ''}
+
 Name: ${full_name || 'N/A'}
 Email: ${email}
 Company: ${company || 'N/A'}
 Role: ${role || 'N/A'}
-Exchange: ${exchange}
-Audit Slug: ${audit_slug}
+Audit Slug: ${audit_slug || 'N/A'}
 Timestamp: ${timestamp}
-Opt-in for updates: ${opt_in ? 'Yes' : 'No'}
       `,
     });
 
     // 3. Send confirmation to user
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fix.opound.com';
-    const reportUrl = `${appUrl}/audit/${audit_slug}/report`;
+    if (message) {
+      // General Inquiry Thank You
+      await resend.emails.send({
+        from: 'Navilla Bagga <navilla@send.opound.com>',
+        to: email,
+        subject: `Thank you for your inquiry — Opound LLC`,
+        text: `
+Hi ${full_name || 'there'},
 
-    await resend.emails.send({
-      from: 'Navilla Bagga <navilla@send.opound.com>',
-      to: email,
-      subject: `Your CryptoFIX RoE report for ${exchange}`,
-      text: `
+Thanks for reaching out to Opound LLC. We've received your inquiry regarding "${message.substring(0, 50)}${message.length > 50 ? '...' : ''}" and will get back to you shortly.
+
+If you'd like to book a call immediately, you can do so here: https://calendly.com/navilla-bagga/30min
+
+Best regards,
+Navilla Bagga
+Opound LLC
+        `,
+      });
+    } else if (audit_slug && audit_slug !== 'contact-page') {
+      // Audit Report Confirmation
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fix.opound.com';
+      const reportUrl = `${appUrl}/audit/${audit_slug}/report`;
+
+      await resend.emails.send({
+        from: 'Navilla Bagga <navilla@send.opound.com>',
+        to: email,
+        subject: `Your CryptoFIX RoE report for ${exchange}`,
+        text: `
 Thanks ${full_name || ''} for using CryptoFIX Auditor.
 Your Rules of Engagement report for ${exchange} is ready.
 
 Score: ${score}/100 — ${grade}
 View report: ${reportUrl}
 
-If you'd like a custom institutional FIX implementation review or fractional product leadership engagement, reply to this email or book a call: https://calendly.com/navillabagga
+If you'd like a custom institutional FIX implementation review or fractional product leadership engagement, reply to this email or book a call: https://calendly.com/navilla-bagga/30min
 
 — Navilla Bagga, Opound LLC
-      `,
-    });
+        `,
+      });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
