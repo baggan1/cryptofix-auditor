@@ -28,25 +28,18 @@
       "earned": 8.5,
       "available": 15,
       "pct": 57
-    },
-    "tier5": {
-      "label": "DAWG FIX Extensions",
-      "earned": 0,
-      "available": 0,
-      "pct": 0,
-      "is_informational": true
     }
   },
   "compliance_sub_score": {
-    "total": 7,
+    "total": 9.5,
     "max": 15,
     "grade": "Partial compliance coverage",
     "tiers": {
       "tier4": {
         "label": "AML & Travel Rule",
-        "earned": 2,
+        "earned": 4.5,
         "available": 10,
-        "pct": 20
+        "pct": 45
       },
       "tier6": {
         "label": "Drop Copy — consolidated execution feed",
@@ -65,13 +58,12 @@
     "label": "Market Data Readiness",
     "audience": "Buy-side institutions, algo execution desks"
   },
-  "gap_count": 74,
+  "gap_count": 81,
   "gap_summary": [
     {
       "check_id": "T4_453",
-      "fix_tag": 453,
+      "fix_tag": "453",
       "field_name": "Parties Group",
-      "message_type": "35=8/AE/AR",
       "tier": 4,
       "status": "no_credit",
       "points_lost": 4,
@@ -81,7 +73,6 @@
       "check_id": "T3_AE_000",
       "fix_tag": "",
       "field_name": "TradeCaptureReport",
-      "message_type": "35=AE",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 2,
@@ -91,7 +82,6 @@
       "check_id": "T3_J_000",
       "fix_tag": "",
       "field_name": "AllocationInstruction",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 2,
@@ -101,17 +91,15 @@
       "check_id": "T4_WAL",
       "fix_tag": "803 / custom",
       "field_name": "Wallet address attribution — tag 803 (PartySubIDType)",
-      "message_type": "35=8/AE/AR",
       "tier": 4,
       "status": "no_credit",
       "points_lost": 2,
-      "evidence": "Message 35=8/AE not supported, so tag null is absent."
+      "evidence": "No wallet linkage mechanism documented in the FIX spec."
     },
     {
       "check_id": "T4_018",
-      "fix_tag": 18,
+      "fix_tag": "18",
       "field_name": "ExecInst",
-      "message_type": "35=D/8",
       "tier": 4,
       "status": "no_credit",
       "points_lost": 2,
@@ -121,7 +109,6 @@
       "check_id": "T1_Q_000",
       "fix_tag": "",
       "field_name": "DontKnowTrade",
-      "message_type": "35=Q",
       "tier": 1,
       "status": "no_credit",
       "points_lost": 1.5,
@@ -129,9 +116,8 @@
     },
     {
       "check_id": "T2_8_851",
-      "fix_tag": 851,
+      "fix_tag": "851",
       "field_name": "LastLiquidityInd",
-      "message_type": "35=8",
       "tier": 2,
       "status": "partial_credit",
       "points_lost": 1.5,
@@ -141,7 +127,6 @@
       "check_id": "T3_AR_000",
       "fix_tag": "",
       "field_name": "TradeCaptureReportAck — message documentation",
-      "message_type": "35=AR",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 1.5,
@@ -151,7 +136,6 @@
       "check_id": "T3_R_000",
       "fix_tag": "",
       "field_name": "RequestForQuote",
-      "message_type": "35=R",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 1.5,
@@ -161,7 +145,6 @@
       "check_id": "T3_S_000",
       "fix_tag": "",
       "field_name": "Quote",
-      "message_type": "35=S",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 1.5,
@@ -171,7 +154,6 @@
       "check_id": "T3_AJ_000",
       "fix_tag": "",
       "field_name": "QuoteResponse",
-      "message_type": "35=AJ",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 1.5,
@@ -181,7 +163,6 @@
       "check_id": "T3_P_000",
       "fix_tag": "",
       "field_name": "AllocationInstructionAck",
-      "message_type": "35=P",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 1,
@@ -189,9 +170,8 @@
     },
     {
       "check_id": "T3_P_070",
-      "fix_tag": 70,
+      "fix_tag": "70",
       "field_name": "AllocID",
-      "message_type": "35=P",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 1,
@@ -199,9 +179,8 @@
     },
     {
       "check_id": "T3_P_087",
-      "fix_tag": 87,
+      "fix_tag": "87",
       "field_name": "AllocStatus",
-      "message_type": "35=P",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 1,
@@ -209,9 +188,8 @@
     },
     {
       "check_id": "T3_AR_939",
-      "fix_tag": 939,
+      "fix_tag": "939",
       "field_name": "TrdRptStatus",
-      "message_type": "35=AR",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.8,
@@ -221,7 +199,6 @@
       "check_id": "T8_RR_000",
       "fix_tag": "",
       "field_name": "ResendRequest / Gap Fill",
-      "message_type": "35=2",
       "tier": 8,
       "status": "no_credit",
       "points_lost": 0.8,
@@ -231,7 +208,6 @@
       "check_id": "T8_RR_WIN",
       "fix_tag": "",
       "field_name": "Recovery Window",
-      "message_type": "35=2",
       "tier": 8,
       "status": "no_credit",
       "points_lost": 0.8,
@@ -239,9 +215,8 @@
     },
     {
       "check_id": "T3_AE_828",
-      "fix_tag": 828,
+      "fix_tag": "828",
       "field_name": "TrdType",
-      "message_type": "35=AE",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
@@ -249,9 +224,8 @@
     },
     {
       "check_id": "T3_AE_880",
-      "fix_tag": 880,
+      "fix_tag": "880",
       "field_name": "TrdMatchID",
-      "message_type": "35=AE",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
@@ -259,9 +233,8 @@
     },
     {
       "check_id": "T3_AE_017",
-      "fix_tag": 17,
+      "fix_tag": "17",
       "field_name": "ExecID",
-      "message_type": "35=AE",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
@@ -269,9 +242,8 @@
     },
     {
       "check_id": "T3_AE_055",
-      "fix_tag": 55,
+      "fix_tag": "55",
       "field_name": "Symbol",
-      "message_type": "35=AE",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
@@ -279,9 +251,8 @@
     },
     {
       "check_id": "T3_AE_552",
-      "fix_tag": 552,
+      "fix_tag": "552",
       "field_name": "NoSides",
-      "message_type": "35=AE",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
@@ -289,9 +260,8 @@
     },
     {
       "check_id": "T3_AE_054",
-      "fix_tag": 54,
+      "fix_tag": "54",
       "field_name": "Side",
-      "message_type": "35=AE",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
@@ -299,9 +269,8 @@
     },
     {
       "check_id": "T3_AE_032",
-      "fix_tag": 32,
+      "fix_tag": "32",
       "field_name": "LastQty",
-      "message_type": "35=AE",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
@@ -309,9 +278,8 @@
     },
     {
       "check_id": "T3_AE_031",
-      "fix_tag": 31,
+      "fix_tag": "31",
       "field_name": "LastPx",
-      "message_type": "35=AE",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.7,
@@ -319,9 +287,8 @@
     },
     {
       "check_id": "T3_J_070",
-      "fix_tag": 70,
+      "fix_tag": "70",
       "field_name": "AllocID",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -329,9 +296,8 @@
     },
     {
       "check_id": "T3_J_071",
-      "fix_tag": 71,
+      "fix_tag": "71",
       "field_name": "AllocTransType",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -339,9 +305,8 @@
     },
     {
       "check_id": "T3_J_626",
-      "fix_tag": 626,
+      "fix_tag": "626",
       "field_name": "AllocType",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -349,9 +314,8 @@
     },
     {
       "check_id": "T3_J_078",
-      "fix_tag": 78,
+      "fix_tag": "78",
       "field_name": "NoAllocs",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -359,9 +323,8 @@
     },
     {
       "check_id": "T3_J_079",
-      "fix_tag": 79,
+      "fix_tag": "79",
       "field_name": "AllocAccount",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -369,9 +332,8 @@
     },
     {
       "check_id": "T3_J_366",
-      "fix_tag": 366,
+      "fix_tag": "366",
       "field_name": "AllocPrice",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -379,9 +341,8 @@
     },
     {
       "check_id": "T3_J_080",
-      "fix_tag": 80,
+      "fix_tag": "80",
       "field_name": "AllocShares",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -389,9 +350,8 @@
     },
     {
       "check_id": "T3_J_153",
-      "fix_tag": 153,
+      "fix_tag": "153",
       "field_name": "AllocAvgPx",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -399,9 +359,8 @@
     },
     {
       "check_id": "T3_J_120",
-      "fix_tag": 120,
+      "fix_tag": "120",
       "field_name": "SettlCurrency",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -409,9 +368,8 @@
     },
     {
       "check_id": "T3_J_055",
-      "fix_tag": 55,
+      "fix_tag": "55",
       "field_name": "Symbol",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -419,9 +377,8 @@
     },
     {
       "check_id": "T3_J_054",
-      "fix_tag": 54,
+      "fix_tag": "54",
       "field_name": "Side",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -429,9 +386,8 @@
     },
     {
       "check_id": "T3_J_075",
-      "fix_tag": 75,
+      "fix_tag": "75",
       "field_name": "TradeDate",
-      "message_type": "35=J",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -439,9 +395,8 @@
     },
     {
       "check_id": "T3_S_131",
-      "fix_tag": 131,
+      "fix_tag": "131",
       "field_name": "QuoteReqID",
-      "message_type": "35=S",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -449,9 +404,8 @@
     },
     {
       "check_id": "T3_S_117",
-      "fix_tag": 117,
+      "fix_tag": "117",
       "field_name": "QuoteID",
-      "message_type": "35=S",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -459,9 +413,8 @@
     },
     {
       "check_id": "T3_S_055",
-      "fix_tag": 55,
+      "fix_tag": "55",
       "field_name": "Symbol",
-      "message_type": "35=S",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -469,9 +422,8 @@
     },
     {
       "check_id": "T3_S_132",
-      "fix_tag": 132,
+      "fix_tag": "132",
       "field_name": "BidPx",
-      "message_type": "35=S",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -479,9 +431,8 @@
     },
     {
       "check_id": "T3_S_133",
-      "fix_tag": 133,
+      "fix_tag": "133",
       "field_name": "OfferPx",
-      "message_type": "35=S",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -489,9 +440,8 @@
     },
     {
       "check_id": "T3_S_134",
-      "fix_tag": 134,
+      "fix_tag": "134",
       "field_name": "BidSize",
-      "message_type": "35=S",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -499,9 +449,8 @@
     },
     {
       "check_id": "T3_S_135",
-      "fix_tag": 135,
+      "fix_tag": "135",
       "field_name": "OfferSize",
-      "message_type": "35=S",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -509,9 +458,8 @@
     },
     {
       "check_id": "T3_AJ_693",
-      "fix_tag": 693,
+      "fix_tag": "693",
       "field_name": "QuoteRespID",
-      "message_type": "35=AJ",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -519,9 +467,8 @@
     },
     {
       "check_id": "T3_AJ_694",
-      "fix_tag": 694,
+      "fix_tag": "694",
       "field_name": "QuoteRespType",
-      "message_type": "35=AJ",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -529,9 +476,8 @@
     },
     {
       "check_id": "T3_AJ_054",
-      "fix_tag": 54,
+      "fix_tag": "54",
       "field_name": "Side",
-      "message_type": "35=AJ",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -539,9 +485,8 @@
     },
     {
       "check_id": "T3_AJ_055",
-      "fix_tag": 55,
+      "fix_tag": "55",
       "field_name": "Symbol",
-      "message_type": "35=AJ",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.6,
@@ -549,9 +494,8 @@
     },
     {
       "check_id": "T3_AR_880",
-      "fix_tag": 880,
+      "fix_tag": "880",
       "field_name": "TrdMatchID",
-      "message_type": "35=AR",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.5,
@@ -559,9 +503,8 @@
     },
     {
       "check_id": "T3_AR_751",
-      "fix_tag": 751,
+      "fix_tag": "751",
       "field_name": "TradeReportRejectReason",
-      "message_type": "35=AR",
       "tier": 3,
       "status": "no_credit",
       "points_lost": 0.5,
@@ -569,9 +512,8 @@
     },
     {
       "check_id": "T6_DC_797",
-      "fix_tag": 797,
+      "fix_tag": "797",
       "field_name": "CopyMsgIndicator",
-      "message_type": "35=8, 35=D, 35=G, 35=F, 35=9, 35=AE, 35=AR, 35=0, 35=H",
       "tier": 6,
       "status": "partial_credit",
       "points_lost": 0.5,
@@ -581,7 +523,6 @@
       "check_id": "T7_x_000",
       "fix_tag": "",
       "field_name": "Security List Request",
-      "message_type": "35=x",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.5,
@@ -591,7 +532,6 @@
       "check_id": "T7_h_000",
       "fix_tag": "",
       "field_name": "Trading Session Status",
-      "message_type": "35=h",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.5,
@@ -601,7 +541,6 @@
       "check_id": "T7_AI_000",
       "fix_tag": "",
       "field_name": "QuoteStatusReport — message documentation",
-      "message_type": "35=AI",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.5,
@@ -609,9 +548,17 @@
     },
     {
       "check_id": "T7_AI_297",
-      "fix_tag": 297,
+      "fix_tag": "297",
       "field_name": "QuoteStatus",
-      "message_type": "35=AI",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.5,
+      "evidence": null
+    },
+    {
+      "check_id": "T7_6_000",
+      "fix_tag": "",
+      "field_name": "IOI — message documentation",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.5,
@@ -621,17 +568,24 @@
       "check_id": "T7_Y_000",
       "fix_tag": "",
       "field_name": "Market Data Request Reject",
-      "message_type": "35=Y",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.4,
       "evidence": null
     },
     {
+      "check_id": "T7_Y_281",
+      "fix_tag": "281",
+      "field_name": "MDReqRejReason",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.4,
+      "evidence": "Message 35=Y not supported, so tag 281 is absent."
+    },
+    {
       "check_id": "T3_R_131",
-      "fix_tag": 131,
+      "fix_tag": "131",
       "field_name": "QuoteReqID",
-      "message_type": "35=R",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.4,
@@ -639,9 +593,8 @@
     },
     {
       "check_id": "T3_R_055",
-      "fix_tag": 55,
+      "fix_tag": "55",
       "field_name": "Symbol",
-      "message_type": "35=R",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.4,
@@ -649,9 +602,8 @@
     },
     {
       "check_id": "T3_R_038",
-      "fix_tag": 38,
+      "fix_tag": "38",
       "field_name": "OrderQty",
-      "message_type": "35=R",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.4,
@@ -659,9 +611,8 @@
     },
     {
       "check_id": "T3_R_054",
-      "fix_tag": 54,
+      "fix_tag": "54",
       "field_name": "Side",
-      "message_type": "35=R",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.4,
@@ -669,9 +620,8 @@
     },
     {
       "check_id": "T3_R_044",
-      "fix_tag": 44,
+      "fix_tag": "44",
       "field_name": "Price",
-      "message_type": "35=R",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.4,
@@ -679,29 +629,17 @@
     },
     {
       "check_id": "T3_R_528",
-      "fix_tag": 528,
+      "fix_tag": "528",
       "field_name": "OrderCapacity",
-      "message_type": "35=R",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.4,
       "evidence": "Message 35=R not supported, so tag 528 is absent."
     },
     {
-      "check_id": "T7_Y_281",
-      "fix_tag": 281,
-      "field_name": "MDReqRejReason",
-      "message_type": "35=Y",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": "Message 35=Y not supported, so tag 281 is absent."
-    },
-    {
       "check_id": "T1_Q_037",
-      "fix_tag": 37,
+      "fix_tag": "37",
       "field_name": "OrderID",
-      "message_type": "35=Q",
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.3,
@@ -709,9 +647,8 @@
     },
     {
       "check_id": "T1_Q_017",
-      "fix_tag": 17,
+      "fix_tag": "17",
       "field_name": "ExecID",
-      "message_type": "35=Q",
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.3,
@@ -719,9 +656,8 @@
     },
     {
       "check_id": "T1_Q_127",
-      "fix_tag": 127,
+      "fix_tag": "127",
       "field_name": "DKReason",
-      "message_type": "35=Q",
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.3,
@@ -729,9 +665,8 @@
     },
     {
       "check_id": "T1_Q_055",
-      "fix_tag": 55,
+      "fix_tag": "55",
       "field_name": "Symbol",
-      "message_type": "35=Q",
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.3,
@@ -739,9 +674,8 @@
     },
     {
       "check_id": "T1_Q_054",
-      "fix_tag": 54,
+      "fix_tag": "54",
       "field_name": "Side",
-      "message_type": "35=Q",
       "tier": 1,
       "status": "no_credit",
       "points_lost": 0.3,
@@ -749,9 +683,8 @@
     },
     {
       "check_id": "T8_REJ_TXT",
-      "fix_tag": 58,
+      "fix_tag": "58",
       "field_name": "Reject reason quality — tag 58 (Text) on rejects",
-      "message_type": "Rejects",
       "tier": 8,
       "status": "no_credit",
       "points_lost": 0.3,
@@ -759,9 +692,8 @@
     },
     {
       "check_id": "T7_x_559",
-      "fix_tag": 559,
+      "fix_tag": "559",
       "field_name": "SecurityListRequestType",
-      "message_type": "35=x",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.3,
@@ -769,9 +701,8 @@
     },
     {
       "check_id": "T7_x_263",
-      "fix_tag": 263,
+      "fix_tag": "263",
       "field_name": "SubscriptionRequestType",
-      "message_type": "35=x",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.3,
@@ -779,9 +710,8 @@
     },
     {
       "check_id": "T7_h_1682",
-      "fix_tag": 1682,
+      "fix_tag": "1682",
       "field_name": "MDSecurityTradingStatus",
-      "message_type": "35=h",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.3,
@@ -789,9 +719,8 @@
     },
     {
       "check_id": "T7_AI_131",
-      "fix_tag": 131,
+      "fix_tag": "131",
       "field_name": "QuoteReqID",
-      "message_type": "35=AI",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.3,
@@ -799,12 +728,65 @@
     },
     {
       "check_id": "T7_AI_117",
-      "fix_tag": 117,
+      "fix_tag": "117",
       "field_name": "QuoteID",
-      "message_type": "35=AI",
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.3,
+      "evidence": null
+    },
+    {
+      "check_id": "T7_6_023",
+      "fix_tag": "23",
+      "field_name": "IOITransType",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.3,
+      "evidence": null
+    },
+    {
+      "check_id": "T7_6_130",
+      "fix_tag": "130",
+      "field_name": "IOIQualifier",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.3,
+      "evidence": null
+    },
+    {
+      "check_id": "T7_6_055",
+      "fix_tag": "55",
+      "field_name": "Symbol",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.2,
+      "evidence": null
+    },
+    {
+      "check_id": "T7_6_054",
+      "fix_tag": "54",
+      "field_name": "Side",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.2,
+      "evidence": null
+    },
+    {
+      "check_id": "T7_6_027",
+      "fix_tag": "27",
+      "field_name": "IOIShares",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.2,
+      "evidence": null
+    },
+    {
+      "check_id": "T7_6_062",
+      "fix_tag": "62",
+      "field_name": "ValidUntilTime",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.2,
       "evidence": null
     }
   ],
@@ -817,12 +799,12 @@
       "message_name": "NewOrderSingle",
       "level": "message",
       "tier": 1,
-      "weight": 3,
       "status": "full_credit",
-      "points_earned": 3,
       "points_available": 3,
+      "points_earned": 3,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_D_011",
@@ -832,12 +814,12 @@
       "message_name": "NewOrderSingle",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 11 (ClOrdID) documented in 35=D table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_D_055",
@@ -847,12 +829,12 @@
       "message_name": "NewOrderSingle",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 55 (Symbol) documented in 35=D table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_D_054",
@@ -862,12 +844,12 @@
       "message_name": "NewOrderSingle",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 54 (Side) documented in 35=D table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_D_060",
@@ -877,12 +859,12 @@
       "message_name": "NewOrderSingle",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 60 (TransactTime) documented in 35=D table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_D_038",
@@ -892,12 +874,12 @@
       "message_name": "NewOrderSingle",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 38 (OrderQty) documented in 35=D table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_D_040",
@@ -907,12 +889,12 @@
       "message_name": "NewOrderSingle",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 40 (OrdType) documented in 35=D table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_D_044",
@@ -922,12 +904,12 @@
       "message_name": "NewOrderSingle",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 44 (Price) documented in 35=D table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_D_167",
@@ -937,12 +919,12 @@
       "message_name": "NewOrderSingle",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 167 (SecurityType) documented in 35=D table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_8_000",
@@ -952,12 +934,12 @@
       "message_name": "ExecutionReport",
       "level": "message",
       "tier": 1,
-      "weight": 2,
       "status": "full_credit",
-      "points_earned": 2,
       "points_available": 2,
+      "points_earned": 2,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_8_037",
@@ -967,12 +949,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 37 (OrderID) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_8_017",
@@ -982,12 +964,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 17 (ExecID) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_8_150",
@@ -997,12 +979,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 150 (ExecType) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_8_039",
@@ -1012,12 +994,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 39 (OrdStatus) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_8_055",
@@ -1027,12 +1009,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 55 (Symbol) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_8_054",
@@ -1042,12 +1024,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 54 (Side) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_8_151",
@@ -1057,12 +1039,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 151 (LeavesQty) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_8_014",
@@ -1072,12 +1054,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 14 (CumQty) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_8_044",
@@ -1087,12 +1069,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 44 (Price) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_F_000",
@@ -1102,12 +1084,12 @@
       "message_name": "OrderCancelRequest",
       "level": "message",
       "tier": 1,
-      "weight": 2,
       "status": "full_credit",
-      "points_earned": 2,
       "points_available": 2,
+      "points_earned": 2,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_F_011",
@@ -1117,12 +1099,12 @@
       "message_name": "OrderCancelRequest",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 11 (ClOrdID) documented in 35=F table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_F_041",
@@ -1132,12 +1114,12 @@
       "message_name": "OrderCancelRequest",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 41 (OrigClOrdID) documented in 35=F table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_F_055",
@@ -1147,12 +1129,12 @@
       "message_name": "OrderCancelRequest",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 55 (Symbol) documented in 35=F table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_F_054",
@@ -1162,12 +1144,12 @@
       "message_name": "OrderCancelRequest",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 54 (Side) documented in 35=F table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_F_060",
@@ -1177,12 +1159,12 @@
       "message_name": "OrderCancelRequest",
       "level": "tag",
       "tier": 1,
-      "weight": 0.7,
       "status": "full_credit",
-      "points_earned": 0.7,
       "points_available": 0.7,
+      "points_earned": 0.7,
       "evidence": "Tag 60 (TransactTime) documented in 35=F table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_G_000",
@@ -1192,12 +1174,12 @@
       "message_name": "OrderCancelReplaceRequest",
       "level": "message",
       "tier": 1,
-      "weight": 2,
       "status": "full_credit",
-      "points_earned": 2,
       "points_available": 2,
+      "points_earned": 2,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_G_011",
@@ -1207,12 +1189,12 @@
       "message_name": "OrderCancelReplaceRequest",
       "level": "tag",
       "tier": 1,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Tag 11 (ClOrdID) documented in 35=G table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_G_041",
@@ -1222,12 +1204,12 @@
       "message_name": "OrderCancelReplaceRequest",
       "level": "tag",
       "tier": 1,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Tag 41 (OrigClOrdID) documented in 35=G table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_G_055",
@@ -1237,12 +1219,12 @@
       "message_name": "OrderCancelReplaceRequest",
       "level": "tag",
       "tier": 1,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Tag 55 (Symbol) documented in 35=G table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_G_054",
@@ -1252,12 +1234,12 @@
       "message_name": "OrderCancelReplaceRequest",
       "level": "tag",
       "tier": 1,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Tag 54 (Side) documented in 35=G table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_G_060",
@@ -1267,12 +1249,12 @@
       "message_name": "OrderCancelReplaceRequest",
       "level": "tag",
       "tier": 1,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Tag 60 (TransactTime) documented in 35=G table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_UC_000",
@@ -1282,12 +1264,12 @@
       "message_name": "ExecutionReport (Unsolicited)",
       "level": "message",
       "tier": 1,
-      "weight": 1.5,
       "status": "full_credit",
-      "points_earned": 1.5,
       "points_available": 1.5,
+      "points_earned": 1.5,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_UC_150",
@@ -1297,12 +1279,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 1,
-      "weight": 1.5,
       "status": "full_credit",
-      "points_earned": 1.5,
       "points_available": 1.5,
+      "points_earned": 1.5,
       "evidence": "Tag 150 (ExecType=4) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_9_000",
@@ -1312,12 +1294,12 @@
       "message_name": "OrderCancelReject",
       "level": "message",
       "tier": 1,
-      "weight": 2,
       "status": "full_credit",
-      "points_earned": 2,
       "points_available": 2,
+      "points_earned": 2,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_9_037",
@@ -1327,12 +1309,12 @@
       "message_name": "OrderCancelReject",
       "level": "tag",
       "tier": 1,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Tag 37 (OrderID) documented in 35=9 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_9_011",
@@ -1342,12 +1324,12 @@
       "message_name": "OrderCancelReject",
       "level": "tag",
       "tier": 1,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Tag 11 (ClOrdID) documented in 35=9 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_9_039",
@@ -1357,12 +1339,12 @@
       "message_name": "OrderCancelReject",
       "level": "tag",
       "tier": 1,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Tag 39 (OrdStatus) documented in 35=9 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_9_434",
@@ -1372,12 +1354,12 @@
       "message_name": "OrderCancelReject",
       "level": "tag",
       "tier": 1,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Tag 434 (CxlRejResponseTo) documented in 35=9 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_Q_000",
@@ -1387,12 +1369,12 @@
       "message_name": "DontKnowTrade",
       "level": "message",
       "tier": 1,
-      "weight": 1.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 1.5,
+      "points_earned": 0,
       "evidence": "Message not found/documented in FIX 5.0 spec.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_Q_037",
@@ -1402,12 +1384,12 @@
       "message_name": "DontKnowTrade",
       "level": "tag",
       "tier": 1,
-      "weight": 0.3,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.3,
+      "points_earned": 0,
       "evidence": "Message 35=Q not supported, so tag 37 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_Q_017",
@@ -1417,12 +1399,12 @@
       "message_name": "DontKnowTrade",
       "level": "tag",
       "tier": 1,
-      "weight": 0.3,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.3,
+      "points_earned": 0,
       "evidence": "Message 35=Q not supported, so tag 17 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_Q_127",
@@ -1432,12 +1414,12 @@
       "message_name": "DontKnowTrade",
       "level": "tag",
       "tier": 1,
-      "weight": 0.3,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.3,
+      "points_earned": 0,
       "evidence": "Message 35=Q not supported, so tag 127 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_Q_055",
@@ -1447,12 +1429,12 @@
       "message_name": "DontKnowTrade",
       "level": "tag",
       "tier": 1,
-      "weight": 0.3,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.3,
+      "points_earned": 0,
       "evidence": "Message 35=Q not supported, so tag 55 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T1_Q_054",
@@ -1462,12 +1444,12 @@
       "message_name": "DontKnowTrade",
       "level": "tag",
       "tier": 1,
-      "weight": 0.3,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.3,
+      "points_earned": 0,
       "evidence": "Message 35=Q not supported, so tag 54 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T2_8_000",
@@ -1477,12 +1459,12 @@
       "message_name": "ExecutionReport",
       "level": "message",
       "tier": 2,
-      "weight": 1,
       "status": "full_credit",
-      "points_earned": 1,
       "points_available": 1,
+      "points_earned": 1,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T2_8_029",
@@ -1492,12 +1474,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 2,
-      "weight": 5,
       "status": "full_credit",
-      "points_earned": 5,
       "points_available": 5,
+      "points_earned": 5,
       "evidence": "Tag 29 (LastCapacity) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T2_8_030",
@@ -1507,12 +1489,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 2,
-      "weight": 4,
       "status": "full_credit",
-      "points_earned": 4,
       "points_available": 4,
+      "points_earned": 4,
       "evidence": "Tag 30 (LastMkt) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T2_8_528",
@@ -1522,12 +1504,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 2,
-      "weight": 4,
       "status": "full_credit",
-      "points_earned": 4,
       "points_available": 4,
+      "points_earned": 4,
       "evidence": "Tag 528 (OrderCapacity) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T2_8_031",
@@ -1537,12 +1519,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 2,
-      "weight": 3,
       "status": "full_credit",
-      "points_earned": 3,
       "points_available": 3,
+      "points_earned": 3,
       "evidence": "Tag 31 (LastPx) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T2_8_032",
@@ -1552,12 +1534,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 2,
-      "weight": 3,
       "status": "full_credit",
-      "points_earned": 3,
       "points_available": 3,
+      "points_earned": 3,
       "evidence": "Tag 32 (LastQty) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T2_8_060",
@@ -1567,12 +1549,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 2,
-      "weight": 3,
       "status": "full_credit",
-      "points_earned": 3,
       "points_available": 3,
+      "points_earned": 3,
       "evidence": "Tag 60 (TransactTime) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T2_8_851",
@@ -1582,12 +1564,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 2,
-      "weight": 3,
       "status": "partial_credit",
-      "points_earned": 1.5,
       "points_available": 3,
+      "points_earned": 1.5,
       "evidence": "Uses custom tag 1057 AggressorIndicator (Y=Taker, N=Maker) instead of standard 851.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T2_8_375",
@@ -1597,12 +1579,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 2,
-      "weight": 2,
       "status": "full_credit",
-      "points_earned": 2,
       "points_available": 2,
+      "points_earned": 2,
       "evidence": "Tag 375 (ContraTrader) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AE_000",
@@ -1612,12 +1594,12 @@
       "message_name": "TradeCaptureReport",
       "level": "message",
       "tier": 3,
-      "weight": 2,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 2,
+      "points_earned": 0,
       "evidence": "Message not found/documented in FIX 5.0 spec.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AE_828",
@@ -1627,12 +1609,12 @@
       "message_name": "TradeCaptureReport",
       "level": "tag",
       "tier": 3,
-      "weight": 0.7,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.7,
+      "points_earned": 0,
       "evidence": "Message 35=AE not supported, so tag 828 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AE_880",
@@ -1642,12 +1624,12 @@
       "message_name": "TradeCaptureReport",
       "level": "tag",
       "tier": 3,
-      "weight": 0.7,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.7,
+      "points_earned": 0,
       "evidence": "Message 35=AE not supported, so tag 880 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AE_017",
@@ -1657,12 +1639,12 @@
       "message_name": "TradeCaptureReport",
       "level": "tag",
       "tier": 3,
-      "weight": 0.7,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.7,
+      "points_earned": 0,
       "evidence": "Message 35=AE not supported, so tag 17 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AE_055",
@@ -1672,12 +1654,12 @@
       "message_name": "TradeCaptureReport",
       "level": "tag",
       "tier": 3,
-      "weight": 0.7,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.7,
+      "points_earned": 0,
       "evidence": "Message 35=AE not supported, so tag 55 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AE_552",
@@ -1687,12 +1669,12 @@
       "message_name": "TradeCaptureReport",
       "level": "tag",
       "tier": 3,
-      "weight": 0.7,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.7,
+      "points_earned": 0,
       "evidence": "Message 35=AE not supported, so tag 552 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AE_054",
@@ -1702,12 +1684,12 @@
       "message_name": "TradeCaptureReport",
       "level": "tag",
       "tier": 3,
-      "weight": 0.7,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.7,
+      "points_earned": 0,
       "evidence": "Message 35=AE not supported, so tag 54 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AE_032",
@@ -1717,12 +1699,12 @@
       "message_name": "TradeCaptureReport",
       "level": "tag",
       "tier": 3,
-      "weight": 0.7,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.7,
+      "points_earned": 0,
       "evidence": "Message 35=AE not supported, so tag 32 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AE_031",
@@ -1732,12 +1714,12 @@
       "message_name": "TradeCaptureReport",
       "level": "tag",
       "tier": 3,
-      "weight": 0.7,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.7,
+      "points_earned": 0,
       "evidence": "Message 35=AE not supported, so tag 31 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AR_000",
@@ -1747,12 +1729,12 @@
       "message_name": "TradeCaptureReportAck",
       "level": "message",
       "tier": 3,
-      "weight": 1.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 1.5,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AR_880",
@@ -1762,12 +1744,12 @@
       "message_name": "TradeCaptureReportAck",
       "level": "tag",
       "tier": 3,
-      "weight": 0.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.5,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AR_939",
@@ -1777,12 +1759,12 @@
       "message_name": "TradeCaptureReportAck",
       "level": "tag",
       "tier": 3,
-      "weight": 0.75,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.75,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AR_751",
@@ -1792,12 +1774,12 @@
       "message_name": "TradeCaptureReportAck",
       "level": "tag",
       "tier": 3,
-      "weight": 0.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.5,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_000",
@@ -1807,12 +1789,12 @@
       "message_name": "AllocationInstruction",
       "level": "message",
       "tier": 3,
-      "weight": 2,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 2,
+      "points_earned": 0,
       "evidence": "Message not found/documented in FIX 5.0 spec.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_070",
@@ -1822,12 +1804,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 70 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_071",
@@ -1837,12 +1819,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 71 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_626",
@@ -1852,12 +1834,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 626 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_078",
@@ -1867,12 +1849,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 78 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_079",
@@ -1882,12 +1864,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 79 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_366",
@@ -1897,12 +1879,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 366 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_080",
@@ -1912,12 +1894,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 80 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_153",
@@ -1927,12 +1909,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 153 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_120",
@@ -1942,12 +1924,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 120 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_055",
@@ -1957,12 +1939,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 55 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_054",
@@ -1972,12 +1954,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 54 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_J_075",
@@ -1987,12 +1969,12 @@
       "message_name": "AllocationInstruction",
       "level": "tag",
       "tier": 3,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=J not supported, so tag 75 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_P_000",
@@ -2002,12 +1984,12 @@
       "message_name": "AllocationInstructionAck",
       "level": "message",
       "tier": 3,
-      "weight": 1,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 1,
+      "points_earned": 0,
       "evidence": "Message not found/documented in FIX 5.0 spec.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_P_070",
@@ -2017,12 +1999,12 @@
       "message_name": "AllocationInstructionAck",
       "level": "tag",
       "tier": 3,
-      "weight": 1,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 1,
+      "points_earned": 0,
       "evidence": "Message 35=P not supported, so tag 70 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_P_087",
@@ -2032,12 +2014,12 @@
       "message_name": "AllocationInstructionAck",
       "level": "tag",
       "tier": 3,
-      "weight": 1,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 1,
+      "points_earned": 0,
       "evidence": "Message 35=P not supported, so tag 87 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_HDR_000",
@@ -2047,12 +2029,12 @@
       "message_name": "Standard Header",
       "level": "message",
       "tier": 8,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Standard Header documented (8, 49, 56, 34, 52).",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_HDR_008",
@@ -2062,12 +2044,12 @@
       "message_name": "Standard Header",
       "level": "tag",
       "tier": 8,
-      "weight": 0.25,
       "status": "full_credit",
-      "points_earned": 0.3,
       "points_available": 0.25,
+      "points_earned": 0.25,
       "evidence": "Tag 8 documented in Standard Header.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_HDR_049",
@@ -2077,12 +2059,12 @@
       "message_name": "Standard Header",
       "level": "tag",
       "tier": 8,
-      "weight": 0.25,
       "status": "full_credit",
-      "points_earned": 0.3,
       "points_available": 0.25,
+      "points_earned": 0.25,
       "evidence": "Tag 49 documented in Standard Header.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_HDR_056",
@@ -2092,12 +2074,12 @@
       "message_name": "Standard Header",
       "level": "tag",
       "tier": 8,
-      "weight": 0.25,
       "status": "full_credit",
-      "points_earned": 0.3,
       "points_available": 0.25,
+      "points_earned": 0.25,
       "evidence": "Tag 56 documented in Standard Header.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_HDR_052",
@@ -2107,12 +2089,12 @@
       "message_name": "Standard Header",
       "level": "tag",
       "tier": 8,
-      "weight": 0.25,
       "status": "full_credit",
-      "points_earned": 0.3,
       "points_available": 0.25,
+      "points_earned": 0.25,
       "evidence": "Tag 52 documented in Standard Header.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_A_000",
@@ -2122,12 +2104,12 @@
       "message_name": "Logon",
       "level": "message",
       "tier": 8,
-      "weight": 1,
       "status": "full_credit",
-      "points_earned": 1,
       "points_available": 1,
+      "points_earned": 1,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_A_098",
@@ -2137,12 +2119,12 @@
       "message_name": "Logon",
       "level": "tag",
       "tier": 8,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Tag 98 (EncryptMethod) documented in 35=A table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_A_108",
@@ -2152,12 +2134,12 @@
       "message_name": "Logon",
       "level": "tag",
       "tier": 8,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Tag 108 (HeartBtInt) documented in 35=A table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_A_141",
@@ -2167,12 +2149,12 @@
       "message_name": "Logon",
       "level": "tag",
       "tier": 8,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "ResetSeqNumFlag (141) required and documented for fresh sessions.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_A_553",
@@ -2182,12 +2164,12 @@
       "message_name": "Logon",
       "level": "tag",
       "tier": 8,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Tag 553 (Username) documented in 35=A table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_A_554",
@@ -2197,12 +2179,12 @@
       "message_name": "Logon",
       "level": "tag",
       "tier": 8,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Tag 554 (Password) documented in 35=A table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_HB_000",
@@ -2212,12 +2194,12 @@
       "message_name": "Heartbeat",
       "level": "message",
       "tier": 8,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_HB_COD",
@@ -2227,12 +2209,12 @@
       "message_name": "Heartbeat",
       "level": "message",
       "tier": 8,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Cancel-on-Disconnect behavior documented and configurable.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_RR_000",
@@ -2242,12 +2224,12 @@
       "message_name": "ResendRequest / Gap Fill",
       "level": "message",
       "tier": 8,
-      "weight": 0.75,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.75,
+      "points_earned": 0,
       "evidence": "Resend Requests (35=2) not supported on Coinbase FIX 5.0. Fresh sessions expected.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_RR_WIN",
@@ -2257,12 +2239,12 @@
       "message_name": "ResendRequest / Gap Fill",
       "level": "message",
       "tier": 8,
-      "weight": 0.75,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.75,
+      "points_earned": 0,
       "evidence": "Resend Requests (35=2) not supported on Coinbase FIX 5.0. Fresh sessions expected.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_LO_000",
@@ -2272,12 +2254,12 @@
       "message_name": "Logout",
       "level": "message",
       "tier": 8,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_LO_058",
@@ -2287,12 +2269,12 @@
       "message_name": "Logout",
       "level": "tag",
       "tier": 8,
-      "weight": 0.35,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.35,
+      "points_earned": 0.35,
       "evidence": "Tag 58 (Text) documented in 35=5 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_REJ_3_000",
@@ -2302,12 +2284,12 @@
       "message_name": "Session Reject",
       "level": "message",
       "tier": 8,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_REJ_j_000",
@@ -2317,12 +2299,12 @@
       "message_name": "Business Message Reject",
       "level": "message",
       "tier": 8,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_REJ_TXT",
@@ -2332,12 +2314,12 @@
       "message_name": "Reject Reason Quality",
       "level": "message",
       "tier": 8,
-      "weight": 0.25,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.25,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_SR_000",
@@ -2347,12 +2329,12 @@
       "message_name": "Sequence Reset",
       "level": "message",
       "tier": 8,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported as per FIX 5.0 spec for Coinbase Exchange.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T8_SR_123",
@@ -2362,12 +2344,12 @@
       "message_name": "Sequence Reset",
       "level": "tag",
       "tier": 8,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Tag 123 (GapFillFlag) documented in 35=4 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T4_453",
@@ -2377,12 +2359,12 @@
       "message_name": "ExecReport, TCR, or TCR Ack",
       "level": "tag",
       "tier": 4,
-      "weight": 4,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 4,
+      "points_earned": 0,
       "evidence": "Message 35=8/AE not supported, so tag 453 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T4_WAL",
@@ -2392,12 +2374,12 @@
       "message_name": "ExecReport, TCR, or TCR Ack",
       "level": "tag",
       "tier": 4,
-      "weight": 2,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 2,
-      "evidence": "Message 35=8/AE not supported, so tag null is absent.",
-      "asset_class_limitation": null
+      "points_earned": 0,
+      "evidence": "No wallet linkage mechanism documented in the FIX spec.",
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T4_017",
@@ -2407,12 +2389,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 4,
-      "weight": 2,
       "status": "full_credit",
-      "points_earned": 2,
       "points_available": 2,
+      "points_earned": 2,
       "evidence": "Tag 17 (ExecID Uniqueness) documented in 35=8 table.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T4_018",
@@ -2422,12 +2404,42 @@
       "message_name": "NOS or ExecReport",
       "level": "tag",
       "tier": 4,
-      "weight": 2,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 2,
+      "points_earned": 0,
       "evidence": "Message 35=D/8 not supported, so tag 18 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
+    },
+    {
+      "check_id": "T4_SMP_000",
+      "fix_tag": "",
+      "field_name": "SelfMatchPrevention (SMP) — order entry context",
+      "message_type": "35=D",
+      "message_name": "SelfMatchPrevention — message context",
+      "level": "message",
+      "tier": 4,
+      "status": "full_credit",
+      "points_available": 1.5,
+      "points_earned": 1.5,
+      "evidence": "SMP supported via tag 7928.",
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
+    },
+    {
+      "check_id": "T4_SMP_7928",
+      "fix_tag": "7928",
+      "field_name": "SelfMatchPreventionID",
+      "message_type": "35=D",
+      "message_name": "SelfMatchPrevention — message context",
+      "level": "tag",
+      "tier": 4,
+      "status": "full_credit",
+      "points_available": 1,
+      "points_earned": 1,
+      "evidence": "SelfMatchPrevention (7928) supported with cancel-aggressor, cancel-resting, and cancel-both modes.",
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_000",
@@ -2437,12 +2449,12 @@
       "message_name": "Logon (Drop Copy)",
       "level": "message",
       "tier": 6,
-      "weight": 1.5,
       "status": "full_credit",
-      "points_earned": 1.5,
       "points_available": 1.5,
+      "points_earned": 1.5,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_9406",
@@ -2452,12 +2464,12 @@
       "message_name": "Logon",
       "level": "tag",
       "tier": 6,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_108",
@@ -2467,12 +2479,12 @@
       "message_name": "Logon",
       "level": "tag",
       "tier": 6,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_141",
@@ -2482,12 +2494,12 @@
       "message_name": "Logon",
       "level": "tag",
       "tier": 6,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_8_000",
@@ -2497,12 +2509,12 @@
       "message_name": "ExecutionReport (Drop Copy)",
       "level": "message",
       "tier": 6,
-      "weight": 2,
       "status": "full_credit",
-      "points_earned": 2,
       "points_available": 2,
+      "points_earned": 2,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_8_017",
@@ -2512,12 +2524,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 6,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_8_150",
@@ -2527,12 +2539,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 6,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_8_039",
@@ -2542,12 +2554,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 6,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_8_011",
@@ -2557,12 +2569,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 6,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_8_032",
@@ -2572,12 +2584,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 6,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_8_031",
@@ -2587,12 +2599,12 @@
       "message_name": "ExecutionReport",
       "level": "tag",
       "tier": 6,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_CONN",
@@ -2602,12 +2614,12 @@
       "message_name": "Connectivity",
       "level": "tag",
       "tier": 6,
-      "weight": 1,
       "status": "full_credit",
-      "points_earned": 1,
       "points_available": 1,
+      "points_earned": 1,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_SCOPE",
@@ -2617,12 +2629,12 @@
       "message_name": "Scope",
       "level": "tag",
       "tier": 6,
-      "weight": 1,
       "status": "full_credit",
-      "points_earned": 1,
       "points_available": 1,
+      "points_earned": 1,
       "evidence": "Supported on dedicated Drop Copy port 6122.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T6_DC_797",
@@ -2632,12 +2644,12 @@
       "message_name": "CopyMsgIndicator — drop copy flag on FIX messages",
       "level": "tag",
       "tier": 6,
-      "weight": 1,
       "status": "partial_credit",
-      "points_earned": 0.5,
       "points_available": 1,
+      "points_earned": 0.5,
       "evidence": "Uses session-level DropCopyFlag (9406) instead of per-message CopyMsgIndicator (797).",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_V_000",
@@ -2647,12 +2659,12 @@
       "message_name": "Market Data Request",
       "level": "message",
       "tier": 7,
-      "weight": 0.75,
       "status": "full_credit",
-      "points_earned": 0.8,
       "points_available": 0.75,
+      "points_earned": 0.75,
       "evidence": "Market Data tag null documented for 35=V.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_V_262",
@@ -2662,12 +2674,12 @@
       "message_name": "Market Data Request",
       "level": "tag",
       "tier": 7,
-      "weight": 0.41,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.41,
+      "points_earned": 0.41,
       "evidence": "Market Data tag 262 documented for 35=V.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_V_263",
@@ -2677,12 +2689,12 @@
       "message_name": "Market Data Request",
       "level": "tag",
       "tier": 7,
-      "weight": 0.41,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.41,
+      "points_earned": 0.41,
       "evidence": "Market Data tag 263 documented for 35=V.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_V_146",
@@ -2692,12 +2704,12 @@
       "message_name": "Market Data Request",
       "level": "tag",
       "tier": 7,
-      "weight": 0.41,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.41,
+      "points_earned": 0.41,
       "evidence": "Market Data tag 146 documented for 35=V.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_V_055",
@@ -2707,12 +2719,12 @@
       "message_name": "Market Data Request",
       "level": "tag",
       "tier": 7,
-      "weight": 0.41,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.41,
+      "points_earned": 0.41,
       "evidence": "Market Data tag 55 documented for 35=V.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_W_000",
@@ -2722,12 +2734,12 @@
       "message_name": "Market Data Snapshot Full Refresh",
       "level": "message",
       "tier": 7,
-      "weight": 1,
       "status": "full_credit",
-      "points_earned": 1,
       "points_available": 1,
+      "points_earned": 1,
       "evidence": "Market Data tag null documented for 35=W.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_W_262",
@@ -2737,12 +2749,12 @@
       "message_name": "Market Data Snapshot Full Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Market Data tag 262 documented for 35=W.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_W_268",
@@ -2752,12 +2764,12 @@
       "message_name": "Market Data Snapshot Full Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Market Data tag 268 documented for 35=W.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_W_269",
@@ -2767,12 +2779,12 @@
       "message_name": "Market Data Snapshot Full Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Market Data tag 269 documented for 35=W.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_W_270",
@@ -2782,12 +2794,12 @@
       "message_name": "Market Data Snapshot Full Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Market Data tag 270 documented for 35=W.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_W_271",
@@ -2797,12 +2809,12 @@
       "message_name": "Market Data Snapshot Full Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.5,
       "status": "full_credit",
-      "points_earned": 0.5,
       "points_available": 0.5,
+      "points_earned": 0.5,
       "evidence": "Market Data tag 271 documented for 35=W.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_X_000",
@@ -2812,12 +2824,12 @@
       "message_name": "Market Data Incremental Refresh",
       "level": "message",
       "tier": 7,
-      "weight": 1,
       "status": "full_credit",
-      "points_earned": 1,
       "points_available": 1,
+      "points_earned": 1,
       "evidence": "Market Data tag null documented for 35=X.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_X_262",
@@ -2827,12 +2839,12 @@
       "message_name": "Market Data Incremental Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Market Data tag 262 documented for 35=X.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_X_279",
@@ -2842,12 +2854,12 @@
       "message_name": "Market Data Incremental Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Market Data tag 279 documented for 35=X.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_X_269",
@@ -2857,12 +2869,12 @@
       "message_name": "Market Data Incremental Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Market Data tag 269 documented for 35=X.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_X_270",
@@ -2872,12 +2884,12 @@
       "message_name": "Market Data Incremental Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Market Data tag 270 documented for 35=X.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_X_271",
@@ -2887,12 +2899,12 @@
       "message_name": "Market Data Incremental Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Market Data tag 271 documented for 35=X.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_X_278",
@@ -2902,12 +2914,12 @@
       "message_name": "Market Data Incremental Refresh",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "full_credit",
-      "points_earned": 0.4,
       "points_available": 0.4,
+      "points_earned": 0.4,
       "evidence": "Market Data tag 278 documented for 35=X.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_Y_000",
@@ -2917,12 +2929,12 @@
       "message_name": "Market Data Request Reject",
       "level": "message",
       "tier": 7,
-      "weight": 0.4,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.4,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_Y_281",
@@ -2932,12 +2944,12 @@
       "message_name": "Market Data Request Reject",
       "level": "tag",
       "tier": 7,
-      "weight": 0.35,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.35,
+      "points_earned": 0,
       "evidence": "Message 35=Y not supported, so tag 281 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_x_000",
@@ -2947,12 +2959,12 @@
       "message_name": "Security List Request",
       "level": "message",
       "tier": 7,
-      "weight": 0.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.5,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_x_559",
@@ -2962,12 +2974,12 @@
       "message_name": "Security List Request",
       "level": "tag",
       "tier": 7,
-      "weight": 0.25,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.25,
+      "points_earned": 0,
       "evidence": "Message 35=x not supported, so tag 559 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_x_263",
@@ -2977,12 +2989,12 @@
       "message_name": "Security List Request",
       "level": "tag",
       "tier": 7,
-      "weight": 0.25,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.25,
+      "points_earned": 0,
       "evidence": "Message 35=x not supported, so tag 263 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_h_000",
@@ -2992,12 +3004,12 @@
       "message_name": "Trading Session Status",
       "level": "message",
       "tier": 7,
-      "weight": 0.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.5,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_h_1682",
@@ -3007,12 +3019,12 @@
       "message_name": "Trading Session Status",
       "level": "tag",
       "tier": 7,
-      "weight": 0.25,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.25,
+      "points_earned": 0,
       "evidence": "Message 35=h not supported, so tag 1682 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_R_000",
@@ -3022,12 +3034,12 @@
       "message_name": "RequestForQuote",
       "level": "message",
       "tier": 7,
-      "weight": 1.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 1.5,
+      "points_earned": 0,
       "evidence": "Message not found/documented in FIX 5.0 spec.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_R_131",
@@ -3037,12 +3049,12 @@
       "message_name": "RequestForQuote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.4,
+      "points_earned": 0,
       "evidence": "Message 35=R not supported, so tag 131 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_R_055",
@@ -3052,12 +3064,12 @@
       "message_name": "RequestForQuote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.4,
+      "points_earned": 0,
       "evidence": "Message 35=R not supported, so tag 55 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_R_038",
@@ -3067,12 +3079,12 @@
       "message_name": "RequestForQuote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.4,
+      "points_earned": 0,
       "evidence": "Message 35=R not supported, so tag 38 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_R_054",
@@ -3082,12 +3094,12 @@
       "message_name": "RequestForQuote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.4,
+      "points_earned": 0,
       "evidence": "Message 35=R not supported, so tag 54 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_R_044",
@@ -3097,12 +3109,12 @@
       "message_name": "RequestForQuote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.4,
+      "points_earned": 0,
       "evidence": "Message 35=R not supported, so tag 44 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_R_528",
@@ -3112,12 +3124,12 @@
       "message_name": "RequestForQuote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.4,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.4,
+      "points_earned": 0,
       "evidence": "Message 35=R not supported, so tag 528 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_S_000",
@@ -3127,12 +3139,12 @@
       "message_name": "Quote",
       "level": "message",
       "tier": 7,
-      "weight": 1.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 1.5,
+      "points_earned": 0,
       "evidence": "Message not found/documented in FIX 5.0 spec.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_S_131",
@@ -3142,12 +3154,12 @@
       "message_name": "Quote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=S not supported, so tag 131 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_S_117",
@@ -3157,12 +3169,12 @@
       "message_name": "Quote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=S not supported, so tag 117 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_S_055",
@@ -3172,12 +3184,12 @@
       "message_name": "Quote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=S not supported, so tag 55 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_S_132",
@@ -3187,12 +3199,12 @@
       "message_name": "Quote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=S not supported, so tag 132 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_S_133",
@@ -3202,12 +3214,12 @@
       "message_name": "Quote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=S not supported, so tag 133 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_S_134",
@@ -3217,12 +3229,12 @@
       "message_name": "Quote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=S not supported, so tag 134 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_S_135",
@@ -3232,12 +3244,12 @@
       "message_name": "Quote",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=S not supported, so tag 135 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AJ_000",
@@ -3247,12 +3259,12 @@
       "message_name": "QuoteResponse",
       "level": "message",
       "tier": 7,
-      "weight": 1.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 1.5,
+      "points_earned": 0,
       "evidence": "Message not found/documented in FIX 5.0 spec.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AJ_693",
@@ -3262,12 +3274,12 @@
       "message_name": "QuoteResponse",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=AJ not supported, so tag 693 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AJ_694",
@@ -3277,12 +3289,12 @@
       "message_name": "QuoteResponse",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=AJ not supported, so tag 694 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AJ_054",
@@ -3292,12 +3304,12 @@
       "message_name": "QuoteResponse",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=AJ not supported, so tag 54 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T3_AJ_055",
@@ -3307,12 +3319,12 @@
       "message_name": "QuoteResponse",
       "level": "tag",
       "tier": 7,
-      "weight": 0.6,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.6,
+      "points_earned": 0,
       "evidence": "Message 35=AJ not supported, so tag 55 is absent.",
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_AI_000",
@@ -3322,12 +3334,12 @@
       "message_name": "QuoteStatusReport",
       "level": "message",
       "tier": 7,
-      "weight": 0.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.5,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_AI_131",
@@ -3337,12 +3349,12 @@
       "message_name": "QuoteStatusReport",
       "level": "tag",
       "tier": 7,
-      "weight": 0.25,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.25,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_AI_117",
@@ -3352,12 +3364,12 @@
       "message_name": "QuoteStatusReport",
       "level": "tag",
       "tier": 7,
-      "weight": 0.25,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.25,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
       "check_id": "T7_AI_297",
@@ -3367,92 +3379,131 @@
       "message_name": "QuoteStatusReport",
       "level": "tag",
       "tier": 7,
-      "weight": 0.5,
       "status": "no_credit",
-      "points_earned": 0,
       "points_available": 0.5,
+      "points_earned": 0,
       "evidence": null,
-      "asset_class_limitation": null
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
-      "check_id": "T5_001",
-      "fix_tag": 22,
-      "field_name": "SecurityIDSource=Y",
-      "message_type": "35=D/8/AE",
-      "message_name": "NOS/ER/TCR",
-      "level": "tag",
-      "tier": 5,
-      "weight": 0,
+      "check_id": "T7_6_000",
+      "fix_tag": "",
+      "field_name": "IOI — message documentation",
+      "message_type": "35=6",
+      "message_name": "IndicationOfInterest (IOI)",
+      "level": "message",
+      "tier": 7,
       "status": "no_credit",
+      "points_available": 0.5,
       "points_earned": 0,
-      "points_available": 0,
-      "evidence": "SecurityIDSource=Y (DTI) not explicitly documented in Coinbase Exchange spec.",
-      "asset_class_limitation": null
+      "evidence": null,
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
-      "check_id": "T5_002",
-      "fix_tag": 2897,
-      "field_name": "CurrencyCodeSource",
-      "message_type": "35=D/8/AE",
-      "message_name": "NOS/ER/TCR",
+      "check_id": "T7_6_023",
+      "fix_tag": "23",
+      "field_name": "IOITransType",
+      "message_type": "35=6",
+      "message_name": "IndicationOfInterest (IOI)",
       "level": "tag",
-      "tier": 5,
-      "weight": 0,
+      "tier": 7,
       "status": "no_credit",
+      "points_available": 0.25,
       "points_earned": 0,
-      "points_available": 0,
-      "evidence": "Tags 2897/2899 (CurrencyCodeSource) not explicitly documented.",
-      "asset_class_limitation": null
+      "evidence": null,
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
-      "check_id": "T5_003",
-      "fix_tag": 167,
-      "field_name": "SecurityType=DIGITAL",
-      "message_type": "35=D",
-      "message_name": "NewOrderSingle",
+      "check_id": "T7_6_130",
+      "fix_tag": "130",
+      "field_name": "IOIQualifier",
+      "message_type": "35=6",
+      "message_name": "IndicationOfInterest (IOI)",
       "level": "tag",
-      "tier": 5,
-      "weight": 0,
+      "tier": 7,
       "status": "no_credit",
+      "points_available": 0.25,
       "points_earned": 0,
-      "points_available": 0,
-      "evidence": "Tag 167 found in spec but only with FUT/SPOT values. SecurityType=DIGITAL (ISO 24165) not documented.",
-      "asset_class_limitation": null
+      "evidence": null,
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
-      "check_id": "T5_004",
-      "fix_tag": 803,
-      "field_name": "Wallet PartySubID",
-      "message_type": "35=8/AE",
-      "message_name": "ER/TCR",
+      "check_id": "T7_6_055",
+      "fix_tag": "55",
+      "field_name": "Symbol",
+      "message_type": "35=6",
+      "message_name": "IndicationOfInterest (IOI)",
       "level": "tag",
-      "tier": 5,
-      "weight": 0,
+      "tier": 7,
       "status": "no_credit",
+      "points_available": 0.2,
       "points_earned": 0,
-      "points_available": 0,
-      "evidence": "PartySubIDType (803) wallet value not documented.",
-      "asset_class_limitation": null
+      "evidence": null,
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     },
     {
-      "check_id": "T5_005",
-      "fix_tag": 55,
-      "field_name": "Symbol + SecAltIDGrp",
-      "message_type": "35=D",
-      "message_name": "NewOrderSingle",
+      "check_id": "T7_6_054",
+      "fix_tag": "54",
+      "field_name": "Side",
+      "message_type": "35=6",
+      "message_name": "IndicationOfInterest (IOI)",
       "level": "tag",
-      "tier": 5,
-      "weight": 0,
+      "tier": 7,
       "status": "no_credit",
+      "points_available": 0.2,
       "points_earned": 0,
-      "points_available": 0,
-      "evidence": "Tag 55 Symbol present in NOS but SecAltIDGrp not used for DTI pair identification. DAWG pattern not documented.",
-      "asset_class_limitation": null
+      "evidence": null,
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
+    },
+    {
+      "check_id": "T7_6_027",
+      "fix_tag": "27",
+      "field_name": "IOIShares",
+      "message_type": "35=6",
+      "message_name": "IndicationOfInterest (IOI)",
+      "level": "tag",
+      "tier": 7,
+      "status": "no_credit",
+      "points_available": 0.2,
+      "points_earned": 0,
+      "evidence": null,
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
+    },
+    {
+      "check_id": "T7_6_062",
+      "fix_tag": "62",
+      "field_name": "ValidUntilTime",
+      "message_type": "35=6",
+      "message_name": "IndicationOfInterest (IOI)",
+      "level": "tag",
+      "tier": 7,
+      "status": "no_credit",
+      "points_available": 0.15,
+      "points_earned": 0,
+      "evidence": null,
+      "asset_class_limitation": null,
+      "custom_tag_notes": null
     }
   ],
   "tier5_results": {
     "label": "DAWG FIX Extensions",
     "informational_only": true,
+    "ep273_ratified_checks": [
+      "T5_001",
+      "T5_002",
+      "T5_003"
+    ],
+    "tbd_checks": [
+      "T5_004",
+      "T5_005"
+    ],
     "checks": [
       {
         "check_id": "T5_001",
