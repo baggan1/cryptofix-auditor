@@ -73,7 +73,7 @@ export default function ContactPage() {
           <h3 className="text-xl font-bold mb-2">Email Us</h3>
           <p className="text-slate-300 text-sm mb-6">Inquiries for custom exchange audits and consulting</p>
           <div className="inline-flex items-center gap-2 px-6 py-3 bg-white text-navy-dark rounded-xl font-bold text-sm">
-            navilla@opound.com
+            Send Message
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </div>
         </button>
