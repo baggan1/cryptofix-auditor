@@ -2,12 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import { Mail, Calendar, ArrowRight } from 'lucide-react';
-import { openPopupWidget } from 'react-calendly';
+import { PopupModal } from 'react-calendly';
 
 export default function ContactPage() {
   const [userInfo, setUserInfo] = useState<{name?: string, email?: string}>({});
+  const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
+  const [rootElement, setRootElement] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
+    // Set root element for Calendly portal
+    setRootElement(document.body);
+
     const saved = localStorage.getItem('cryptofix_user_info');
     if (saved) {
       try {
@@ -19,13 +24,7 @@ export default function ContactPage() {
   }, []);
 
   const handleSchedule = () => {
-    openPopupWidget({
-      url: 'https://calendly.com/navilla-bagga/30min',
-      prefill: {
-        email: userInfo.email,
-        name: userInfo.name,
-      }
-    });
+    setIsCalendlyOpen(true);
   };
 
   return (
@@ -76,6 +75,19 @@ export default function ContactPage() {
           Opound LLC — Strategic FIX Protocol Advisory
         </p>
       </div>
+
+      {rootElement && (
+        <PopupModal
+          url="https://calendly.com/navilla-bagga/30min"
+          onModalClose={() => setIsCalendlyOpen(false)}
+          open={isCalendlyOpen}
+          rootElement={rootElement}
+          prefill={{
+            email: userInfo.email,
+            name: userInfo.name,
+          }}
+        />
+      )}
     </div>
   );
 }
