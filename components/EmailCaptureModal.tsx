@@ -20,6 +20,7 @@ const roles = [
 
 export default function EmailCaptureModal({ isOpen, onClose, exchangeName, auditSlug }: EmailCaptureModalProps) {
   const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
   const [company, setCompany] = useState('');
   const [role, setRole] = useState('');
   const [optIn, setOptIn] = useState(true);
@@ -39,6 +40,7 @@ export default function EmailCaptureModal({ isOpen, onClose, exchangeName, audit
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
+          full_name: fullName,
           company,
           role,
           exchange_name: exchangeName,
@@ -52,6 +54,12 @@ export default function EmailCaptureModal({ isOpen, onClose, exchangeName, audit
       if (!response.ok) {
         throw new Error(result.error || 'Something went wrong. Please try again.');
       }
+
+      // Save to localStorage for pre-filling Calendly
+      localStorage.setItem('cryptofix_user_info', JSON.stringify({
+        email,
+        name: fullName
+      }));
 
       // Success! Open the report in a new tab
       window.open(`/audit/${auditSlug}/report`, '_blank');
@@ -89,6 +97,21 @@ export default function EmailCaptureModal({ isOpen, onClose, exchangeName, audit
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="fullName" className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">
+                Full Name
+              </label>
+              <input
+                id="fullName"
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="John Doe"
+                className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all text-slate-900 font-medium"
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">
                 Email address

@@ -7,7 +7,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, company, role, exchange_name, audit_slug, opt_in } = await req.json();
+    const { email, full_name, company, role, exchange_name, audit_slug, opt_in } = await req.json();
 
     if (!email || !audit_slug) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -18,7 +18,8 @@ export async function POST(req: NextRequest) {
       .from('audit_leads')
       .insert([
         { 
-          email, 
+          email,
+          full_name,
           company, 
           role, 
           exchange_name, 
@@ -29,8 +30,6 @@ export async function POST(req: NextRequest) {
 
     if (supabaseError) {
       console.error('Supabase error:', supabaseError);
-      // We continue even if DB insert fails to send the email, or should we abort?
-      // Usually better to at least try sending the lead notification.
     }
 
     // Fetch report data for the confirmation email
@@ -47,6 +46,7 @@ export async function POST(req: NextRequest) {
       to: 'navilla.bagga@gmail.com',
       subject: `New CryptoFIX audit lead — ${exchange}`,
       text: `
+Name: ${full_name || 'N/A'}
 Email: ${email}
 Company: ${company || 'N/A'}
 Role: ${role || 'N/A'}
@@ -66,7 +66,7 @@ Opt-in for updates: ${opt_in ? 'Yes' : 'No'}
       to: email,
       subject: `Your CryptoFIX RoE report for ${exchange}`,
       text: `
-Thanks for using CryptoFIX Auditor.
+Thanks ${full_name || ''} for using CryptoFIX Auditor.
 Your Rules of Engagement report for ${exchange} is ready.
 
 Score: ${score}/100 — ${grade}
