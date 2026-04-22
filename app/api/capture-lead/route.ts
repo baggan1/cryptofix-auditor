@@ -9,8 +9,8 @@ export async function POST(req: NextRequest) {
   try {
     const { email, full_name, company, role, exchange_name, audit_slug, opt_in } = await req.json();
 
-    if (!email || !audit_slug) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!email) {
+      return NextResponse.json({ error: 'Missing required email field' }, { status: 400 });
     }
 
     // 1. Insert into Supabase
@@ -22,8 +22,8 @@ export async function POST(req: NextRequest) {
           full_name,
           company, 
           role, 
-          exchange_name, 
-          audit_slug, 
+          exchange_name: exchange_name || 'General Inquiry', 
+          audit_slug: audit_slug || 'contact-page', 
           opt_in 
         }
       ]);
@@ -32,11 +32,11 @@ export async function POST(req: NextRequest) {
       console.error('Supabase error:', supabaseError);
     }
 
-    // Fetch report data for the confirmation email
-    const report = await getScoredReport(audit_slug);
+    // Fetch report data for the confirmation email (if it's an audit lead)
+    const report = audit_slug ? await getScoredReport(audit_slug) : null;
     const score = report ? report.total_score : 'XX';
     const grade = report ? report.grade : 'N/A';
-    const exchange = exchange_name || (report ? report.exchange_name : 'Exchange');
+    const exchange = exchange_name || (report ? report.exchange_name : 'General Inquiry');
 
     const timestamp = new Date().toLocaleString();
 
