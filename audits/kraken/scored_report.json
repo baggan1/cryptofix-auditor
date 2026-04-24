@@ -65,7 +65,7 @@
     "label": "Market Data Readiness",
     "audience": "Buy-side institutions, algo execution desks"
   },
-  "gap_count": 96,
+  "gap_count": 77,
   "gap_summary": [
     {
       "check_id": "T2_8_375",
@@ -578,66 +578,6 @@
       "evidence": null
     },
     {
-      "check_id": "T7_W_262",
-      "fix_tag": 262,
-      "field_name": "MDReqID",
-      "message_type": "35=W",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.5,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_W_268",
-      "fix_tag": 268,
-      "field_name": "NoMDEntries",
-      "message_type": "35=W",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.5,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_W_269",
-      "fix_tag": 269,
-      "field_name": "MDEntryType",
-      "message_type": "35=W",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.5,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_W_270",
-      "fix_tag": 270,
-      "field_name": "MDEntryPx",
-      "message_type": "35=W",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.5,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_W_271",
-      "fix_tag": 271,
-      "field_name": "MDEntrySize",
-      "message_type": "35=W",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.5,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_x_000",
-      "fix_tag": "",
-      "field_name": "Security List Request",
-      "message_type": "35=x",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.5,
-      "evidence": null
-    },
-    {
       "check_id": "T7_h_000",
       "fix_tag": "",
       "field_name": "Trading Session Status",
@@ -675,116 +615,6 @@
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.5,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_V_262",
-      "fix_tag": 262,
-      "field_name": "MDReqID",
-      "message_type": "35=V",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_V_263",
-      "fix_tag": 263,
-      "field_name": "SubscriptionRequestType",
-      "message_type": "35=V",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_V_146",
-      "fix_tag": 146,
-      "field_name": "NoRelatedSym",
-      "message_type": "35=V",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_V_055",
-      "fix_tag": 55,
-      "field_name": "Symbol",
-      "message_type": "35=V",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_X_262",
-      "fix_tag": 262,
-      "field_name": "MDReqID",
-      "message_type": "35=X",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_X_279",
-      "fix_tag": 279,
-      "field_name": "MDUpdateAction",
-      "message_type": "35=X",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_X_269",
-      "fix_tag": 269,
-      "field_name": "MDEntryType",
-      "message_type": "35=X",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_X_270",
-      "fix_tag": 270,
-      "field_name": "MDEntryPx",
-      "message_type": "35=X",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_X_271",
-      "fix_tag": 271,
-      "field_name": "MDEntrySize",
-      "message_type": "35=X",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_X_278",
-      "fix_tag": 278,
-      "field_name": "MDEntryID",
-      "message_type": "35=X",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_Y_000",
-      "fix_tag": "",
-      "field_name": "Market Data Request Reject",
-      "message_type": "35=Y",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
       "evidence": null
     },
     {
@@ -858,16 +688,6 @@
       "evidence": "Recovery supported."
     },
     {
-      "check_id": "T7_Y_281",
-      "fix_tag": 281,
-      "field_name": "MDReqRejReason",
-      "message_type": "35=Y",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.4,
-      "evidence": null
-    },
-    {
       "check_id": "T1_Q_037",
       "fix_tag": 37,
       "field_name": "OrderID",
@@ -913,26 +733,6 @@
       "field_name": "Side",
       "message_type": "35=Q",
       "tier": 1,
-      "status": "no_credit",
-      "points_lost": 0.3,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_x_559",
-      "fix_tag": 559,
-      "field_name": "SecurityListRequestType",
-      "message_type": "35=x",
-      "tier": 7,
-      "status": "no_credit",
-      "points_lost": 0.3,
-      "evidence": null
-    },
-    {
-      "check_id": "T7_x_263",
-      "fix_tag": 263,
-      "field_name": "SubscriptionRequestType",
-      "message_type": "35=x",
-      "tier": 7,
       "status": "no_credit",
       "points_lost": 0.3,
       "evidence": null
@@ -986,6 +786,16 @@
       "status": "no_credit",
       "points_lost": 0.3,
       "evidence": null
+    },
+    {
+      "check_id": "T7_V_263",
+      "fix_tag": 263,
+      "field_name": "SubscriptionRequestType",
+      "message_type": "35=V",
+      "tier": 7,
+      "status": "partial_credit",
+      "points_lost": 0.2,
+      "evidence": "Tag 263 SubscriptionRequestType supported with values 1=Snapshot+Updates and 2=Unsubscribe. Value 0=Snapshot only is NOT supported — subscription cancels on disconnect."
     },
     {
       "check_id": "T7_6_055",
@@ -2901,7 +2711,7 @@
       "status": "full_credit",
       "points_earned": 0.8,
       "points_available": 0.75,
-      "evidence": "MDRequest supported.",
+      "evidence": "MsgType V. MarketDataRequest documented with full tag table. Supports Snapshot+Updates (263=1) and Unsubscribe (263=2).",
       "asset_class_limitation": null
     },
     {
@@ -2913,10 +2723,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.41,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.41,
-      "evidence": null,
+      "evidence": "Tag 262 MDReqID required. Used as unique subscription identifier and for unsubscribe requests.",
       "asset_class_limitation": null
     },
     {
@@ -2928,11 +2738,11 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.41,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "partial_credit",
+      "points_earned": 0.2,
       "points_available": 0.41,
-      "evidence": null,
-      "asset_class_limitation": null
+      "evidence": "Tag 263 SubscriptionRequestType supported with values 1=Snapshot+Updates and 2=Unsubscribe. Value 0=Snapshot only is NOT supported — subscription cancels on disconnect.",
+      "asset_class_limitation": "Snapshot-only (263=0) not available"
     },
     {
       "check_id": "T7_V_146",
@@ -2943,10 +2753,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.41,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.41,
-      "evidence": null,
+      "evidence": "Tag 146 NoRelatedSym required. Number of pairs to subscribe. Multiple symbols supported per request.",
       "asset_class_limitation": null
     },
     {
@@ -2958,10 +2768,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.41,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.41,
-      "evidence": null,
+      "evidence": "Tag 55 Symbol required. Format BASE/QUOTE.",
       "asset_class_limitation": null
     },
     {
@@ -2976,7 +2786,7 @@
       "status": "full_credit",
       "points_earned": 1,
       "points_available": 1,
-      "evidence": "Snapshot support.",
+      "evidence": "MsgType W. MarketDataSnapshotFullRefresh documented. Supports L2 (AggregatedBook=Y) and L3 (AggregatedBook=N, Derivatives only).",
       "asset_class_limitation": null
     },
     {
@@ -2988,10 +2798,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.5,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": null,
+      "evidence": "Tag 262 MDReqID required in 35=W.",
       "asset_class_limitation": null
     },
     {
@@ -3003,10 +2813,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.5,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": null,
+      "evidence": "Tag 268 NoMDEntries required. Number of entries following in the snapshot.",
       "asset_class_limitation": null
     },
     {
@@ -3018,10 +2828,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.5,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": null,
+      "evidence": "Tag 269 MDEntryType required. Values 0=Bid, 1=Offer. Trades only via Incremental Refresh (35=X).",
       "asset_class_limitation": null
     },
     {
@@ -3033,10 +2843,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.5,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": null,
+      "evidence": "Tag 270 MDEntryPx required. Price of market data entry.",
       "asset_class_limitation": null
     },
     {
@@ -3048,10 +2858,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.5,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": null,
+      "evidence": "Tag 271 MDEntrySize required. Volume at price level.",
       "asset_class_limitation": null
     },
     {
@@ -3066,7 +2876,7 @@
       "status": "full_credit",
       "points_earned": 1,
       "points_available": 1,
-      "evidence": "Incremental support.",
+      "evidence": "MsgType X. MarketDataIncrementalRefresh fully documented. Supports L2 and L3 (Derivatives). MDEntryID (278) present — confirms L3 order-level data.",
       "asset_class_limitation": null
     },
     {
@@ -3078,10 +2888,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.4,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": null,
+      "evidence": "Tag 262 MDReqID required in 35=X.",
       "asset_class_limitation": null
     },
     {
@@ -3093,10 +2903,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.4,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": null,
+      "evidence": "Tag 279 MDUpdateAction required. Values 0=New, 1=Update (quantity change), 2=Delete. All three values documented and required.",
       "asset_class_limitation": null
     },
     {
@@ -3108,10 +2918,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.4,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": null,
+      "evidence": "Tag 269 MDEntryType required. Values 0=Bid, 1=Offer, 2=Trade.",
       "asset_class_limitation": null
     },
     {
@@ -3123,10 +2933,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.4,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": null,
+      "evidence": "Tag 270 MDEntryPx required.",
       "asset_class_limitation": null
     },
     {
@@ -3138,10 +2948,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.4,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": null,
+      "evidence": "Tag 271 MDEntrySize required.",
       "asset_class_limitation": null
     },
     {
@@ -3153,10 +2963,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.4,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": null,
+      "evidence": "Tag 278 MDEntryID required in 35=X. OrderID for Level 3. Confirms L3 order-level book data for Derivatives.",
       "asset_class_limitation": null
     },
     {
@@ -3168,10 +2978,10 @@
       "level": "message",
       "tier": 7,
       "weight": 0.4,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.4,
-      "evidence": null,
+      "evidence": "MsgType Y MarketDataRequestReject documented. Sent when MDRequest is invalid.",
       "asset_class_limitation": null
     },
     {
@@ -3183,10 +2993,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.35,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.4,
       "points_available": 0.35,
-      "evidence": null,
+      "evidence": "Tag 281 MDReqRejReason documented with reason codes.",
       "asset_class_limitation": null
     },
     {
@@ -3198,10 +3008,10 @@
       "level": "message",
       "tier": 7,
       "weight": 0.5,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.5,
       "points_available": 0.5,
-      "evidence": null,
+      "evidence": "MsgType x InstrumentListRequest documented. Recommended to send on every new connection or reconnection as instrument status may change during disconnection.",
       "asset_class_limitation": null
     },
     {
@@ -3213,10 +3023,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.25,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.3,
       "points_available": 0.25,
-      "evidence": null,
+      "evidence": "Tag 559 InstrumentListRequestType required. Values 0=SingleAssetPair, 1=SecurityType, 4=AllSecurities.",
       "asset_class_limitation": null
     },
     {
@@ -3228,10 +3038,10 @@
       "level": "tag",
       "tier": 7,
       "weight": 0.25,
-      "status": "no_credit",
-      "points_earned": 0,
+      "status": "full_credit",
+      "points_earned": 0.3,
       "points_available": 0.25,
-      "evidence": null,
+      "evidence": "Tag 263 SubscriptionRequestType in 35=x: values 0=Snapshot, 1=Snapshot+Updates, 2=Disable.",
       "asset_class_limitation": null
     },
     {
