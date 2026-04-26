@@ -162,7 +162,7 @@ export default function MethodologyPage() {
                     </p>
                     <h5 className="font-bold text-xs text-slate-800 mb-1 uppercase tracking-tight">RFQ Workflow:</h5>
                     <p className="text-xs text-slate-600 leading-relaxed font-mono">
-                      35=R (RequestForQuote), 35=S (Quote), 35=AJ (QuoteResponse), 35=AI (QuoteStatusReport)
+                      35=AH (RFQ Request), 35=R (RequestForQuote), 35=S (Quote), 35=AJ (QuoteResponse), 35=AI (QuoteStatusReport)
                     </p>
                   </div>
                 </div>
