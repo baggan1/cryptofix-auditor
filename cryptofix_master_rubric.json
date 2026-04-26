@@ -1926,6 +1926,72 @@
           "description": "Instrument identifier"
         },
         {
+          "id": "T7_AH_000",
+          "message_type": "35=AH",
+          "message_name": "RFQ Request",
+          "level": "message",
+          "tag_number": null,
+          "tag_name": "RFQ Request — message documentation",
+          "weight": 0.5,
+          "required": false,
+          "description": "RFQ Request (35=AH) initiates an RFQ auction on the exchange. The exchange broadcasts the request to liquidity providers who respond with quotes (35=S). Distinct from QuoteRequest (35=R) which is directed at a specific counterparty. Used in Coinbase Exchange FIX 5.0 for institutional block trade price discovery.",
+          "fix_reference": "Coinbase Exchange FIX 5.0: https://docs.cdp.coinbase.com/exchange/fix-api/order-entry-messages/order-entry-messages5#rfq-request-ah; FIX 5.0 SP2 message type AH",
+          "institutional_gap_if_missing": "Without 35=AH, institutions cannot initiate broadcast RFQ auctions via FIX. Block trade price discovery requires out-of-band communication or REST API workarounds.",
+          "scoring_logic": {
+            "full_credit": "35=AH documented with tag table",
+            "partial_credit": "35=AH mentioned but incomplete documentation",
+            "no_credit": "35=AH absent"
+          }
+        },
+        {
+          "id": "T7_AH_131",
+          "message_type": "35=AH",
+          "message_name": "RFQ Request",
+          "level": "tag",
+          "tag_number": 131,
+          "tag_name": "QuoteReqID",
+          "weight": 0.2,
+          "required": true,
+          "description": "Unique identifier for the RFQ request",
+          "fix_reference": "FIX 4.2+ tag 131; https://fiximate.fixtrading.org/ — search tag 131"
+        },
+        {
+          "id": "T7_AH_055",
+          "message_type": "35=AH",
+          "message_name": "RFQ Request",
+          "level": "tag",
+          "tag_number": 55,
+          "tag_name": "Symbol",
+          "weight": 0.2,
+          "required": true,
+          "description": "Instrument for the RFQ auction",
+          "fix_reference": "FIX 4.0+ tag 55; https://fiximate.fixtrading.org/ — search tag 55"
+        },
+        {
+          "id": "T7_AH_054",
+          "message_type": "35=AH",
+          "message_name": "RFQ Request",
+          "level": "tag",
+          "tag_number": 54,
+          "tag_name": "Side",
+          "weight": 0.2,
+          "required": false,
+          "description": "Buy (1) or Sell (2) direction. May be omitted for two-sided RFQ.",
+          "fix_reference": "FIX 4.0+ tag 54; https://fiximate.fixtrading.org/ — search tag 54"
+        },
+        {
+          "id": "T7_AH_038",
+          "message_type": "35=AH",
+          "message_name": "RFQ Request",
+          "level": "tag",
+          "tag_number": 38,
+          "tag_name": "OrderQty",
+          "weight": 0.2,
+          "required": false,
+          "description": "Quantity for the RFQ auction",
+          "fix_reference": "FIX 4.0+ tag 38; https://fiximate.fixtrading.org/ — search tag 38"
+        },
+        {
           "id": "T7_AI_000",
           "message_type": "35=AI",
           "message_name": "QuoteStatusReport",

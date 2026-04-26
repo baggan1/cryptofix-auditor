@@ -65,7 +65,7 @@
     "label": "Market Data Readiness",
     "audience": "Buy-side institutions, algo execution desks"
   },
-  "gap_count": 77,
+  "gap_count": 85,
   "gap_summary": [
     {
       "check_id": "T2_8_375",
@@ -156,6 +156,36 @@
       "status": "no_credit",
       "points_lost": 1.5,
       "evidence": null
+    },
+    {
+      "check_id": "T3_R_000",
+      "fix_tag": "",
+      "field_name": "RequestForQuote",
+      "message_type": "35=R",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 1.5,
+      "evidence": "35=R RequestForQuote not present in Kraken FIX spec. Kraken FIX covers Trading and Market Data only — no RFQ messages."
+    },
+    {
+      "check_id": "T3_S_000",
+      "fix_tag": "",
+      "field_name": "Quote",
+      "message_type": "35=S",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 1.5,
+      "evidence": "35=S Quote not present in Kraken FIX spec."
+    },
+    {
+      "check_id": "T3_AJ_000",
+      "fix_tag": "",
+      "field_name": "QuoteResponse",
+      "message_type": "35=AJ",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 1.5,
+      "evidence": "35=AJ QuoteResponse not present in Kraken FIX spec."
     },
     {
       "check_id": "T1_G_000",
@@ -588,6 +618,16 @@
       "evidence": null
     },
     {
+      "check_id": "T7_AH_000",
+      "fix_tag": "",
+      "field_name": "RFQ Request — message documentation",
+      "message_type": "35=AH",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.5,
+      "evidence": "35=AH RFQ Request not present in Kraken FIX spec."
+    },
+    {
       "check_id": "T7_AI_000",
       "fix_tag": "",
       "field_name": "QuoteStatusReport — message documentation",
@@ -595,7 +635,7 @@
       "tier": 7,
       "status": "no_credit",
       "points_lost": 0.5,
-      "evidence": null
+      "evidence": "35=AI QuoteStatusReport not present in Kraken FIX spec."
     },
     {
       "check_id": "T7_AI_297",
@@ -796,6 +836,46 @@
       "status": "partial_credit",
       "points_lost": 0.2,
       "evidence": "Tag 263 SubscriptionRequestType supported with values 1=Snapshot+Updates and 2=Unsubscribe. Value 0=Snapshot only is NOT supported — subscription cancels on disconnect."
+    },
+    {
+      "check_id": "T7_AH_131",
+      "fix_tag": "131",
+      "field_name": "QuoteReqID",
+      "message_type": "35=AH",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.2,
+      "evidence": null
+    },
+    {
+      "check_id": "T7_AH_055",
+      "fix_tag": "55",
+      "field_name": "Symbol",
+      "message_type": "35=AH",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.2,
+      "evidence": null
+    },
+    {
+      "check_id": "T7_AH_054",
+      "fix_tag": "54",
+      "field_name": "Side",
+      "message_type": "35=AH",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.2,
+      "evidence": null
+    },
+    {
+      "check_id": "T7_AH_038",
+      "fix_tag": "38",
+      "field_name": "OrderQty",
+      "message_type": "35=AH",
+      "tier": 7,
+      "status": "no_credit",
+      "points_lost": 0.2,
+      "evidence": null
     },
     {
       "check_id": "T7_6_055",
@@ -3083,10 +3163,10 @@
       "level": "message",
       "tier": 7,
       "weight": 1.5,
-      "status": "full_credit",
-      "points_earned": 1.5,
+      "status": "no_credit",
+      "points_earned": 0,
       "points_available": 1.5,
-      "evidence": "RFQ support.",
+      "evidence": "35=R RequestForQuote not present in Kraken FIX spec. Kraken FIX covers Trading and Market Data only — no RFQ messages.",
       "asset_class_limitation": null
     },
     {
@@ -3188,10 +3268,10 @@
       "level": "message",
       "tier": 7,
       "weight": 1.5,
-      "status": "full_credit",
-      "points_earned": 1.5,
+      "status": "no_credit",
+      "points_earned": 0,
       "points_available": 1.5,
-      "evidence": "Quote present.",
+      "evidence": "35=S Quote not present in Kraken FIX spec.",
       "asset_class_limitation": null
     },
     {
@@ -3308,10 +3388,10 @@
       "level": "message",
       "tier": 7,
       "weight": 1.5,
-      "status": "full_credit",
-      "points_earned": 1.5,
+      "status": "no_credit",
+      "points_earned": 0,
       "points_available": 1.5,
-      "evidence": "QuoteResponse present.",
+      "evidence": "35=AJ QuoteResponse not present in Kraken FIX spec.",
       "asset_class_limitation": null
     },
     {
@@ -3375,6 +3455,81 @@
       "asset_class_limitation": null
     },
     {
+      "check_id": "T7_AH_000",
+      "fix_tag": "",
+      "field_name": "RFQ Request — message documentation",
+      "message_type": "35=AH",
+      "message_name": "RFQ Request",
+      "level": "message",
+      "tier": 7,
+      "weight": 0.5,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 0.5,
+      "evidence": "35=AH RFQ Request not present in Kraken FIX spec.",
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T7_AH_131",
+      "fix_tag": "131",
+      "field_name": "QuoteReqID",
+      "message_type": "35=AH",
+      "message_name": "RFQ Request",
+      "level": "tag",
+      "tier": 7,
+      "weight": 0.2,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 0.2,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T7_AH_055",
+      "fix_tag": "55",
+      "field_name": "Symbol",
+      "message_type": "35=AH",
+      "message_name": "RFQ Request",
+      "level": "tag",
+      "tier": 7,
+      "weight": 0.2,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 0.2,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T7_AH_054",
+      "fix_tag": "54",
+      "field_name": "Side",
+      "message_type": "35=AH",
+      "message_name": "RFQ Request",
+      "level": "tag",
+      "tier": 7,
+      "weight": 0.2,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 0.2,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
+      "check_id": "T7_AH_038",
+      "fix_tag": "38",
+      "field_name": "OrderQty",
+      "message_type": "35=AH",
+      "message_name": "RFQ Request",
+      "level": "tag",
+      "tier": 7,
+      "weight": 0.2,
+      "status": "no_credit",
+      "points_earned": 0,
+      "points_available": 0.2,
+      "evidence": null,
+      "asset_class_limitation": null
+    },
+    {
       "check_id": "T7_AI_000",
       "fix_tag": "",
       "field_name": "QuoteStatusReport — message documentation",
@@ -3386,7 +3541,7 @@
       "status": "no_credit",
       "points_earned": 0,
       "points_available": 0.5,
-      "evidence": null,
+      "evidence": "35=AI QuoteStatusReport not present in Kraken FIX spec.",
       "asset_class_limitation": null
     },
     {
