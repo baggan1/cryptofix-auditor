@@ -39,7 +39,7 @@ export default function Home() {
     // Determine input source — priority: pasted spec > URL
     const hasPasted = pastedSpec.trim().length > 100;
     const hasUrl = url.trim().length > 0;
-    
+
     if (!hasPasted && !hasUrl) {
       setErrorText('Please enter a FIX spec URL or paste spec content.');
       return;
@@ -51,7 +51,7 @@ export default function Home() {
       sessionStorage.removeItem('live_audit_report');
       sessionStorage.removeItem('liveAuditResult');
       setCurrentStep(0);
-      
+
       const payload = {
         exchange_name: hasPasted ? (exchangeName || 'Pasted-Spec-Exchange') : (url ? new URL(url).hostname.replace('www.', '') : 'Unknown Exchange'),
         spec_source: hasPasted ? pastedSpec.trim() : url.trim(),
@@ -73,7 +73,7 @@ export default function Home() {
       }
 
       const extractionResult = await ingestRes.json();
-      
+
       // Step 2: Scoring
       setCurrentStep(2);
       const scoreRes = await fetch('/api/score', {
@@ -95,10 +95,10 @@ export default function Home() {
 
       // Hydrate sessionStorage for client-side routing persistence
       sessionStorage.setItem('live_audit_report', JSON.stringify(scoreData.report));
-      
+
       // Clear paste content after successful submission
       setPastedSpec('');
-      
+
       router.push(`/audit/live`);
     } catch (error: any) {
       console.error(error);
@@ -114,7 +114,7 @@ export default function Home() {
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_0,transparent_50%)]" />
         </div>
-        
+
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/80 text-[10px] font-bold uppercase tracking-widest mb-6 backdrop-blur-sm border border-white/10">
             <Zap className="w-3 h-3 text-amber-400 fill-amber-400" />
@@ -125,8 +125,8 @@ export default function Home() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-white opacity-90">Readiness Auditor</span>
           </h2>
           <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed font-medium">
-            Score any crypto exchange FIX implementation against TradFi institutional standards. 
-            Built on 15 years of FIX protocol experience at Wellington Management and Solidus Labs.
+            Score any crypto exchange FIX implementation against TradFi institutional standards.
+            Built on 12+ years of FIX protocol experience at a Tier-1 Investment Institution and a Digital Asset Compliance SaaS provider.
           </p>
         </div>
       </section>
@@ -139,7 +139,7 @@ export default function Home() {
               <h3 className="text-2xl font-bold text-slate-900 mb-2">Select Target Exchange</h3>
               <p className="text-slate-500 font-medium">Choose a certified audit or input a documentation URL to begin analysis.</p>
             </div>
-            
+
             <ExchangeSelector
               selectedExchange={selectedExchange}
               onSelect={(id) => {
@@ -175,7 +175,7 @@ export default function Home() {
                     if (e.target.value) setUrl('');
                   }}
                 />
-                
+
                 {pastedSpec.trim().length > 100 && (
                   <div className="space-y-3">
                     <div className={`flex items-center gap-2 mt-2 text-sm
@@ -223,15 +223,15 @@ export default function Home() {
                     const isDone = currentStep > idx;
                     const isActive = currentStep === idx;
                     const isPending = currentStep < idx;
-                    
+
                     return (
                       <div key={idx} className={`flex items-center gap-3 ${isPending ? 'opacity-40' : 'opacity-100'}`}>
                         {isDone ? (
-                           <CheckCircle2 className="w-5 h-5 text-green-500" />
+                          <CheckCircle2 className="w-5 h-5 text-green-500" />
                         ) : isActive ? (
-                           <div className="w-5 h-5 border-2 border-navy-dark/30 border-t-navy-dark rounded-full animate-spin flex-shrink-0" />
+                          <div className="w-5 h-5 border-2 border-navy-dark/30 border-t-navy-dark rounded-full animate-spin flex-shrink-0" />
                         ) : (
-                           <div className="w-5 h-5 border-2 border-slate-200 rounded-full flex-shrink-0" />
+                          <div className="w-5 h-5 border-2 border-slate-200 rounded-full flex-shrink-0" />
                         )}
                         <span className={`text-sm font-medium ${isActive ? 'text-navy-dark font-bold' : 'text-slate-500'}`}>
                           {step}

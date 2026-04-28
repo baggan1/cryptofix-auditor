@@ -219,22 +219,22 @@ export default function MethodologyPage() {
             Provenance
           </h2>
           <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-            <p className="text-slate-700 font-bold mb-6">Built from 15+ years of FIX protocol implementation:</p>
+            <p className="text-slate-700 font-bold mb-6">Built from 12+ years of FIX protocol implementation:</p>
 
             <div className="space-y-8">
               <div>
-                <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-2">Wellington Management (9 years, 20+ certifications)</h4>
+                <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-2">Wellington Management Company (9 years, 30+ certifications)</h4>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  ATDL algo strategy construction, dark pool ATS connectivity (Liquidnet, Luminex, Instinet),
+                  ATDL algo strategy construction, dark pool ATS connectivity (Liquidnet, Luminex, Instinet), EMS (Bloomberg EMSX, Tradeweb,MarketAxess, etc),
                   MiFID II trade reporting, TWAP/VWAP/IS/POV execution algorithms, CME Self-Match Prevention,
-                  TBA/MBS netting via DTCC/FICC.
+                  TBA/MBS netting via DTCC/FICC, FIX Onboarding, FIX Post-trade STP.
                 </p>
               </div>
 
               <div>
                 <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-2">Solidus Labs (Lead TPM, 25+ onboardings)</h4>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Digital asset FIX standard design, AML/surveillance platform delivery, first FIX-native
+                  Digital Asset FIX standard design, AML/surveillance platform delivery, first FIX-native
                   implementation of digital asset trade compliance for institutional crypto exchanges.
                 </p>
               </div>
