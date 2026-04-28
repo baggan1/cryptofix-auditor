@@ -52,9 +52,19 @@ export default function Home() {
       sessionStorage.removeItem('liveAuditResult');
       setCurrentStep(0);
 
+      // Helper to safely parse URL
+      const safeGetHostname = (urlStr: string) => {
+        try {
+          const withProto = urlStr.startsWith('http') ? urlStr : `https://${urlStr}`;
+          return new URL(withProto).hostname.replace('www.', '');
+        } catch {
+          return 'Unknown Exchange';
+        }
+      };
+
       const payload = {
-        exchange_name: hasPasted ? (exchangeName || 'Pasted-Spec-Exchange') : (url ? new URL(url).hostname.replace('www.', '') : 'Unknown Exchange'),
-        spec_source: hasPasted ? pastedSpec.trim() : url.trim(),
+        exchange_name: exchangeName || (hasPasted ? 'Pasted-Spec-Exchange' : (url ? safeGetHostname(url) : 'Unknown Exchange')),
+        spec_source: hasPasted ? pastedSpec.trim() : (url.trim().startsWith('http') ? url.trim() : `https://${url.trim()}`),
         asset_classes: assetClasses || 'spot',
         is_pasted: hasPasted,
       };
@@ -157,6 +167,8 @@ export default function Home() {
               onRunAudit={handleRunAudit}
               loading={loading}
               pastedReady={pastedSpec.trim().length > 100}
+              exchangeName={exchangeName}
+              onExchangeNameChange={setExchangeName}
             />
 
             {!selectedExchange && (
@@ -172,7 +184,9 @@ export default function Home() {
                   value={pastedSpec}
                   onChange={(e) => {
                     setPastedSpec(e.target.value);
-                    if (e.target.value) setUrl('');
+                    if (e.target.value) {
+                      setUrl('');
+                    }
                   }}
                 />
 
@@ -188,14 +202,18 @@ export default function Home() {
                       }
                     </div>
 
-                    <input
-                      type="text"
-                      placeholder="Exchange name (e.g. Coinbase INTX)"
-                      value={exchangeName}
-                      onChange={(e) => setExchangeName(e.target.value)}
-                      className="mt-2 w-full p-3 text-sm border border-slate-300 rounded-lg
-                        focus:outline-none focus:ring-2 focus:ring-[#10B981]"
-                    />
+                    {!url && (
+                      <div className="mt-2">
+                        <input
+                          type="text"
+                          placeholder="Exchange name (e.g. Coinbase INTX)"
+                          value={exchangeName}
+                          onChange={(e) => setExchangeName(e.target.value)}
+                          className="w-full p-3 text-sm border border-slate-300 rounded-lg
+                            focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </details>

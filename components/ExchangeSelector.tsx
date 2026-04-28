@@ -24,6 +24,8 @@ interface ExchangeSelectorProps {
   onRunAudit: () => void;
   loading: boolean;
   pastedReady?: boolean;
+  exchangeName?: string;
+  onExchangeNameChange?: (name: string) => void;
 }
 
 const ExchangeSelector: React.FC<ExchangeSelectorProps> = ({
@@ -33,7 +35,9 @@ const ExchangeSelector: React.FC<ExchangeSelectorProps> = ({
   onUrlChange,
   onRunAudit,
   loading,
-  pastedReady = false
+  pastedReady = false,
+  exchangeName,
+  onExchangeNameChange
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -196,6 +200,22 @@ const ExchangeSelector: React.FC<ExchangeSelectorProps> = ({
           </div>
         </div>
       </div>
+
+      {url.trim().length > 0 && !selectedExchange && onExchangeNameChange && (
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+          <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">
+            Exchange Name
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. Coinbase INTX"
+            value={exchangeName || ''}
+            onChange={(e) => onExchangeNameChange(e.target.value)}
+            className="w-full p-3 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-dark/10 focus:border-navy-dark"
+            disabled={loading}
+          />
+        </div>
+      )}
 
       <div className="flex justify-center">
         <button
