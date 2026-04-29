@@ -65,10 +65,7 @@ export default function LiveAuditPreview() {
               <FileText className="w-4 h-4" />
               Download RoE document
             </button>
-            <button className="px-6 h-12 bg-navy-dark text-white rounded-xl font-bold flex items-center gap-2 hover:bg-slate-800 transition-all shadow-lg shadow-navy-dark/10">
-              <Mail className="w-4 h-4" />
-              Email Report
-            </button>
+
           </div>
         </div>
       </div>
