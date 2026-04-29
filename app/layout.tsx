@@ -15,7 +15,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased bg-slate-50 min-h-screen flex flex-col">
         <header className="bg-navy-dark text-white shadow-lg z-50">
-          <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-4 py-4 md:py-0 md:h-20 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
             <div className="flex items-center gap-3">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-10 h-10 shadow-sm">
                 <rect width="100" height="100" rx="25" fill="#10B981"/>
@@ -26,7 +26,7 @@ export default function RootLayout({
                 <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold -mt-1">CryptoFIX Auditor</p>
               </div>
             </div>
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="flex items-center gap-4 md:gap-8">
               <a href="/" className="text-sm font-semibold hover:text-[#10B981] transition-colors">Home</a>
               <a href="/methodology" className="text-sm font-semibold hover:text-[#10B981] transition-colors">Methodology</a>
               <a href="/contact" className="text-sm font-semibold px-4 py-2 border border-[#10B981] text-[#10B981] rounded-full hover:bg-[#10B981] hover:text-white transition-all">Contact</a>
