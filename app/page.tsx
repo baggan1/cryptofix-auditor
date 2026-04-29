@@ -267,6 +267,37 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Demo Video Section */}
+      <section className="py-16 px-4 bg-white border-t border-slate-100">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold text-slate-900 mb-2">
+              See it in action
+            </h3>
+            <p className="text-slate-500 text-sm max-w-xl mx-auto">
+              3-minute walkthrough: scoring Kraken and Coinbase Exchange,
+              reading the gap analysis, and running a live audit on any spec.
+            </p>
+          </div>
+          <div className="relative w-full rounded-2xl overflow-hidden border
+            border-slate-200 shadow-lg"
+            style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src="https://www.youtube.com/embed/zgosto3l884"
+              title="CryptoFIX Institutional Readiness Auditor — Demo"
+              allow="accelerometer; autoplay; clipboard-write;
+                encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          <p className="text-center text-xs text-slate-400 mt-4">
+            Auditing Kraken (68/100) and Coinbase Exchange (60/100) against
+            the full 8-tier institutional readiness rubric.
+          </p>
+        </div>
+      </section>
+
       {/* Features Grid */}
       <section className="py-20 bg-slate-50 border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-4">
@@ -284,9 +315,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-white rounded-2xl border border-slate-200 flex items-center justify-center mb-6 shadow-sm">
                 <BarChart3 className="w-8 h-8 text-navy-dark" />
               </div>
-              <h4 className="text-xl font-bold mb-3 text-slate-900">190-Check Matrix</h4>
+              <h4 className="text-xl font-bold mb-3 text-slate-900">190-Check Rubric</h4>
               <p className="text-slate-500 text-sm leading-relaxed">
-                Deep analysis across Order Lifecycle, Execution Quality, Post-Trade, and AML/Compliance fields.
+                Deep analysis across 8 tiers: Order Lifecycle, Execution Quality, Post-Trade, Compliance, Drop Copy, Market Data, Session Management, and DAWG extensions.
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
