@@ -7,7 +7,7 @@ import { ShieldCheck, BarChart3, FileText, Zap, CheckCircle2 } from 'lucide-reac
 
 const PROGRESS_STEPS = [
   "Fetching FIX specification",
-  "Extracting 27 fields",
+  "Extracting 190 fields",
   "Scoring against rubric",
   "Building report"
 ];
