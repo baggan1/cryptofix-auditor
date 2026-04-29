@@ -284,7 +284,7 @@ export default function Home() {
               <div className="w-16 h-16 bg-white rounded-2xl border border-slate-200 flex items-center justify-center mb-6 shadow-sm">
                 <BarChart3 className="w-8 h-8 text-navy-dark" />
               </div>
-              <h4 className="text-xl font-bold mb-3 text-slate-900">32-Check Matrix</h4>
+              <h4 className="text-xl font-bold mb-3 text-slate-900">190-Check Matrix</h4>
               <p className="text-slate-500 text-sm leading-relaxed">
                 Deep analysis across Order Lifecycle, Execution Quality, Post-Trade, and AML/Compliance fields.
               </p>
