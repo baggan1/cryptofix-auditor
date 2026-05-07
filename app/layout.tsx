@@ -22,7 +22,9 @@ export default function RootLayout({
                 <text x="50" y="53" font-family="sans-serif" font-weight="bold" font-size="60" fill="white" text-anchor="middle" dominant-baseline="middle">O</text>
               </svg>
               <div>
-                <h1 className="text-xl font-bold tracking-tight">Opound LLC</h1>
+                <a href="https://www.opound.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#10B981] transition-colors">
+                  <h1 className="text-xl font-bold tracking-tight">Opound LLC</h1>
+                </a>
                 <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold -mt-1">CryptoFIX Auditor</p>
               </div>
             </div>
@@ -48,7 +50,7 @@ export default function RootLayout({
                 </svg>
                 <div>
                   <p className="text-sm text-slate-500 font-semibold uppercase tracking-wider mb-1">CryptoFIX Auditor</p>
-                  <p className="text-xs text-slate-400">Opound LLC — navilla@opound.com</p>
+                  <p className="text-xs text-slate-400"><a href="https://www.opound.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#10B981] transition-colors">Opound LLC</a> — navilla@opound.com</p>
                 </div>
               </div>
               <div className="text-center md:text-right">

@@ -109,10 +109,18 @@ export default function ContactPage() {
         </button>
       </div>
       
-      <div className="mt-24 text-center">
+      <div className="mt-24 text-center space-y-2">
         <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
           Opound LLC — Strategic FIX Protocol Advisory
         </p>
+        <a 
+          href="https://www.opound.com" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="inline-block text-sm font-medium text-[#10B981] hover:text-[#059669] transition-colors"
+        >
+          Learn more about Opound LLC → www.opound.com
+        </a>
       </div>
 
       <EmailCaptureModal 
