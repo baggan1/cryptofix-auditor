@@ -186,7 +186,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
   return (
     <div className="bg-[#f7f9fc] min-h-screen font-sans">
       {/* 1. Header / Meta Block */}
-      <div className="bg-[#1F3178] w-full border-t-4 border-[#10B981] shadow-md sticky top-0 z-50">
+      <div className="bg-navy-dark w-full border-t-4 border-[#10B981] shadow-md sticky top-0 z-50">
         <div className="max-w-[1000px] mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-4">
@@ -303,8 +303,8 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
               <SectionHeader num={1} title="Executive Summary" />
               
               {recommendationText && (
-                <div className="bg-[#f0f4ff] border-l-[3px] border-[#1F3178] p-5 rounded-r-xl mb-8 shadow-sm">
-                  <p className="text-[#1F3178] font-bold tracking-tight mb-2 uppercase text-xs font-mono">Recommendation</p>
+                <div className="bg-[#f0f4ff] border-l-[3px] border-navy-dark p-5 rounded-r-xl mb-8 shadow-sm">
+                  <p className="text-navy-dark font-bold tracking-tight mb-2 uppercase text-xs font-mono">Recommendation</p>
                   <p className="text-slate-700 leading-relaxed font-sans">{recommendationText}</p>
                 </div>
               )}

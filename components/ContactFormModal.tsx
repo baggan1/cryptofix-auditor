@@ -67,7 +67,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
           <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-emerald-600" />
           </div>
-          <h2 className="text-3xl font-black text-[#0F172A] tracking-tight mb-2">Message Sent</h2>
+          <h2 className="text-3xl font-black text-navy-dark tracking-tight mb-2">Message Sent</h2>
           <p className="text-slate-500 font-medium mb-8">
             Thank you for reaching out. We've received your inquiry and will be in touch shortly.
           </p>
@@ -98,7 +98,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
 
         <div className="p-10">
           <div className="mb-8">
-            <h2 className="text-3xl font-black text-[#0F172A] tracking-tight mb-2">
+            <h2 className="text-3xl font-black text-navy-dark tracking-tight mb-2">
               Email Us
             </h2>
             <p className="text-slate-500 font-medium">Inquire about custom FIX audits or strategy</p>
