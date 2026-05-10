@@ -15,10 +15,10 @@ const config: Config = {
       },
       colors: {
         navy: {
-          dark: "#1F3178",
+          dark: "#0F172A",
         },
         brand: {
-          bg: '#1F3178',
+          bg: '#0F172A',
           accent: '#10B981',
           'accent-hover': '#059669',
           muted: '#94A3B8',
