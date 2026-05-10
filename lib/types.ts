@@ -112,6 +112,7 @@ export interface MarketDataSubScore {
 export interface ScoredReport {
   exchange_name: string;
   audit_date: string;
+  inputType?: string;
   spec_source?: string;
   asset_classes_audited?: string[];
   total_score: number;

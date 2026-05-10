@@ -59,7 +59,7 @@ const ScoreGauge: React.FC<ScoreGaugeProps> = ({ score, grade }) => {
         </svg>
         <div className="absolute flex flex-col items-center justify-center text-center">
           <div className="flex items-baseline">
-            <span className="text-6xl font-bold text-slate-800">{score}</span>
+            <span className="text-6xl font-bold text-slate-800">{score.toFixed(1)}</span>
             <span className="text-xl text-slate-400 font-medium ml-1">/100</span>
           </div>
         </div>

@@ -123,6 +123,59 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
 
   const gapCardsData = useMemo(() => parseGapBlocks(stripHeading(getSectionByNum(4))), [mdSections]);
 
+  const recommendationText = useMemo(() => {
+    const match = content.match(/Recommendation:\s*([\s\S]*?)(?=\n\n|\nCritical gaps)/);
+    return match ? match[1].trim() : '';
+  }, [content]);
+
+  const sessionConfigData = useMemo(() => {
+    const section2 = stripHeading(getSectionByNum(2));
+    const data = {
+      connection: [] as { k: string, v: string }[],
+      auth: [] as { k: string, v: string }[],
+      session: [] as { k: string, v: string }[]
+    };
+    
+    const lines = section2.split('\n');
+    let currentSection = 'connection';
+    
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('##')) return;
+      
+      if (trimmed.toLowerCase().startsWith('fix version') || trimmed.toLowerCase().startsWith('transport')) {
+        const splitIdx = trimmed.indexOf(':');
+        if (splitIdx > -1) {
+          data.connection.push({ k: trimmed.substring(0, splitIdx).trim(), v: trimmed.substring(splitIdx + 1).trim() });
+        }
+        return;
+      }
+      
+      if (trimmed.toLowerCase().includes('authentication:')) {
+        currentSection = 'auth';
+        data.auth.push({ k: 'Method', v: trimmed.substring(trimmed.indexOf(':') + 1).trim() });
+        return;
+      }
+      if (trimmed.toLowerCase().includes('session management:')) {
+        currentSection = 'session';
+        return;
+      }
+      if (trimmed.toLowerCase().includes('connection parameters:')) {
+        currentSection = 'connection';
+        return;
+      }
+      
+      const splitIdx = trimmed.indexOf(':');
+      if (splitIdx > -1) {
+        const k = trimmed.substring(0, splitIdx).trim();
+        const v = trimmed.substring(splitIdx + 1).trim();
+        data[currentSection as keyof typeof data].push({ k, v });
+      }
+    });
+    
+    return data;
+  }, [mdSections]);
+
   const SectionHeader = ({ num, title }: { num: number, title: string }) => (
     <div className="border-l-[3px] border-[#10B981] pl-4 mb-8 pb-3 border-b border-slate-200">
       <div className="font-mono text-xs font-bold text-[#10B981] tracking-widest uppercase mb-1">Section {num}</div>
@@ -133,25 +186,32 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
   return (
     <div className="bg-[#f7f9fc] min-h-screen font-sans">
       {/* 1. Header / Meta Block */}
-      <div className="bg-[#0A1628] w-full border-t-4 border-[#10B981] shadow-md sticky top-0 z-50">
-        <div className="max-w-[860px] mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-12 h-12 shadow-sm">
-              <rect width="100" height="100" rx="25" fill="#10B981"/>
-              <text x="50" y="53" fontFamily="sans-serif" fontWeight="bold" fontSize="60" fill="white" textAnchor="middle" dominantBaseline="middle">O</text>
-            </svg>
-            <div className="text-white flex flex-col justify-center">
-              <span className="font-bold text-lg leading-tight tracking-tight">Opound LLC</span>
-              <span className="text-[11px] font-bold tracking-widest text-[#10B981] uppercase mt-0.5 font-mono">CryptoFIX Auditor</span>
+      <div className="bg-[#1F3178] w-full border-t-4 border-[#10B981] shadow-md sticky top-0 z-50">
+        <div className="max-w-[1000px] mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-12 h-12 shadow-sm">
+                <rect width="100" height="100" rx="25" fill="#10B981"/>
+                <text x="50" y="53" fontFamily="sans-serif" fontWeight="bold" fontSize="60" fill="white" textAnchor="middle" dominantBaseline="middle">O</text>
+              </svg>
+              <div className="text-white flex flex-col justify-center">
+                <span className="font-bold text-lg leading-tight tracking-tight whitespace-nowrap">Opound LLC</span>
+                <span className="text-[11px] font-bold tracking-widest text-[#10B981] uppercase mt-0.5 font-mono whitespace-nowrap">CryptoFIX Auditor</span>
+              </div>
+            </div>
+            <div className="hidden md:block w-px h-10 bg-white/20"></div>
+            <div className="text-white text-xl font-bold tracking-tight whitespace-nowrap">
+              {exchangeName}
             </div>
           </div>
           
-          <div className="flex-1 flex justify-center text-sm w-full md:w-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3 text-slate-300 w-full">
-              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1 font-mono">Audit Date</span><span className="text-white font-medium">{report.audit_date}</span></div>
-              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1 font-mono">Auditor</span><span className="text-white font-medium">Navilla Bagga</span></div>
-              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1 font-mono">Spec Source</span><a href={report.spec_source} target="_blank" rel="noreferrer" className="text-[#10B981] hover:underline truncate max-w-[120px]">{report.spec_source}</a></div>
-              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1 font-mono">Asset Classes</span><span className="text-white font-medium capitalize">{report.asset_classes_audited?.join(', ') ?? 'Spot'}</span></div>
+          <div className="flex-1 flex justify-center md:justify-end text-sm w-full md:w-auto overflow-hidden">
+            <div className="flex flex-wrap gap-x-6 gap-y-3 text-slate-300 justify-start md:justify-end">
+              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Input Type</span><span className="text-white font-medium whitespace-nowrap">{report.inputType || 'Pre-loaded Spec'}</span></div>
+              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Audit Date</span><span className="text-white font-medium whitespace-nowrap">{report.audit_date}</span></div>
+              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Auditor</span><span className="text-white font-medium whitespace-nowrap">Navilla Bagga</span></div>
+              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Spec Source</span><a href={report.spec_source} target="_blank" rel="noreferrer" className="text-[#10B981] hover:underline truncate max-w-[120px]">{report.spec_source}</a></div>
+              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Asset Classes</span><span className="text-white font-medium capitalize whitespace-nowrap">{report.asset_classes_audited?.join(', ') ?? 'Spot'}</span></div>
             </div>
           </div>
 
@@ -182,7 +242,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                 </svg>
                 <div className="absolute flex flex-col items-center justify-center">
                   <div className="flex items-baseline">
-                    <span className="text-5xl font-bold font-sans tracking-tighter text-white">{report.total_score.toFixed(0)}</span>
+                    <span className="text-5xl font-bold font-sans tracking-tighter text-white">{report.total_score.toFixed(1)}</span>
                     <span className="text-lg text-slate-400 font-mono font-medium ml-1">/100</span>
                   </div>
                 </div>
@@ -241,9 +301,13 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
             {/* SECTION 1: EXEC SUMMARY */}
             <section className="report-section">
               <SectionHeader num={1} title="Executive Summary" />
-              <div className="prose prose-slate max-w-none text-slate-700 font-sans leading-relaxed">
-                <div dangerouslySetInnerHTML={{ __html: marked.parse(mdSections[0].split('\n\n').slice(5).join('\n\n')) }} />
-              </div>
+              
+              {recommendationText && (
+                <div className="bg-[#f0f4ff] border-l-[3px] border-[#1F3178] p-5 rounded-r-xl mb-8 shadow-sm">
+                  <p className="text-[#1F3178] font-bold tracking-tight mb-2 uppercase text-xs font-mono">Recommendation</p>
+                  <p className="text-slate-700 leading-relaxed font-sans">{recommendationText}</p>
+                </div>
+              )}
               
               <div className="mt-8">
                 <h3 className="text-lg font-bold text-slate-800 mb-4 font-sans">Critical Gaps</h3>
@@ -280,8 +344,28 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
             {/* SECTION 2: SESSION CONFIG */}
             <section className="report-section">
               <SectionHeader num={2} title="Session configuration" />
-              <div className="report-content prose prose-slate max-w-none font-sans">
-                <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(2))) }} />
+              <div className="space-y-6">
+                {Object.entries(sessionConfigData).map(([sectionKey, rows]) => {
+                  if (rows.length === 0) return null;
+                  const sectionTitle = sectionKey === 'connection' ? 'Connection' : sectionKey === 'auth' ? 'Authentication' : 'Session Management';
+                  return (
+                    <div key={sectionKey} className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
+                      <div className="bg-slate-50 px-4 py-2 border-b border-slate-200">
+                        <h4 className="text-[10px] font-bold text-[#10B981] uppercase tracking-widest font-mono">{sectionTitle}</h4>
+                      </div>
+                      <table className="w-full text-sm text-left m-0">
+                        <tbody className="divide-y divide-slate-100">
+                          {rows.map((row, idx) => (
+                            <tr key={idx} className="bg-white">
+                              <td className="px-4 py-3 font-medium text-slate-500 w-1/3 text-xs tracking-wide uppercase">{row.k}</td>
+                              <td className="px-4 py-3 text-slate-800 font-medium font-sans">{row.v}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+                })}
               </div>
             </section>
 
@@ -464,6 +548,9 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
       </div>
 
       <style jsx global>{`
+        /* Hide global navbar and footer on report page */
+        body > header, body > footer { display: none !important; }
+
         /* Screen versions */
         .report-content table {
           width: 100%;
