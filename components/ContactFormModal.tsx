@@ -62,7 +62,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
   if (submitted) {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-[#0F172A]/80 backdrop-blur-sm" onClick={onClose} />
+        <div className="absolute inset-0 bg-navy-dark/80 backdrop-blur-sm" onClick={onClose} />
         <div className="relative bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden p-12 text-center animate-in fade-in zoom-in duration-300">
           <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-emerald-600" />
@@ -73,7 +73,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
           </p>
           <button
             onClick={onClose}
-            className="w-full h-14 bg-[#0F172A] text-white rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20"
+            className="w-full h-14 bg-navy-dark text-white rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20"
           >
             Close
           </button>
@@ -85,7 +85,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Overlay */}
-      <div className="absolute inset-0 bg-[#0F172A]/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-navy-dark/80 backdrop-blur-sm" onClick={onClose} />
       
       {/* Modal Card */}
       <div className="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
@@ -195,7 +195,7 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-16 bg-[#0F172A] hover:bg-slate-800 disabled:bg-slate-400 text-white rounded-2xl font-black text-lg flex items-center justify-center gap-3 shadow-xl shadow-slate-900/20 transition-all active:scale-[0.98] mt-4"
+              className="w-full h-16 bg-navy-dark hover:bg-slate-800 disabled:bg-slate-400 text-white rounded-2xl font-black text-lg flex items-center justify-center gap-3 shadow-xl shadow-slate-900/20 transition-all active:scale-[0.98] mt-4"
             >
               {loading ? (
                 <Loader2 className="w-6 h-6 animate-spin" />

@@ -5,7 +5,7 @@ import { marked } from 'marked';
 import { ScoredReport, GapSummaryItem, CheckResult } from '@/lib/types';
 import Tier5Panel from './Tier5Panel';
 import SeparateTierPanel from './SeparateTierPanel';
-import { Shield, FileText, CheckCircle, AlertCircle, AlertTriangle, Printer, Download, Map, Activity, BarChart3, ShieldAlert, Check } from 'lucide-react';
+import { Shield, FileText, CheckCircle, AlertCircle, AlertTriangle, Printer, Download, Map, Activity, BarChart3, ShieldAlert, Check, Database } from 'lucide-react';
 
 interface PrintReportProps {
   content: string;
@@ -247,7 +247,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                   </div>
                 </div>
               </div>
-              <div className="mt-4 px-5 py-1.5 rounded-full font-bold text-sm tracking-widest uppercase shadow-sm"
+              <div className="rating-badge mt-4 px-5 py-1.5 rounded-full font-bold text-sm tracking-widest uppercase shadow-sm"
                 style={{
                   backgroundColor: report.total_score >= 80 ? 'rgba(16, 185, 129, 0.15)' : report.total_score >= 40 ? 'rgba(245, 158, 11, 0.15)' : 'rgba(239, 68, 68, 0.15)',
                   color: report.total_score >= 80 ? '#10B981' : report.total_score >= 40 ? '#F59E0B' : '#EF4444',
@@ -269,8 +269,8 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                         <span className="font-medium text-slate-200">{tier.label.split('—')[0].trim()}</span>
                         <span className="font-mono text-xs text-slate-400"><span className="text-white font-bold">{tier.earned.toFixed(1)}</span> / {tier.available}</span>
                       </div>
-                      <div className="bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                        <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${pct}%`, backgroundColor: barColor }} />
+                      <div className="tier-bar-track bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div className="tier-bar-fill h-full rounded-full transition-all duration-1000" style={{ width: `${pct}%`, backgroundColor: barColor }} />
                       </div>
                     </div>
                   );
@@ -279,18 +279,18 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
 
               {/* Tag Chips */}
               <div className="mt-8 pt-5 border-t border-slate-700/50 flex flex-wrap gap-3">
-                <div className="inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
+                <div className="info-chip inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
                   <Shield className="w-3.5 h-3.5 text-[#10B981]" />
                   <span>Compliance & Drop Copy <span className="text-white font-bold ml-1">{report.compliance_sub_score.total}/{report.compliance_sub_score.max}</span></span>
                 </div>
-                <div className="inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
+                <div className="info-chip inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
                   <Activity className="w-3.5 h-3.5 text-blue-400" />
                   <span>Market Data Readiness <span className="text-white font-bold ml-1">{report.market_data_sub_score.total}/{report.market_data_sub_score.max}</span></span>
                 </div>
                 {report.tier5_results && (
-                  <div className="inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
-                    <Map className="w-3.5 h-3.5 text-purple-400" />
-                    <span>Tier 5 DAWG <span className="text-white font-bold ml-1">{report.tier5_results.checks.filter(c => c.status !== 'no_credit').length} Ext</span></span>
+                  <div className="info-chip inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
+                    <Database className="w-3.5 h-3.5 text-purple-400" />
+                    <span>DAWG Extensions <span className="text-white font-bold ml-1">{report.tier5_results.checks.length} checks</span></span>
                   </div>
                 )}
               </div>
@@ -642,11 +642,49 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
             page-break-inside: avoid;
           }
 
-          /* Score card — keep on one page */
+          /* Score card — keep on one page and invert to light theme */
           .score-card {
             page-break-inside: avoid;
+            break-inside: avoid;
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 8px !important;
           }
 
+          /* Tier breakdown labels and values: dark text on white */
+          .score-card * {
+            color: #0f172a !important;
+          }
+
+          /* Tier progress bar track: light gray */
+          .tier-bar-track {
+            background-color: #e2e8f0 !important;
+          }
+
+          /* Tier progress bar fill: keep color but ensure visibility */
+          .tier-bar-fill {
+            opacity: 1 !important;
+          }
+
+          /* Informational chips: light border, dark text */
+          .info-chip {
+            background-color: #f8fafc !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #0f172a !important;
+          }
+
+          /* PARTIAL badge: keep amber but on white */
+          .rating-badge {
+            background-color: #fef3c7 !important;
+            color: #92400e !important;
+            border: 1px solid #fcd34d !important;
+          }
+
+          /* SVG gauge arc and text: ensure visibility on white */
+          .score-card svg text {
+            fill: #0f172a !important;
+          }
           /* Footer — print on every page */
           .report-footer {
             position: running(footer);

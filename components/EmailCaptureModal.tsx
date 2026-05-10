@@ -108,7 +108,7 @@ export default function EmailCaptureModal({
 
         <div className="p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-black text-[#0F172A] tracking-tight mb-1">
+            <h2 className="text-2xl font-black text-navy-dark tracking-tight mb-1">
               {title}
             </h2>
             <p className="text-slate-500 text-sm font-medium">{description}</p>
