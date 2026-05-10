@@ -8,6 +8,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-ibm-sans)', 'sans-serif'],
+        serif: ['var(--font-ibm-sans)', 'serif'],
+        mono: ['var(--font-ibm-mono)', 'monospace'],
+      },
       colors: {
         navy: {
           dark: "#0F172A",

@@ -4,10 +4,8 @@ import React, { useMemo } from 'react';
 import { marked } from 'marked';
 import { ScoredReport, GapSummaryItem, CheckResult } from '@/lib/types';
 import Tier5Panel from './Tier5Panel';
-import Tier6DropCopyPanel from './Tier6DropCopyPanel';
-import Tier7MarketDataPanel from './Tier7MarketDataPanel';
 import SeparateTierPanel from './SeparateTierPanel';
-import { Shield, FileText, CheckCircle, AlertCircle, AlertTriangle, Printer, Download, Map, Activity, BarChart3, ShieldAlert } from 'lucide-react';
+import { Shield, FileText, CheckCircle, AlertCircle, AlertTriangle, Printer, Download, Map, Activity, BarChart3, ShieldAlert, Check } from 'lucide-react';
 
 interface PrintReportProps {
   content: string;
@@ -40,7 +38,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
     });
 
     // 3. Overall Score
-    md = md.replace(/Overall score: (\d+) \/ 100 — (.*)/, (match: string, score: string, grade: string) => {
+    md = md.replace(/Overall score: (\d+(\.\d+)?) \/ 100 — (.*)/, (match: string, score: string, dec: string, grade: string) => {
       return `<div class="overall-score-block">
         <div class="score-main">${score}</div>
         <div class="score-sub">
@@ -56,7 +54,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
       return `<h2 class="${className}">${full}</h2>`;
     });
 
-    // 5. Gap Analysis Cards (### T... — ... lost)
+    // 5. Gap Analysis Cards
     md = md.replace(/(### [A-Z0-9]+_.*?\n)([\s\S]*?)(?=\n###|\n##|\n---|$(?![\s\S]))/g, (match: string, header: string, body: string) => {
       return `<div class="gap-card">\n\n${header}\n${body}\n\n</div>`;
     });
@@ -71,7 +69,6 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
 
   // Split markdown for screen sections
   const mdSections = useMemo(() => {
-    // Split by SECTION headings, using a positive lookahead to keep the heading with the content
     const sections = content.split(/(?=##?\s*SECTION\s+\d)/gi);
     return sections.map(s => s.trim());
   }, [content]);
@@ -94,149 +91,184 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
     return tiers;
   }, [report.full_detail]);
 
-  // Helper to find a section by its number
   const getSectionByNum = (num: number) => {
     const prefix = `SECTION ${num}`;
     return mdSections.find(s => s.toUpperCase().includes(prefix)) || '';
   };
 
-  // Helper to strip the heading from a section string
   const stripHeading = (sectionContent: string) => {
     return sectionContent.replace(/##?\s*SECTION\s+\d.*?(\n|$)/i, '').trim();
   };
 
-  return (
-    <div className="bg-white min-h-screen">
-      {/* Screen only banner */}
-      <div className="no-print print:hidden bg-navy-dark text-white p-4 text-center sticky top-0 z-50">
-        <p className="font-medium">
-          RoE Document for <span className="font-bold">{exchangeName}</span>. 
-          Use <kbd className="bg-white/10 px-1 rounded">Cmd+P</kbd> or <kbd className="bg-white/10 px-1 rounded">Ctrl+P</kbd> to Save as PDF.
-        </p>
-        <button 
-          onClick={() => window.print()}
-          className="mt-2 bg-white text-navy-dark px-4 py-1.5 rounded-md text-sm font-bold hover:bg-slate-100 transition-colors"
-        >
-          Print / Save as PDF
-        </button>
-      </div>
+  const parseGapBlocks = (contentStr: string) => {
+    const blocks = contentStr.split(/(?=### )/).filter(b => b.trim().startsWith('###'));
+    return blocks.map(block => {
+      const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+      const titleLine = lines[0].replace(/^###\s*/, '');
+      const data: Record<string, string> = { Title: titleLine };
+      let currentKey = '';
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        if (line.includes(':') && !line.startsWith('http')) {
+          const splitIdx = line.indexOf(':');
+          currentKey = line.substring(0, splitIdx).trim();
+          data[currentKey] = line.substring(splitIdx + 1).trim();
+        } else if (currentKey) {
+          data[currentKey] += ' ' + line;
+        }
+      }
+      return data;
+    });
+  };
 
-      <div className="max-w-4xl mx-auto px-6 py-10 print:max-w-none print:p-0">
-        {/* SCREEN VIEW */}
-        <div className="no-print space-y-2">
-          {/* PROBLEM 2: Metadata Block */}
-          <div className="grid grid-cols-[140px_1fr] gap-x-4 gap-y-2 text-sm mb-8 p-4 bg-slate-50 rounded-lg border border-slate-200">
-            <span className="text-slate-500 font-medium">Audit date</span>
-            <span className="text-slate-800">{report.audit_date}</span>
-            <span className="text-slate-500 font-medium">Auditor</span>
-            <span className="text-slate-800">Opound LLC — Navilla Bagga</span>
-            <span className="text-slate-500 font-medium">Spec source</span>
-            <a href={report.spec_source} className="text-blue-600 hover:underline truncate" target="_blank" rel="noopener noreferrer">
-              {report.spec_source}
-            </a>
-            <span className="text-slate-500 font-medium">Asset classes</span>
-            <span className="text-slate-800">
-              {report.asset_classes_audited?.join(', ') ?? 'spot'}
-            </span>
+  const gapCardsData = useMemo(() => parseGapBlocks(stripHeading(getSectionByNum(4))), [mdSections]);
+
+  const SectionHeader = ({ num, title }: { num: number, title: string }) => (
+    <div className="border-l-[3px] border-[#10B981] pl-4 mb-8 pb-3 border-b border-slate-200">
+      <div className="font-mono text-xs font-bold text-[#10B981] tracking-widest uppercase mb-1">Section {num}</div>
+      <h2 className="text-2xl font-bold text-[#0A1628] font-sans">{title}</h2>
+    </div>
+  );
+
+  return (
+    <div className="bg-[#f7f9fc] min-h-screen font-sans">
+      {/* 1. Header / Meta Block */}
+      <div className="bg-[#0A1628] w-full border-t-4 border-[#10B981] shadow-md sticky top-0 z-50">
+        <div className="max-w-[860px] mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-12 h-12 shadow-sm">
+              <rect width="100" height="100" rx="25" fill="#10B981"/>
+              <text x="50" y="53" fontFamily="sans-serif" fontWeight="bold" fontSize="60" fill="white" textAnchor="middle" dominantBaseline="middle">O</text>
+            </svg>
+            <div className="text-white flex flex-col justify-center">
+              <span className="font-bold text-lg leading-tight tracking-tight">Opound LLC</span>
+              <span className="text-[11px] font-bold tracking-widest text-[#10B981] uppercase mt-0.5 font-mono">CryptoFIX Auditor</span>
+            </div>
+          </div>
+          
+          <div className="flex-1 flex justify-center text-sm w-full md:w-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3 text-slate-300 w-full">
+              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1 font-mono">Audit Date</span><span className="text-white font-medium">{report.audit_date}</span></div>
+              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1 font-mono">Auditor</span><span className="text-white font-medium">Navilla Bagga</span></div>
+              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1 font-mono">Spec Source</span><a href={report.spec_source} target="_blank" rel="noreferrer" className="text-[#10B981] hover:underline truncate max-w-[120px]">{report.spec_source}</a></div>
+              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1 font-mono">Asset Classes</span><span className="text-white font-medium capitalize">{report.asset_classes_audited?.join(', ') ?? 'Spot'}</span></div>
+            </div>
           </div>
 
-          {/* PROBLEM 3: Overall Score Hero */}
-          <div className="flex items-center gap-8 p-6 mb-8 rounded-xl border border-slate-200 bg-white shadow-sm">
-            <div className="flex-shrink-0 w-24 h-24 rounded-full flex flex-col items-center justify-center border-4"
-              style={{
-                borderColor: report.total_score >= 70 ? '#10B981' : report.total_score >= 50 ? '#F59E0B' : '#EF4444'
-              }}>
-              <span className="text-3xl font-bold text-slate-800">{report.total_score.toFixed(0)}</span>
-              <span className="text-xs text-slate-500">/ 100</span>
-            </div>
-            <div className="flex-1">
-              <div className="text-xl font-semibold mb-3"
+          <button onClick={() => window.print()} className="print-hide flex-shrink-0 flex items-center gap-2 bg-[#10B981] hover:bg-[#059669] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm">
+            <Printer className="w-4 h-4" /> Print / Save PDF
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-[860px] mx-auto px-6 py-12 print:max-w-none print:p-0 bg-white shadow-sm my-8 rounded-xl print:shadow-none print:my-0">
+        {/* REPORT CONTENT */}
+        <div className="space-y-12">
+          
+          {/* 2. Score Card */}
+          <div className="score-card flex flex-col md:flex-row gap-8 p-8 rounded-2xl bg-[#0A1628] shadow-xl text-white relative overflow-hidden">
+            {/* Decorative background accent */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#10B981] opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            
+            <div className="flex flex-col items-center justify-center min-w-[240px] z-10">
+              <div className="relative w-48 h-48 flex items-center justify-center">
+                <svg viewBox="0 0 200 200" className="w-full h-full transform -rotate-90 drop-shadow-md">
+                  <circle cx="100" cy="100" r="80" stroke="#1e293b" strokeWidth="14" fill="none" />
+                  <circle cx="100" cy="100" r="80" stroke="#10B981" strokeWidth="14" fill="none" 
+                    strokeDasharray={2 * Math.PI * 80} 
+                    strokeDashoffset={2 * Math.PI * 80 - (report.total_score / 100) * 2 * Math.PI * 80} 
+                    strokeLinecap="round" 
+                    className="transition-all duration-1000 ease-out" />
+                </svg>
+                <div className="absolute flex flex-col items-center justify-center">
+                  <div className="flex items-baseline">
+                    <span className="text-5xl font-bold font-sans tracking-tighter text-white">{report.total_score.toFixed(0)}</span>
+                    <span className="text-lg text-slate-400 font-mono font-medium ml-1">/100</span>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 px-5 py-1.5 rounded-full font-bold text-sm tracking-widest uppercase shadow-sm"
                 style={{
-                  color: report.total_score >= 70 ? '#059669' : report.total_score >= 50 ? '#D97706' : '#DC2626'
+                  backgroundColor: report.total_score >= 80 ? 'rgba(16, 185, 129, 0.15)' : report.total_score >= 40 ? 'rgba(245, 158, 11, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                  color: report.total_score >= 80 ? '#10B981' : report.total_score >= 40 ? '#F59E0B' : '#EF4444',
+                  border: `1px solid ${report.total_score >= 80 ? 'rgba(16, 185, 129, 0.3)' : report.total_score >= 40 ? 'rgba(245, 158, 11, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`
                 }}>
                 {report.grade}
               </div>
-              <div className="grid grid-cols-2 gap-x-6 gap-y-2">
-                {Object.entries(report.tier_scores).map(([key, tier]) => (
-                  <div key={key} className="flex items-center gap-3 text-sm">
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-slate-500 text-[10px] uppercase font-bold truncate">{tier.label}</span>
-                        <span className="text-slate-900 font-bold text-[10px]">{tier.earned}/{tier.available}</span>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-center z-10">
+              <h3 className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-5 font-mono">Tier Breakdown</h3>
+              <div className="space-y-4">
+                {Object.entries(report.tier_scores).filter(([k]) => k !== 'tier5').map(([key, tier]) => {
+                  const pct = tier.available > 0 ? (tier.earned / tier.available) * 100 : 0;
+                  const barColor = pct >= 80 ? '#10B981' : pct >= 40 ? '#F59E0B' : '#EF4444';
+                  return (
+                    <div key={key} className="flex flex-col gap-1.5">
+                      <div className="flex justify-between items-end text-sm">
+                        <span className="font-medium text-slate-200">{tier.label.split('—')[0].trim()}</span>
+                        <span className="font-mono text-xs text-slate-400"><span className="text-white font-bold">{tier.earned.toFixed(1)}</span> / {tier.available}</span>
                       </div>
-                      <div className="bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                        <div className="h-full rounded-full bg-navy-dark transition-all"
-                          style={{width: `${tier.pct}%`}} />
+                      <div className="bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${pct}%`, backgroundColor: barColor }} />
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
-              {/* Sub-scores */}
-              <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap gap-4">
-                <div className="text-[10px] bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-100 flex flex-col gap-0.5">
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-3 h-3" />
-                    <span className="font-bold uppercase tracking-tight">{report.compliance_sub_score.label}</span>
-                    <span className="font-black ml-auto">{report.compliance_sub_score.total}/{report.compliance_sub_score.max}</span>
-                  </div>
-                  <div className="opacity-70 font-medium">{report.compliance_sub_score.grade}</div>
+              {/* Tag Chips */}
+              <div className="mt-8 pt-5 border-t border-slate-700/50 flex flex-wrap gap-3">
+                <div className="inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
+                  <Shield className="w-3.5 h-3.5 text-[#10B981]" />
+                  <span>Compliance & Drop Copy <span className="text-white font-bold ml-1">{report.compliance_sub_score.total}/{report.compliance_sub_score.max}</span></span>
                 </div>
-
-                <div className="text-[10px] bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg border border-blue-100 flex flex-col gap-0.5">
-                  <div className="flex items-center gap-2">
-                    <Activity className="w-3 h-3" />
-                    <span className="font-bold uppercase tracking-tight">{report.market_data_sub_score.label}</span>
-                    <span className="font-black ml-auto">{report.market_data_sub_score.total}/{report.market_data_sub_score.max}</span>
-                  </div>
-                  <div className="opacity-70 font-medium">{report.market_data_sub_score.grade}</div>
+                <div className="inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
+                  <Activity className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Market Data Readiness <span className="text-white font-bold ml-1">{report.market_data_sub_score.total}/{report.market_data_sub_score.max}</span></span>
                 </div>
-
                 {report.tier5_results && (
-                  <div className="text-[10px] bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg border border-slate-200 flex flex-col justify-center">
-                    <div className="font-bold uppercase tracking-tight">Tier 5 (DAWG)</div>
-                    <div>{report.tier5_results.checks.filter(c => c.status !== 'no_credit').length} Extensions</div>
+                  <div className="inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
+                    <Map className="w-3.5 h-3.5 text-purple-400" />
+                    <span>Tier 5 DAWG <span className="text-white font-bold ml-1">{report.tier5_results.checks.filter(c => c.status !== 'no_credit').length} Ext</span></span>
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Structured Sections */}
-          <div className="space-y-12">
+          <div className="space-y-[48px]">
             {/* SECTION 1: EXEC SUMMARY */}
-            <section>
-              <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 1 — Executive Summary</h2>
-              <div className="prose prose-slate max-w-none text-slate-700">
+            <section className="report-section">
+              <SectionHeader num={1} title="Executive Summary" />
+              <div className="prose prose-slate max-w-none text-slate-700 font-sans leading-relaxed">
                 <div dangerouslySetInnerHTML={{ __html: marked.parse(mdSections[0].split('\n\n').slice(5).join('\n\n')) }} />
               </div>
               
-              {/* Critical Gaps Table */}
               <div className="mt-8">
-                <h3 className="text-lg font-bold text-slate-800 mb-4">Critical Gaps</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm border-collapse rounded-lg overflow-hidden border border-slate-200">
-                    <thead className="bg-[#0A1628] text-white">
+                <h3 className="text-lg font-bold text-slate-800 mb-4 font-sans">Critical Gaps</h3>
+                <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-[#0A1628] text-white font-sans text-xs uppercase tracking-wider">
                       <tr>
-                        <th className="text-left p-3 font-medium w-32">Check ID</th>
-                        <th className="text-left p-3 font-medium w-48">Field</th>
-                        <th className="text-center p-3 font-medium w-24">Pts Lost</th>
-                        <th className="text-left p-3 font-medium">Impact</th>
+                        <th className="px-4 py-3 font-medium w-32">Check ID</th>
+                        <th className="px-4 py-3 font-medium w-48">Field</th>
+                        <th className="px-4 py-3 font-medium text-center w-24">Pts Lost</th>
+                        <th className="px-4 py-3 font-medium">Impact</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200">
+                    <tbody className="divide-y divide-slate-100">
                       {report.gap_summary.slice(0, 3).map((item, index) => (
                         <tr key={item.check_id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                          <td className="p-3 font-mono text-xs text-slate-500">{item.check_id}</td>
-                          <td className="p-3 font-medium text-slate-800">
+                          <td className="px-4 py-4 font-mono text-xs text-slate-500 font-bold">{item.check_id}</td>
+                          <td className="px-4 py-4 font-medium text-slate-800">
                             {item.field_name || (item as any).field || '—'}
-                            <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                            <div className="text-[10px] text-slate-400 font-mono mt-1 font-bold">
                               Tag {item.fix_tag || (item as any).tag || '—'}
                             </div>
                           </td>
-                          <td className="p-3 text-center text-red-600 font-bold">-{item.points_lost} pts</td>
-                          <td className="p-3 text-slate-600 text-xs leading-relaxed">{getImpact(item)}</td>
+                          <td className="px-4 py-4 text-center text-red-600 font-bold font-mono">-{item.points_lost}</td>
+                          <td className="px-4 py-4 text-slate-600 text-sm leading-relaxed">{getImpact(item)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -246,131 +278,151 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
             </section>
 
             {/* SECTION 2: SESSION CONFIG */}
-            <section>
-              <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 2 — Session configuration</h2>
-              <div className="report-content">
+            <section className="report-section">
+              <SectionHeader num={2} title="Session configuration" />
+              <div className="report-content prose prose-slate max-w-none font-sans">
                 <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(2))) }} />
               </div>
             </section>
 
             {/* SECTION 3 — TIER SCORECARD */}
-            <section>
-              <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 3 — Tier scorecard</h2>
-              <div className="space-y-8 mt-6">
-                {[1, 2, 3, 8, 4, 6, 7].map(tierNum => (
-                  <div key={tierNum}>
-                    <div className="flex items-center gap-2 mb-3 ml-1">
-                      <h3 className="text-md font-bold text-slate-800">Tier {tierNum} Checks</h3>
-                      {[4, 6].includes(tierNum) && <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded uppercase">Compliance Sub-score</span>}
-                      {tierNum === 7 && <span className="text-[9px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded uppercase">Market Data Sub-score</span>}
+            <section className="report-section">
+              <SectionHeader num={3} title="Tier scorecard" />
+              <div className="space-y-10 mt-6">
+                {[1, 2, 3, 8, 4, 6, 7].map(tierNum => {
+                  if (!checksByTier[tierNum] || checksByTier[tierNum].length === 0) return null;
+                  const earned = checksByTier[tierNum].reduce((a, b) => a + (b.status === 'full_credit' ? b.points_available : b.status === 'partial_credit' ? b.points_available * 0.5 : 0), 0);
+                  const avail = checksByTier[tierNum].reduce((a, b) => a + b.points_available, 0);
+                  return (
+                    <div key={tierNum} className="mb-8">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-lg font-bold text-[#0A1628] font-sans">Tier {tierNum} Checks</h3>
+                          {[4, 6].includes(tierNum) && <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-2 py-1 rounded-md uppercase tracking-wider">Compliance Sub-score</span>}
+                          {tierNum === 7 && <span className="text-[9px] font-bold bg-blue-100 text-blue-700 px-2 py-1 rounded-md uppercase tracking-wider">Market Data Sub-score</span>}
+                        </div>
+                        <div className="mt-3 sm:mt-0 text-sm font-mono font-bold bg-[#0A1628] text-white px-4 py-1.5 rounded-full shadow-sm">
+                           {earned % 1 === 0 ? earned : earned.toFixed(1)} / {avail % 1 === 0 ? avail : avail.toFixed(1)} pts
+                        </div>
+                      </div>
+                      <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                        <table className="w-full text-sm text-left">
+                          <thead className="bg-[#0A1628] text-white font-sans text-[11px] uppercase tracking-wider">
+                            <tr>
+                              <th className="px-4 py-3 font-medium whitespace-nowrap">Check ID</th>
+                              <th className="px-4 py-3 font-medium whitespace-nowrap">Tag</th>
+                              <th className="px-4 py-3 font-medium">Field</th>
+                              <th className="px-4 py-3 font-medium text-center">Status</th>
+                              <th className="px-4 py-3 font-medium text-right">Pts</th>
+                              <th className="px-4 py-3 font-medium">Evidence</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {checksByTier[tierNum]?.map((check, index) => {
+                              const checkEarned = check.status === 'full_credit' ? check.points_available : check.status === 'partial_credit' ? check.points_available * 0.5 : 0;
+                              return (
+                                <tr key={check.check_id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50 hover:bg-slate-50 transition-colors'}>
+                                  <td className="px-4 py-4 font-mono text-[11px] text-slate-500 font-bold whitespace-nowrap">{check.check_id}</td>
+                                  <td className="px-4 py-4 font-mono text-[11px] font-bold whitespace-nowrap">{check.fix_tag || (check.level === 'message' ? 'MSG' : '—')}</td>
+                                  <td className="px-4 py-4 font-medium text-slate-800">{check.field_name || check.message_name || '—'}</td>
+                                  <td className="px-4 py-4 text-center">
+                                    <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                      check.status === 'full_credit' ? 'bg-emerald-100 text-emerald-700' : 
+                                      check.status === 'partial_credit' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
+                                    }`}>
+                                      {check.status === 'full_credit' ? 'PASS' : check.status === 'partial_credit' ? 'PARTIAL' : 'FAIL'}
+                                    </span>
+                                  </td>
+                                  <td className="px-4 py-4 text-right font-mono text-xs whitespace-nowrap">
+                                    <span className="font-bold text-slate-800">{checkEarned % 1 === 0 ? checkEarned : checkEarned.toFixed(1)}</span>
+                                    <span className="text-slate-400"> / {check.points_available % 1 === 0 ? check.points_available : check.points_available.toFixed(1)}</span>
+                                  </td>
+                                  <td className="px-4 py-4 text-xs text-slate-600 leading-relaxed font-sans">{check.evidence ?? '—'}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                    <div className="overflow-x-auto mb-8">
-                      <table className="w-full text-sm border-collapse border border-slate-200">
-                        <thead>
-                          <tr className="bg-[#0A1628] text-white">
-                            <th className="text-left p-3 font-medium w-20">Check ID</th>
-                            <th className="text-left p-3 font-medium w-20">FIX Tag</th>
-                            <th className="text-left p-3 font-medium">Field</th>
-                            <th className="text-center p-3 font-medium w-20">Status</th>
-                            <th className="text-center p-3 font-medium w-16">Earned</th>
-                            <th className="text-center p-3 font-medium w-16">Avail</th>
-                            <th className="text-left p-3 font-medium">Evidence</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                          {checksByTier[tierNum]?.map((check, index) => {
-                            const earned = check.status === 'full_credit' ? check.points_available : check.status === 'partial_credit' ? check.points_available * 0.5 : 0;
-                            return (
-                              <tr key={check.check_id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                                <td className="p-3 font-mono text-xs text-slate-500">{check.check_id}</td>
-                                <td className="p-3 font-mono text-xs">{check.fix_tag || (check.level === 'message' ? 'MSG' : '—')}</td>
-                                <td className="p-3 font-medium text-slate-800">{check.field_name || check.message_name || '—'}</td>
-                                <td className="p-3 text-center">
-                                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                                    check.status === 'full_credit' ? 'bg-green-100 text-green-800' : 
-                                    check.status === 'partial_credit' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
-                                  }`}>
-                                    {check.status === 'full_credit' ? 'Present' : check.status === 'partial_credit' ? 'Partial' : 'Missing'}
-                                  </span>
-                                </td>
-                                <td className="p-3 text-center font-mono text-sm">
-                                  {earned % 1 === 0 ? earned : earned.toFixed(1)}
-                                </td>
-                                <td className="p-3 text-center font-mono text-sm text-slate-400">{check.points_available}</td>
-                                <td className="p-3 text-sm text-slate-600 leading-relaxed">{check.evidence ?? '—'}</td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
             {/* SECTION 4 — GAP ANALYSIS */}
-            <section>
-              <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">SECTION 4 — Gap analysis & remediation</h2>
-              <div className="grid grid-cols-1 gap-4 mt-6">
-                {report.gap_summary?.map((gap) => (
-                  <div key={gap.check_id} className="border border-slate-200 rounded-lg p-4 mb-2 border-l-4 border-l-red-400 bg-white">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <span className="font-mono text-sm text-slate-500 mr-2">{gap.check_id}</span>
-                        <span className="font-semibold text-slate-800">{gap.field_name || (gap as any).field || '—'}</span>
-                        <span className="ml-2 text-sm font-mono text-slate-500">Tag {gap.fix_tag || (gap as any).tag || '—'}</span>
+            <section className="report-section">
+              <SectionHeader num={4} title="Gap analysis & remediation" />
+              <div className="space-y-6 mt-6">
+                {gapCardsData.length > 0 ? gapCardsData.map((gap, idx) => (
+                  <div key={idx} className="gap-card border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-shadow">
+                    <div className={`w-2 flex-shrink-0 ${gap.Status?.toLowerCase().includes('partial') ? 'bg-amber-400' : 'bg-red-500'}`} />
+                    <div className="p-6 flex-1">
+                      <h3 className="font-bold text-lg text-[#0A1628] font-sans tracking-tight mb-5">{gap.Title}</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Status</span>
+                          <span className="font-medium text-slate-800">{gap.Status || 'Missing'}</span>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Effort</span>
+                          <div>
+                            <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                              gap.Effort?.trim() === 'H' ? 'bg-red-100 text-red-700' : gap.Effort?.trim() === 'M' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
+                            }`}>{gap.Effort || 'L'}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1 md:col-span-2">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Institutional Impact</span>
+                          <span className="text-slate-700 leading-relaxed">{gap['Institutional impact'] || gap['Impact'] || '—'}</span>
+                        </div>
+                        {(gap['TradFi Reference'] || gap['TradFi Ref']) && (
+                          <div className="flex flex-col gap-1 md:col-span-2">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">TradFi Reference</span>
+                            <span className="text-slate-700 leading-relaxed">{gap['TradFi Reference'] || gap['TradFi Ref']}</span>
+                          </div>
+                        )}
+                        <div className="flex flex-col gap-1 md:col-span-2">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Recommended Remediation</span>
+                          <span className="text-slate-700 leading-relaxed font-medium">{gap['Recommended remediation'] || gap['Remediation'] || '—'}</span>
+                        </div>
                       </div>
-                      <span className="text-sm font-medium text-red-600 flex-shrink-0 ml-4">-{gap.points_lost} pts</span>
-                    </div>
-                    {gap.evidence && (
-                      <p className="text-sm text-slate-600 mb-2">
-                        <span className="font-medium">Evidence: </span>{gap.evidence}
-                      </p>
-                    )}
-                    <div className="flex gap-2 mt-2">
-                      <span className={`text-xs px-2 py-1 rounded font-medium ${
-                        gap.status === 'no_credit' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'
-                      }`}>
-                        {gap.status === 'no_credit' ? 'Missing' : 'Partial'}
-                      </span>
-                      <span className="text-xs px-2 py-1 rounded bg-slate-100 text-slate-600">Tier {gap.tier}</span>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-slate-100">
-                       <p className="text-xs text-slate-500 leading-relaxed">
-                          <span className="font-bold uppercase tracking-tighter mr-2">Institutional Impact:</span>
-                          {getImpact(gap)}
-                       </p>
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <p className="text-slate-500 italic">No gap analysis available in this report.</p>
+                )}
               </div>
             </section>
 
             {/* SECTIONS 5-7 */}
-            {[5, 6, 7].map(num => (
-               <section key={num}>
-                  <h2 className="text-xl font-semibold text-[#0A1628] mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
-                    {num === 5 ? 'SECTION 5 — Custom tag dictionary' : num === 6 ? 'SECTION 6 — Order types matrix' : 'SECTION 7 — UAT checklist'}
-                  </h2>
-                  <div className="report-content">
-                    <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(num))) }} />
+            {[5, 6, 7].map(num => {
+              const content = stripHeading(getSectionByNum(num));
+              if (!content) return null;
+              return (
+                <section key={num} className="report-section">
+                  <SectionHeader num={num} title={num === 5 ? 'Custom tag dictionary' : num === 6 ? 'Order types matrix' : 'UAT checklist'} />
+                  <div className={`report-content prose prose-slate max-w-none font-sans ${num === 7 ? 'section-7-content' : ''}`}>
+                    <div dangerouslySetInnerHTML={{ __html: marked.parse(content) }} />
                   </div>
-               </section>
-            ))}
+                </section>
+              );
+            })}
 
             {report.tier5_results && (
-              <section>
-                <div className="flex items-center gap-3 mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
-                  <h2 className="text-xl font-semibold text-[#0A1628]">SECTION 8 — DAWG Digital Asset FIX Extensions</h2>
-                  <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Forward-Looking assessment</span>
+              <section className="report-section">
+                <div className="border-l-[3px] border-[#10B981] pl-4 mb-8 pb-3 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center gap-3">
+                  <div>
+                    <div className="font-mono text-xs font-bold text-[#10B981] tracking-widest uppercase mb-1">Section 8</div>
+                    <h2 className="text-2xl font-bold text-[#0A1628] font-sans">DAWG Digital Asset FIX Extensions</h2>
+                  </div>
+                  <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mt-2 sm:mt-0 sm:ml-4">Forward-Looking assessment</span>
                 </div>
-                <div className="report-content mb-6">
+                <div className="report-content prose prose-slate max-w-none font-sans mb-8">
                   <div dangerouslySetInnerHTML={{ __html: marked.parse(stripHeading(getSectionByNum(8))) }} />
                 </div>
                 <Tier5Panel results={report.tier5_results} />
                 
-                {/* Sub-score detailed panels */}
                 <div className="mt-8 space-y-4">
                   <SeparateTierPanel
                     label={report.compliance_sub_score.label}
@@ -390,43 +442,23 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
               </section>
             )}
 
-            {/* SECTION 9-11 (Generic Analysis from Text) */}
             {[9, 10, 11].map(sectionNum => {
               const content = stripHeading(getSectionByNum(sectionNum));
               if (!content) return null;
               return (
-                <section key={sectionNum}>
-                  <div className="flex items-center gap-3 mt-12 mb-4 pb-3 border-b-2 border-[#0A1628]">
-                    <h2 className="text-xl font-semibold text-[#0A1628]">SECTION {sectionNum} — {
-                      sectionNum === 9 ? 'Drop Copy Analysis' : sectionNum === 10 ? 'Market Data Analysis' : 'Admin & Session Baseline'
-                    }</h2>
-                  </div>
-                  <div className="report-content mb-6">
+                <section key={sectionNum} className="report-section">
+                  <SectionHeader num={sectionNum} title={sectionNum === 9 ? 'Drop Copy Analysis' : sectionNum === 10 ? 'Market Data Analysis' : 'Admin & Session Baseline'} />
+                  <div className="report-content prose prose-slate max-w-none font-sans mb-6">
                     <div dangerouslySetInnerHTML={{ __html: marked.parse(content) }} />
                   </div>
                 </section>
               );
             })}
           </div>
-        </div>
-
-        {/* PRINT VIEW */}
-        <div className="hidden print:block">
-          <div 
-            className="prose prose-slate max-w-none 
-              prose-headings:font-serif prose-headings:font-bold prose-headings:text-slate-900
-              prose-p:font-serif prose-p:leading-relaxed prose-p:text-slate-800
-              prose-strong:font-bold prose-strong:text-slate-900
-              prose-code:font-mono prose-code:text-navy-dark prose-code:bg-slate-50 prose-code:px-1 prose-code:rounded
-              print:prose-p:text-sm print:prose-headings:text-lg
-              [&>h1]:text-3xl [&>h1]:border-b [&>h1]:border-slate-200 [&>h1]:pb-4 [&>h1]:mb-8
-              [&>.section-heading]:text-xl [&>.section-heading]:border-b [&>.section-heading]:border-slate-100 [&>.section-heading]:pb-2 [&>.section-heading]:mt-12 [&>.section-heading]:mb-6
-            "
-            dangerouslySetInnerHTML={{ __html: htmlContent as string }}
-          />
           
-          <div className="mt-16 pt-8 border-t border-slate-200 text-xs text-slate-400 font-serif italic text-center print:mt-8">
-            Generated by CryptoFIX Institutional Readiness Auditor — Opound LLC
+          {/* Print Footer */}
+          <div className="report-footer hidden print:block mt-16 pt-8 border-t border-slate-200 text-[10px] text-slate-400 font-mono text-center">
+            Prepared by Opound LLC — navilla.bagga@gmail.com | Generated by CryptoFIX Institutional Readiness Auditor | Version 2.0.0
           </div>
         </div>
       </div>
@@ -437,179 +469,100 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
           width: 100%;
           border-collapse: collapse;
           font-size: 0.875rem;
-          margin-bottom: 1.5rem;
-          border: 1px solid #E2E8F0;
+          margin-bottom: 2rem;
+          border-radius: 0.5rem;
+          overflow: hidden;
+          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         }
         .report-content th {
           background-color: #0A1628;
           color: white;
-          padding: 10px 12px;
+          padding: 12px 16px;
           text-align: left;
           font-weight: 500;
+          font-family: var(--font-ibm-sans), sans-serif;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
         }
         .report-content td {
-          padding: 10px 12px;
+          padding: 12px 16px;
           border-bottom: 1px solid #E2E8F0;
           vertical-align: top;
-          color: #374151;
+          color: #334155;
         }
-        .report-content tr:nth-child(even) td {
-          background-color: #F8FAFC;
-        }
-        .report-content h3 {
-          font-size: 1rem;
-          font-weight: 600;
-          color: #0A1628;
-          margin-top: 1.5rem;
-          margin-bottom: 0.75rem;
-        }
-        .report-content ul {
-          list-style: disc;
-          padding-left: 1.25rem;
-          margin-bottom: 1rem;
-        }
-        .report-content li {
-          font-size: 0.875rem;
-          color: #374151;
-          margin-bottom: 0.25rem;
-          line-height: 1.6;
-        }
-        .report-content code {
-          font-family: monospace;
-          font-size: 0.8125rem;
-          background: #F1F5F9;
-          padding: 1px 5px;
-          border-radius: 3px;
-          color: #1E293B;
-        }
-        .report-content p {
-          font-size: 0.9375rem;
-          color: #374151;
-          line-height: 1.7;
-          margin-bottom: 0.75rem;
-        }
+        .report-content tr:nth-child(even) td { background-color: #F8FAFC; }
+        .report-content h3 { font-size: 1.125rem; font-weight: 700; color: #0A1628; margin-top: 2rem; margin-bottom: 1rem; font-family: var(--font-ibm-sans), sans-serif; }
+        .report-content ul, .report-content ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+        .report-content li { font-size: 0.9375rem; color: #334155; margin-bottom: 0.5rem; line-height: 1.6; }
+        .report-content code { font-family: var(--font-ibm-mono), monospace; font-size: 0.8125rem; background: #F1F5F9; padding: 2px 6px; border-radius: 4px; color: #0F172A; font-weight: 600; }
+        .report-content p { font-size: 0.9375rem; color: #334155; line-height: 1.7; margin-bottom: 1rem; }
         
-        .metadata-block { margin: 16px 0; font-size: 14px; line-height: 1.6; }
-        .meta-row { display: block; }
-        .meta-label { font-weight: 600; color: #64748B; margin-right: 8px; }
-        .meta-label::after { content: ":"; }
-        .overall-score-block { margin: 20px 0; padding: 12px; border-left: 4px solid #F59E0B; background: #FFFBEB; }
-        .score-main { font-size: 24px; font-weight: bold; color: #0A1628; }
-        .score-sub { display: inline-flex; gap: 8px; align-items: baseline; }
+        .section-7-content ol { list-style: none; counter-reset: step; padding-left: 0; }
+        .section-7-content ol > li { position: relative; padding-left: 3rem; margin-bottom: 1.5rem; font-weight: 500; }
+        .section-7-content ol > li::before { 
+          counter-increment: step; content: counter(step); 
+          position: absolute; left: 0; top: -4px;
+          width: 2rem; height: 2rem; background-color: #10B981; color: white;
+          border-radius: 50%; display: flex; align-items: center; justify-content: center;
+          font-weight: bold; font-size: 0.875rem; font-family: var(--font-ibm-sans), sans-serif;
+          box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
 
         @media print {
-          .no-print { display: none !important; }
-          nav, footer { display: none !important; }
-          .report-content th { background-color: #0A1628 !important; -webkit-print-color-adjust: exact; }
-
-          @page { margin: 0.75in; size: A4; }
-
-          body {
-            background: white !important;
-            color: #000000 !important;
-            font-size: 11pt !important;
+          /* Page setup */
+          @page {
+            size: A4;
+            margin: 18mm 16mm 18mm 16mm;
           }
 
-          /* Force all text to black */
-          .prose, .prose p, .prose span, .prose div, .prose h1, .prose h2, .prose h3, .prose table, .prose td, .prose th {
-            color: #000000 !important;
+          /* Preserve background colors and borders in print */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
 
-          .prose {
-            max-width: none !important;
+          /* Hide the browser chrome prompt bar and print button */
+          .print-hide,
+          .print-prompt-bar {
+            display: none !important;
           }
 
-          /* 1. METADATA BLOCK */
-          .metadata-block {
-            display: grid !important;
-            grid-template-columns: 140px 1fr;
-            gap: 4px 16px;
-            margin: 16px 0 24px !important;
-            font-size: 14px !important;
-          }
-          .meta-row { display: contents !important; }
-          .meta-label { color: #64748B !important; font-weight: normal !important; }
-          .meta-label::after { content: "" !important; }
-          .meta-value { color: #000000 !important; }
-
-          /* 2. OVERALL SCORE */
-          .overall-score-block {
-            margin: 24px 0 !important;
-            padding: 16px !important;
-            border: 1px solid #E2E8F0 !important;
-            border-radius: 8px !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 24px !important;
-            background: transparent !important;
-            border-left: 1px solid #E2E8F0 !important;
-          }
-          .score-main {
-            font-size: 48px !important;
-            font-weight: 700 !important;
-            color: #0A1628 !important;
-          }
-          .score-denominator { font-size: 14px !important; color: #64748B !important; }
-          .score-text { font-size: 18px !important; font-weight: 600 !important; color: #F59E0B !important; }
-
-          /* 3. TIER SCORES TABLE */
-          .tier-scores-table-wrapper table {
-            width: 100% !important;
-            border-collapse: collapse !important;
-          }
-          .tier-scores-table-wrapper th:nth-child(1) { width: 200px !important; }
-          .tier-scores-table-wrapper th:nth-child(2) { width: 80px !important; }
-          .tier-scores-table-wrapper th:nth-child(3) { width: 80px !important; }
-          .tier-scores-table-wrapper th:nth-child(4) { width: 60px !important; }
-          
-          table tr:nth-child(odd) { background-color: #F8FAFC !important; }
-          table tr:nth-child(even) { background-color: #ffffff !important; }
-          table thead tr { border-bottom: 2px solid #0A1628 !important; background: transparent !important; }
-          table th, table td { padding: 8px !important; text-align: left !important; }
-
-          /* 4. SECTION HEADINGS */
-          h2.section-heading {
-            margin-top: 40px !important;
-            padding-top: 16px !important;
-            border-top: 2px solid #0A1628 !important;
-            border-bottom: none !important;
-            font-size: 14pt !important;
-            font-weight: 600 !important;
-            color: #000000 !important;
-            break-before: auto !important;
-          }
-          
-          /* Specific page breaks for Section 4 and 7 */
-          .section-4, .section-7 {
-            page-break-before: always !important;
+          /* Force body to standard print styling without overriding colors */
+          body { 
+            background: white !important; 
+            font-size: 10pt !important; 
+            font-family: var(--font-ibm-sans), sans-serif !important; 
           }
 
-          /* 5. GAP ANALYSIS ITEMS */
+          /* Section page breaks */
+          .report-section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+
+          .report-section + .report-section {
+            page-break-before: auto;
+          }
+
+          /* Force tables not to break across pages mid-row */
+          tr {
+            page-break-inside: avoid;
+          }
+
+          /* Gap analysis cards — keep each card together */
           .gap-card {
-            border: 1px solid #E2E8F0 !important;
-            border-radius: 6px !important;
-            padding: 12px 16px !important;
-            margin-bottom: 12px !important;
-            page-break-inside: avoid !important;
+            page-break-inside: avoid;
           }
-          .gap-card h3 { margin-top: 0 !important; border: none !important; }
 
-          /* 7. CRITICAL GAPS TABLE */
-          .critical-gaps-table {
-            width: 100% !important;
-            border-collapse: separate !important;
-            border-spacing: 0 4px !important;
+          /* Score card — keep on one page */
+          .score-card {
+            page-break-inside: avoid;
           }
-          .critical-gaps-table td {
-            padding: 8px !important;
-            border-top: 1px solid #E2E8F0 !important;
-            border-bottom: 1px solid #E2E8F0 !important;
-          }
-          .critical-gaps-table tr td:first-child {
-            border-left: 3px solid #EF4444 !important;
-          }
-          .critical-gaps-table td:last-child {
-            border-right: 1px solid #E2E8F0 !important;
+
+          /* Footer — print on every page */
+          .report-footer {
+            position: running(footer);
           }
         }
       `}</style>
