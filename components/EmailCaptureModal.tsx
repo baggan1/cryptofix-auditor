@@ -199,7 +199,7 @@ export default function EmailCaptureModal({
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-[#10B981] hover:bg-[#059669] disabled:bg-emerald-300 text-white rounded-xl font-black text-lg flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 transition-all active:scale-[0.98] mt-4"
+              className="w-full h-14 bg-[#C8963E] hover:bg-[#B08332] disabled:bg-[#C8963E]/40 text-[#0D1B3E] rounded-xl font-black text-lg flex items-center justify-center gap-2 shadow-xl shadow-[#C8963E]/20 transition-all active:scale-[0.98] mt-4"
             >
               {loading ? (
                 <Loader2 className="w-6 h-6 animate-spin" />

@@ -221,7 +221,7 @@ const ExchangeSelector: React.FC<ExchangeSelectorProps> = ({
         <button
           onClick={onRunAudit}
           disabled={loading || (!selectedExchange && !url && !pastedReady)}
-          className="bg-[#10B981] hover:bg-[#059669] text-white font-medium px-10 h-14 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-accent/20 flex items-center gap-3"
+          className="bg-[#C8963E] hover:bg-[#B08332] text-[#0D1B3E] font-bold px-10 h-14 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#C8963E]/20 flex items-center gap-3"
         >
           {loading ? (
             <>

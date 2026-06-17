@@ -8,4 +8,12 @@ if (!supabaseUrl || !supabaseKey) {
   console.warn('Supabase credentials missing. Lead capture will fail.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Create client or a dummy fallback to prevent build failures when env variables are absent
+export const supabase = (supabaseUrl && supabaseKey)
+  ? createClient(supabaseUrl, supabaseKey)
+  : {
+      from: () => ({
+        insert: async () => ({ error: new Error('Supabase credentials missing') }),
+        select: async () => ({ error: new Error('Supabase credentials missing'), data: [] })
+      })
+    } as any;

@@ -179,7 +179,7 @@ export default function Home() {
                 <textarea
                   className="mt-2 w-full h-40 p-3 text-sm border border-slate-300 
                     rounded-lg font-mono resize-y focus:outline-none 
-                    focus:ring-2 focus:ring-[#10B981]"
+                    focus:ring-2 focus:ring-[#C8963E]"
                   placeholder="Paste FIX spec text here (copy from browser, PDF, or API docs)..."
                   value={pastedSpec}
                   onChange={(e) => {
@@ -193,7 +193,7 @@ export default function Home() {
                 {pastedSpec.trim().length > 100 && (
                   <div className="space-y-3">
                     <div className={`flex items-center gap-2 mt-2 text-sm
-                      ${pastedSpec.length > 50000 ? 'text-amber-600' : 'text-emerald-600'}`}>
+                      ${pastedSpec.length > 50000 ? 'text-amber-600' : 'text-[#C8963E]'}`}>
                       {pastedSpec.length > 50000 ? '⚠' : '✓'}{' '}
                       {pastedSpec.trim().length.toLocaleString()} characters
                       {pastedSpec.length > 50000
@@ -205,12 +205,12 @@ export default function Home() {
                     {!url && (
                       <div className="mt-2">
                         <input
-                          type="text"
-                          placeholder="Exchange name (e.g. Coinbase INTX)"
-                          value={exchangeName}
-                          onChange={(e) => setExchangeName(e.target.value)}
-                          className="w-full p-3 text-sm border border-slate-300 rounded-lg
-                            focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                           type="text"
+                           placeholder="Exchange name (e.g. Coinbase INTX)"
+                           value={exchangeName}
+                           onChange={(e) => setExchangeName(e.target.value)}
+                           className="w-full p-3 text-sm border border-slate-300 rounded-lg
+                             focus:outline-none focus:ring-2 focus:ring-[#C8963E]"
                         />
                       </div>
                     )}

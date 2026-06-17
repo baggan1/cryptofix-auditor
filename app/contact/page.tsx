@@ -117,7 +117,7 @@ export default function ContactPage() {
           href="https://www.opound.com" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="inline-block text-sm font-medium text-[#10B981] hover:text-[#059669] transition-colors"
+          className="inline-block text-sm font-medium text-[#C8963E] hover:text-[#B08332] transition-colors"
         >
           Learn more about Opound LLC → www.opound.com
         </a>

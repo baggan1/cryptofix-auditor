@@ -101,7 +101,7 @@ export default async function AuditPage({ params }: { params: { slug: string } }
                     <div className="text-[11px] font-bold mt-0.5"
                       style={{
                         color: (report.compliance_sub_score?.total ?? 0) >= 12
-                          ? '#10B981' : (report.compliance_sub_score?.total ?? 0) >= 7
+                          ? '#C8963E' : (report.compliance_sub_score?.total ?? 0) >= 7
                           ? '#F59E0B' : '#EF4444'
                       }}>
                       {report.compliance_sub_score?.grade}
@@ -146,7 +146,7 @@ export default async function AuditPage({ params }: { params: { slug: string } }
                     <div className="text-[11px] font-bold mt-0.5"
                       style={{
                         color: (report.market_data_sub_score?.total ?? 0) >= 4
-                          ? '#10B981' : (report.market_data_sub_score?.total ?? 0) >= 2
+                          ? '#C8963E' : (report.market_data_sub_score?.total ?? 0) >= 2
                           ? '#F59E0B' : '#EF4444'
                       }}>
                       {report.market_data_sub_score?.grade}

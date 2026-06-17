@@ -120,11 +120,11 @@ export default function MethodologyPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#C8963E] to-amber-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
               <div className="relative p-8 bg-white border border-slate-200 rounded-2xl h-full">
                 <div className="flex justify-between items-start mb-6">
                   <div className="text-lg font-bold text-slate-900">Compliance & Drop Copy</div>
-                  <div className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded">0–15 PTS</div>
+                  <div className="text-xs font-black text-[#C8963E] bg-[#C8963E]/10 px-3 py-1 rounded">0–15 PTS</div>
                 </div>
                 <div className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-4">For: Compliance service providers, AML platforms, prime brokers</div>
                 <div className="space-y-6">

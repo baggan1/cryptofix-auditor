@@ -64,8 +64,8 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div className="absolute inset-0 bg-navy-dark/80 backdrop-blur-sm" onClick={onClose} />
         <div className="relative bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden p-12 text-center animate-in fade-in zoom-in duration-300">
-          <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+          <div className="w-20 h-20 bg-[#C8963E]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle2 className="w-10 h-10 text-[#C8963E]" />
           </div>
           <h2 className="text-3xl font-black text-navy-dark tracking-tight mb-2">Message Sent</h2>
           <p className="text-slate-500 font-medium mb-8">

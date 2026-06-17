@@ -177,8 +177,8 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
   }, [mdSections]);
 
   const SectionHeader = ({ num, title }: { num: number, title: string }) => (
-    <div className="border-l-[3px] border-[#10B981] pl-4 mb-8 pb-3 border-b border-slate-200">
-      <div className="font-mono text-xs font-bold text-[#10B981] tracking-widest uppercase mb-1">Section {num}</div>
+    <div className="border-l-[3px] border-[#C8963E] pl-4 mb-8 pb-3 border-b border-slate-200">
+      <div className="font-mono text-xs font-bold text-[#C8963E] tracking-widest uppercase mb-1">Section {num}</div>
       <h2 className="text-2xl font-bold text-[#0A1628] font-sans">{title}</h2>
     </div>
   );
@@ -186,17 +186,17 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
   return (
     <div className="bg-[#f7f9fc] min-h-screen font-sans">
       {/* 1. Header / Meta Block */}
-      <div className="bg-navy-dark w-full border-t-4 border-[#10B981] shadow-md sticky top-0 z-50">
+      <div className="bg-navy-dark w-full border-t-4 border-[#C8963E] shadow-md sticky top-0 z-50">
         <div className="max-w-[1000px] mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-4">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-12 h-12 shadow-sm">
-                <rect width="100" height="100" rx="25" fill="#10B981"/>
+                <rect width="100" height="100" rx="25" fill="#C8963E"/>
                 <text x="50" y="53" fontFamily="sans-serif" fontWeight="bold" fontSize="60" fill="white" textAnchor="middle" dominantBaseline="middle">O</text>
               </svg>
               <div className="text-white flex flex-col justify-center">
                 <span className="font-bold text-lg leading-tight tracking-tight whitespace-nowrap">Opound LLC</span>
-                <span className="text-[11px] font-bold tracking-widest text-[#10B981] uppercase mt-0.5 font-mono whitespace-nowrap">CryptoFIX Auditor</span>
+                <span className="text-[11px] font-bold tracking-widest text-[#C8963E] uppercase mt-0.5 font-mono whitespace-nowrap">CryptoFIX Auditor</span>
               </div>
             </div>
             <div className="hidden md:block w-px h-10 bg-white/20"></div>
@@ -210,12 +210,12 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
               <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Input Type</span><span className="text-white font-medium whitespace-nowrap">{report.inputType || 'Pre-loaded Spec'}</span></div>
               <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Audit Date</span><span className="text-white font-medium whitespace-nowrap">{report.audit_date}</span></div>
               <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Auditor</span><span className="text-white font-medium whitespace-nowrap">Navilla Bagga</span></div>
-              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Spec Source</span><a href={report.spec_source} target="_blank" rel="noreferrer" className="text-[#10B981] hover:underline truncate max-w-[120px]">{report.spec_source}</a></div>
+              <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Spec Source</span><a href={report.spec_source} target="_blank" rel="noreferrer" className="text-[#C8963E] hover:underline truncate max-w-[120px]">{report.spec_source}</a></div>
               <div className="flex flex-col"><span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1 font-mono">Asset Classes</span><span className="text-white font-medium capitalize whitespace-nowrap">{report.asset_classes_audited?.join(', ') ?? 'Spot'}</span></div>
             </div>
           </div>
 
-          <button onClick={() => window.print()} className="print-hide flex-shrink-0 flex items-center gap-2 bg-[#10B981] hover:bg-[#059669] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm">
+          <button onClick={() => window.print()} className="print-hide flex-shrink-0 flex items-center gap-2 bg-[#C8963E] hover:bg-[#B08332] text-[#0D1B3E] px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm">
             <Printer className="w-4 h-4" /> Print / Save PDF
           </button>
         </div>
@@ -228,13 +228,13 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
           {/* 2. Score Card */}
           <div className="score-card flex flex-col md:flex-row gap-8 p-8 rounded-2xl bg-[#0A1628] shadow-xl text-white relative overflow-hidden">
             {/* Decorative background accent */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#10B981] opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#C8963E] opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             
             <div className="flex flex-col items-center justify-center min-w-[240px] z-10">
               <div className="relative w-48 h-48 flex items-center justify-center">
                 <svg viewBox="0 0 200 200" className="w-full h-full transform -rotate-90 drop-shadow-md">
                   <circle cx="100" cy="100" r="80" stroke="#1e293b" strokeWidth="14" fill="none" />
-                  <circle cx="100" cy="100" r="80" stroke="#10B981" strokeWidth="14" fill="none" 
+                  <circle cx="100" cy="100" r="80" stroke="#C8963E" strokeWidth="14" fill="none" 
                     strokeDasharray={2 * Math.PI * 80} 
                     strokeDashoffset={2 * Math.PI * 80 - (report.total_score / 100) * 2 * Math.PI * 80} 
                     strokeLinecap="round" 
@@ -249,9 +249,9 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
               </div>
               <div className="rating-badge mt-4 px-5 py-1.5 rounded-full font-bold text-sm tracking-widest uppercase shadow-sm"
                 style={{
-                  backgroundColor: report.total_score >= 80 ? 'rgba(16, 185, 129, 0.15)' : report.total_score >= 40 ? 'rgba(245, 158, 11, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                  color: report.total_score >= 80 ? '#10B981' : report.total_score >= 40 ? '#F59E0B' : '#EF4444',
-                  border: `1px solid ${report.total_score >= 80 ? 'rgba(16, 185, 129, 0.3)' : report.total_score >= 40 ? 'rgba(245, 158, 11, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`
+                  backgroundColor: report.total_score >= 80 ? 'rgba(200, 150, 62, 0.15)' : report.total_score >= 40 ? 'rgba(245, 158, 11, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                  color: report.total_score >= 80 ? '#C8963E' : report.total_score >= 40 ? '#F59E0B' : '#EF4444',
+                  border: `1px solid ${report.total_score >= 80 ? 'rgba(200, 150, 62, 0.3)' : report.total_score >= 40 ? 'rgba(245, 158, 11, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`
                 }}>
                 {report.grade}
               </div>
@@ -262,7 +262,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
               <div className="space-y-4">
                 {Object.entries(report.tier_scores).filter(([k]) => k !== 'tier5').map(([key, tier]) => {
                   const pct = tier.available > 0 ? (tier.earned / tier.available) * 100 : 0;
-                  const barColor = pct >= 80 ? '#10B981' : pct >= 40 ? '#F59E0B' : '#EF4444';
+                  const barColor = pct >= 80 ? '#C8963E' : pct >= 40 ? '#F59E0B' : '#EF4444';
                   return (
                     <div key={key} className="flex flex-col gap-1.5">
                       <div className="flex justify-between items-end text-sm">
@@ -280,7 +280,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
               {/* Tag Chips */}
               <div className="mt-8 pt-5 border-t border-slate-700/50 flex flex-wrap gap-3">
                 <div className="info-chip inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
-                  <Shield className="w-3.5 h-3.5 text-[#10B981]" />
+                  <Shield className="w-3.5 h-3.5 text-[#C8963E]" />
                   <span>Compliance & Drop Copy <span className="text-white font-bold ml-1">{report.compliance_sub_score.total}/{report.compliance_sub_score.max}</span></span>
                 </div>
                 <div className="info-chip inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 shadow-sm">
@@ -351,7 +351,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                   return (
                     <div key={sectionKey} className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
                       <div className="bg-slate-50 px-4 py-2 border-b border-slate-200">
-                        <h4 className="text-[10px] font-bold text-[#10B981] uppercase tracking-widest font-mono">{sectionTitle}</h4>
+                        <h4 className="text-[10px] font-bold text-[#C8963E] uppercase tracking-widest font-mono">{sectionTitle}</h4>
                       </div>
                       <table className="w-full text-sm text-left m-0">
                         <tbody className="divide-y divide-slate-100">
@@ -382,7 +382,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <div className="flex items-center gap-3">
                           <h3 className="text-lg font-bold text-[#0A1628] font-sans">Tier {tierNum} Checks</h3>
-                          {[4, 6].includes(tierNum) && <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-2 py-1 rounded-md uppercase tracking-wider">Compliance Sub-score</span>}
+                          {[4, 6].includes(tierNum) && <span className="text-[9px] font-bold bg-[#C8963E]/10 text-[#B08332] px-2 py-1 rounded-md uppercase tracking-wider">Compliance Sub-score</span>}
                           {tierNum === 7 && <span className="text-[9px] font-bold bg-blue-100 text-blue-700 px-2 py-1 rounded-md uppercase tracking-wider">Market Data Sub-score</span>}
                         </div>
                         <div className="mt-3 sm:mt-0 text-sm font-mono font-bold bg-[#0A1628] text-white px-4 py-1.5 rounded-full shadow-sm">
@@ -411,7 +411,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                                   <td className="px-4 py-4 font-medium text-slate-800">{check.field_name || check.message_name || '—'}</td>
                                   <td className="px-4 py-4 text-center">
                                     <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                                      check.status === 'full_credit' ? 'bg-emerald-100 text-emerald-700' : 
+                                      check.status === 'full_credit' ? 'bg-[#C8963E]/10 text-[#B08332]' : 
                                       check.status === 'partial_credit' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
                                     }`}>
                                       {check.status === 'full_credit' ? 'PASS' : check.status === 'partial_credit' ? 'PARTIAL' : 'FAIL'}
@@ -452,7 +452,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Effort</span>
                           <div>
                             <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                              gap.Effort?.trim() === 'H' ? 'bg-red-100 text-red-700' : gap.Effort?.trim() === 'M' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
+                              gap.Effort?.trim() === 'H' ? 'bg-red-100 text-red-700' : gap.Effort?.trim() === 'M' ? 'bg-amber-100 text-amber-700' : 'bg-[#C8963E]/10 text-[#B08332]'
                             }`}>{gap.Effort || 'L'}</span>
                           </div>
                         </div>
@@ -495,9 +495,9 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
 
             {report.tier5_results && (
               <section className="report-section">
-                <div className="border-l-[3px] border-[#10B981] pl-4 mb-8 pb-3 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="border-l-[3px] border-[#C8963E] pl-4 mb-8 pb-3 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center gap-3">
                   <div>
-                    <div className="font-mono text-xs font-bold text-[#10B981] tracking-widest uppercase mb-1">Section 8</div>
+                    <div className="font-mono text-xs font-bold text-[#C8963E] tracking-widest uppercase mb-1">Section 8</div>
                     <h2 className="text-2xl font-bold text-[#0A1628] font-sans">DAWG Digital Asset FIX Extensions</h2>
                   </div>
                   <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mt-2 sm:mt-0 sm:ml-4">Forward-Looking assessment</span>
@@ -590,10 +590,10 @@ const PrintReport: React.FC<PrintReportProps> = ({ content, report, exchangeName
         .section-7-content ol > li::before { 
           counter-increment: step; content: counter(step); 
           position: absolute; left: 0; top: -4px;
-          width: 2rem; height: 2rem; background-color: #10B981; color: white;
+          width: 2rem; height: 2rem; background-color: #C8963E; color: white;
           border-radius: 50%; display: flex; align-items: center; justify-content: center;
           font-weight: bold; font-size: 0.875rem; font-family: var(--font-ibm-sans), sans-serif;
-          box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+          box-shadow: 0 2px 4px rgba(200, 150, 62, 0.3);
         }
 
         @media print {

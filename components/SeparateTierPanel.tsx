@@ -13,24 +13,24 @@ interface SeparateTierPanelProps {
 
 const SeparateTierPanel: React.FC<SeparateTierPanelProps> = ({ label, score, maxScore, grade, pct }) => {
   const getColor = () => {
-    if (score >= 8) return '#10B981'; // emerald-500
+    if (score >= 8) return '#C8963E'; // gold-amber-500
     if (score >= 5) return '#F59E0B'; // amber-500
     return '#EF4444'; // red-500
   };
 
   const getBgColor = () => {
-    if (score >= 8) return 'bg-emerald-50 border-emerald-200';
+    if (score >= 8) return 'bg-[#C8963E]/5 border-[#C8963E]/20';
     if (score >= 5) return 'bg-amber-50 border-amber-200';
     return 'bg-red-50 border-red-200';
   };
 
   const getIcon = () => {
-    if (score >= 8) return <ShieldCheck className="w-5 h-5 text-emerald-600" />;
+    if (score >= 8) return <ShieldCheck className="w-5 h-5 text-[#C8963E]" />;
     if (score >= 5) return <AlertCircle className="w-5 h-5 text-amber-600" />;
     return <XCircle className="w-5 h-5 text-red-600" />;
   };
 
-  const textColor = score >= 8 ? 'text-emerald-900' : score >= 5 ? 'text-amber-900' : 'text-red-900';
+  const textColor = score >= 8 ? 'text-[#0D1B3E]' : score >= 5 ? 'text-amber-900' : 'text-red-900';
 
   return (
     <div className={`p-4 rounded-xl border-2 mb-4 transition-all hover:shadow-md ${getBgColor()}`}>

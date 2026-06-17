@@ -10,13 +10,13 @@ const Tier6DropCopyPanel: React.FC<Tier6DropCopyPanelProps> = ({ results }) => {
   if (!results) return null;
 
   const getScoreColor = (score: number) => {
-    if (score >= 8) return 'text-emerald-600 bg-emerald-50 border-emerald-100';
+    if (score >= 8) return 'text-[#C8963E] bg-[#C8963E]/10 border-[#C8963E]/20';
     if (score >= 5) return 'text-amber-600 bg-amber-50 border-amber-100';
     return 'text-red-600 bg-red-50 border-red-100';
   };
 
   const getStatusDot = (status: string) => {
-    if (status === 'full_credit') return 'bg-emerald-500';
+    if (status === 'full_credit') return 'bg-[#C8963E]';
     if (status === 'partial_credit') return 'bg-amber-500';
     return 'bg-red-400';
   };

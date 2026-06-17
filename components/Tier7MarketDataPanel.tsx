@@ -17,7 +17,7 @@ interface Tier7MarketDataPanelProps {
 const Tier7MarketDataPanel: React.FC<Tier7MarketDataPanelProps> = ({ results }) => {
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'full_credit': return <CheckCircle className="w-4 h-4 text-emerald-500" />;
+      case 'full_credit': return <CheckCircle className="w-4 h-4 text-[#C8963E]" />;
       case 'partial_credit': return <AlertTriangle className="w-4 h-4 text-amber-500" />;
       default: return <XCircle className="w-4 h-4 text-slate-300" />;
     }
@@ -25,7 +25,7 @@ const Tier7MarketDataPanel: React.FC<Tier7MarketDataPanelProps> = ({ results }) 
 
   const getStatusBg = (status: string) => {
     switch (status) {
-      case 'full_credit': return 'bg-emerald-50 border-emerald-100';
+      case 'full_credit': return 'bg-[#C8963E]/5 border-[#C8963E]/20';
       case 'partial_credit': return 'bg-amber-50 border-amber-100';
       default: return 'bg-slate-50 border-slate-100';
     }
@@ -69,7 +69,7 @@ const Tier7MarketDataPanel: React.FC<Tier7MarketDataPanelProps> = ({ results }) 
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">{check.check_id}</span>
                   <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
-                    check.status === 'full_credit' ? 'bg-emerald-100 text-emerald-700' : 
+                    check.status === 'full_credit' ? 'bg-[#C8963E]/10 text-[#B08332]' : 
                     check.status === 'partial_credit' ? 'bg-amber-100 text-amber-700' : 
                     'bg-slate-200 text-slate-600'
                   }`}>

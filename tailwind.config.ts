@@ -9,30 +9,30 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-ibm-sans)', 'sans-serif'],
-        serif: ['var(--font-ibm-sans)', 'serif'],
-        mono: ['var(--font-ibm-mono)', 'monospace'],
+        sans: ['var(--font-inter)', 'sans-serif'],
+        serif: ['var(--font-dm-serif)', 'serif'],
+        mono: ['var(--font-jetbrains)', 'monospace'],
       },
       colors: {
         navy: {
-          dark: "#0F172A",
+          dark: "#0D1B3E",
         },
         brand: {
-          bg: '#0F172A',
-          accent: '#10B981',
-          'accent-hover': '#059669',
-          muted: '#94A3B8',
+          bg: '#0D1B3E',
+          accent: '#C8963E',
+          'accent-hover': '#B08332',
+          muted: '#4A5568',
         },
         status: {
-          present: "#10B981", // Updated from #1D9E75
+          present: "#C8963E",
           partial: "#F59E0B", // Amber
           missing: "#EF4444", // Red
         },
         tier5: {
-          bg: "#f5f3ff", // light purple
-          badge: "#faf5ff",
-          text: "#7e22ce",
-          border: "#e9d5ff"
+          bg: "#F0EFE9", // Light paper
+          badge: "#FFFFFF", // Cards
+          text: "#0D1B3E",
+          border: "#C8963E"
         }
       },
       backgroundImage: {
